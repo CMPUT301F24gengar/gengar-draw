@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "423827814166",
+    "project_id": "cmput301f24gengar-draw",
+    "storage_bucket": "cmput301f24gengar-draw.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:423827814166:android:09d3aa96be9cf11a598237",
+        "android_client_info": {
+          "package_name": "com.example.gengardraw"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtSnchK1UD0Fz9dmHsgc6UE1COhSjYdTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
