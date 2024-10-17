@@ -16,6 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageView
+            android:id="@+id/navbar_notifications"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
@@ -25,6 +26,7 @@
             android:background="@drawable/rounded_corner"
             app:tint="@color/black1" />
         <ImageView
+            android:id="@+id/navbar_myevents"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
@@ -34,6 +36,7 @@
             android:background="@drawable/rounded_corner"
             app:tint="@color/grey" />
         <ImageView
+            android:id="@+id/navbar_scanner"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
@@ -43,6 +46,7 @@
             android:background="@drawable/rounded_corner"
             app:tint="@color/grey" />
         <ImageView
+            android:id="@+id/navbar_create_event"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
@@ -52,6 +56,7 @@
             android:background="@drawable/rounded_corner"
             app:tint="@color/grey" />
         <ImageView
+            android:id="@+id/navbar_profile"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
