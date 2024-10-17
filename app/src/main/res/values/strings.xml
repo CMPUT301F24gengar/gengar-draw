@@ -5,4 +5,18 @@
     <string name="name">NAME</string>
     <string name="email">EMAIL</string>
     <string name="phone_no_optional">PHONE NO. [ OPTIONAL ]</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile">PROFILE</string>
+    <string name="user">USER</string>
+    <string name="facility">FACILITY</string>
+    <string name="add_edit_profile_picture">ADD / EDIT PROFILE PICTURE</string>
+    <string name="remove_profile_picture">REMOVE PROFILE PICTURE</string>
+    <string name="save">SAVE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="add_edit_facility_picture">ADD / EDIT FACILITY PICTURE</string>
+    <string name="remove_facility_picture">REMOVE FACILITY PICTURE</string>
+    <string name="location">LOCATION</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="create">CREATE</string>
 </resources>
