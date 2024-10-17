@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">GengarDraw</string>
+    <string name="register">REGISTER</string>
+    <string name="todo">TODO</string>
+    <string name="name">NAME</string>
+    <string name="email">EMAIL</string>
+    <string name="phone_no_optional">PHONE NO. [ OPTIONAL ]</string>
 </resources>
