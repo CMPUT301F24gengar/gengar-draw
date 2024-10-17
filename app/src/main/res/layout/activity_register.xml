@@ -11,22 +11,23 @@
     tools:context=".Register">
 
     <TextView
+        style="@style/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed"
         android:gravity="center"
         android:text="@string/register"
         android:textColor="@color/white"
         android:textSize="32sp" />
 
     <androidx.cardview.widget.CardView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/black1"
-        app:cardCornerRadius="100dp">
+        app:cardCornerRadius="10dp">
 
         <ImageView
+            android:id="@+id/register_user_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/todo"
@@ -36,6 +37,7 @@
 
     <EditText
         android:id="@+id/register_name"
+        style="@style/main"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="40dp"
@@ -43,7 +45,6 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_corner"
         android:backgroundTint="@color/black2"
-        android:fontFamily="sans-serif-condensed"
         android:hint="@string/name"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
@@ -52,6 +53,7 @@
 
     <EditText
         android:id="@+id/register_email"
+        style="@style/main"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="40dp"
@@ -59,7 +61,6 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_corner"
         android:backgroundTint="@color/black2"
-        android:fontFamily="sans-serif-condensed"
         android:hint="@string/email"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
@@ -68,6 +69,7 @@
 
     <EditText
         android:id="@+id/register_phone"
+        style="@style/main"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="40dp"
@@ -75,7 +77,6 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/rounded_corner"
         android:backgroundTint="@color/black2"
-        android:fontFamily="sans-serif-condensed"
         android:hint="@string/phone_no_optional"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
@@ -93,10 +94,10 @@
         android:backgroundTint="@color/green">
 
         <TextView
+            style="@style/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="sans-serif-condensed"
             android:text="@string/register"
             android:textAlignment="center"
             android:textColor="@color/black1"

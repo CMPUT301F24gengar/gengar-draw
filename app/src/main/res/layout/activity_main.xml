@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/black1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black1"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -20,53 +20,60 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
-            android:src="@drawable/bell"
-            android:contentDescription="@string/todo"
-            android:backgroundTint="@color/green"
             android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/green"
+            android:contentDescription="@string/todo"
+            android:padding="5dp"
+            android:src="@drawable/bell"
             app:tint="@color/black1" />
+
         <ImageView
             android:id="@+id/navbar_myevents"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
-            android:src="@drawable/events"
-            android:contentDescription="@string/todo"
-            android:backgroundTint="@color/black2"
             android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2"
+            android:contentDescription="@string/todo"
+            android:padding="5dp"
+            android:src="@drawable/events"
             app:tint="@color/grey" />
+
         <ImageView
             android:id="@+id/navbar_scanner"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
-            android:src="@drawable/scan"
-            android:contentDescription="@string/todo"
-            android:backgroundTint="@color/black2"
             android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2"
+            android:contentDescription="@string/todo"
+            android:padding="5dp"
+            android:src="@drawable/scan"
             app:tint="@color/grey" />
+
         <ImageView
             android:id="@+id/navbar_create_event"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
-            android:src="@drawable/create_event"
-            android:contentDescription="@string/todo"
-            android:backgroundTint="@color/black2"
             android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2"
+            android:contentDescription="@string/todo"
+            android:padding="5dp"
+            android:src="@drawable/create_event"
             app:tint="@color/grey" />
+
         <ImageView
             android:id="@+id/navbar_profile"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
-            android:src="@drawable/user"
-            android:contentDescription="@string/todo"
-            android:backgroundTint="@color/black2"
             android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2"
+            android:contentDescription="@string/todo"
+            android:padding="5dp"
+            android:src="@drawable/user"
             app:tint="@color/grey" />
-
-
 
 
     </LinearLayout>
