@@ -19,4 +19,14 @@
     <string name="location">LOCATION</string>
     <string name="description">DESCRIPTION</string>
     <string name="create">CREATE</string>
+    <string name="create_event">CREATE EVENT</string>
+    <string name="event_title">EVENT TITLE</string>
+    <string name="registration_opens">REGISTRATION OPENS</string>
+    <string name="registration_deadline">REGISTRATION DEADLINE</string>
+    <string name="event_starts">EVENT STARTS</string>
+    <string name="max_winners">MAX WINNERS</string>
+    <string name="max_entrants">MAX ENTRANTS</string>
+    <string name="optional">[ OPTIONAL ]</string>
+    <string name="event_details">EVENT DETAILS</string>
+    <string name="enable_geolocation">ENABLE GEOLOCATION</string>
 </resources>
