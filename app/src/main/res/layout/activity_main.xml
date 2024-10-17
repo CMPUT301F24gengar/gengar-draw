@@ -3,17 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@color/black1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/black2"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/bell"
+            android:contentDescription="@string/todo"
+            android:backgroundTint="@color/green"
+            android:background="@drawable/rounded_corner"
+            app:tint="@color/black1" />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/events"
+            android:contentDescription="@string/todo"
+            android:backgroundTint="@color/black2"
+            android:background="@drawable/rounded_corner"
+            app:tint="@color/grey" />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/scan"
+            android:contentDescription="@string/todo"
+            android:backgroundTint="@color/black2"
+            android:background="@drawable/rounded_corner"
+            app:tint="@color/grey" />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/create_event"
+            android:contentDescription="@string/todo"
+            android:backgroundTint="@color/black2"
+            android:background="@drawable/rounded_corner"
+            app:tint="@color/grey" />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/user"
+            android:contentDescription="@string/todo"
+            android:backgroundTint="@color/black2"
+            android:background="@drawable/rounded_corner"
+            app:tint="@color/grey" />
+
+
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
