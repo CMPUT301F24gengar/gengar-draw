@@ -29,4 +29,7 @@
     <string name="optional">[ OPTIONAL ]</string>
     <string name="event_details">EVENT DETAILS</string>
     <string name="enable_geolocation">ENABLE GEOLOCATION</string>
+    <string name="joined_events">JOINED EVENTS</string>
+    <string name="hosted_events">HOSTED EVENTS</string>
+    <string name="my_events">MY EVENTS</string>
 </resources>
