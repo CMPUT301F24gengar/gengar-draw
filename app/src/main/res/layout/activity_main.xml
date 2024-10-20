@@ -35,7 +35,7 @@
             app:tint="@color/black1" />
 
         <ImageView
-            android:id="@+id/navbar_myevents"
+            android:id="@+id/navbar_my_events"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="10dp"
@@ -82,7 +82,13 @@
             android:src="@drawable/user"
             app:tint="@color/grey" />
 
-
     </LinearLayout>
+
+<!--    u wanna put the register fragment in here and remove the frame if user has an account -->
+    <FrameLayout
+        android:id="@+id/register"
+        android:background="@color/black1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

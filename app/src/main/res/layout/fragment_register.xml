@@ -8,7 +8,7 @@
     android:background="@color/black1"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".Register">
+    tools:context="Fragments.register">
 
     <TextView
         style="@style/main"
