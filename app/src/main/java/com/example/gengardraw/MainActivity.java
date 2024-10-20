@@ -1,14 +1,17 @@
 package com.example.gengardraw;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,6 +28,13 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
     FrameLayout mainContentFrame;
     FrameLayout registerFrame;
 
+    ImageView highlightedButton;
+    ImageView navbarNotificationsbutton;
+    ImageView navbarMyEventsbutton;
+    ImageView navbarScannerbutton;
+    ImageView navbarCreateEventbutton;
+    ImageView navbarProfilebutton;
+
     UserProfileManager userProfileManager;
     UserProfile userProfile;
 
@@ -36,9 +46,16 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
         mainContentFrame = findViewById(R.id.main_content);
         registerFrame = findViewById(R.id.register);
 
+        navbarNotificationsbutton = findViewById(R.id.navbar_notifications);
+        navbarMyEventsbutton = findViewById(R.id.navbar_my_events);
+        navbarScannerbutton = findViewById(R.id.navbar_scanner);
+        navbarCreateEventbutton = findViewById(R.id.navbar_create_event);
+        navbarProfilebutton = findViewById(R.id.navbar_profile);
+
+        highlightedButton = navbarNotificationsbutton;
+
         deviceID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         userProfileManager = new UserProfileManager();
-
         userProfileManager.checkUserExists(deviceID, new UserProfileManager.OnUserCheckListener() {
             @Override
             public void onUserExists(UserProfile userProfile) {
@@ -57,6 +74,45 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             }
         });
 
+        navbarNotificationsbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedButton(navbarNotificationsbutton);
+            }
+        });
+        navbarMyEventsbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedButton(navbarMyEventsbutton);
+            }
+        });
+        navbarScannerbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedButton(navbarScannerbutton);
+            }
+        });
+        navbarCreateEventbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedButton(navbarCreateEventbutton);
+            }
+        });
+        navbarProfilebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedButton(navbarProfilebutton);
+            }
+        });
+
+    }
+
+    private void setHighlightedButton(ImageView button) {
+        highlightedButton.setColorFilter(ContextCompat.getColor(this, R.color.grey));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black2)));
+        highlightedButton = button;
+        highlightedButton.setColorFilter(ContextCompat.getColor(this, R.color.black2));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green)));
     }
 
     private void loadRegisterFragment() {
