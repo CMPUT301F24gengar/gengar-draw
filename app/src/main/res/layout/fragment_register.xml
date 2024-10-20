@@ -48,6 +48,7 @@
         android:hint="@string/name"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
+        android:textColor="@color/white"
         android:textColorHint="@color/grey"
         android:textSize="18sp" />
 
@@ -64,6 +65,7 @@
         android:hint="@string/email"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
+        android:textColor="@color/white"
         android:textColorHint="@color/grey"
         android:textSize="18sp" />
 
@@ -80,6 +82,7 @@
         android:hint="@string/phone_no_optional"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
+        android:textColor="@color/white"
         android:textColorHint="@color/grey"
         android:textSize="18sp" />
 

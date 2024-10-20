@@ -32,4 +32,5 @@
     <string name="joined_events">JOINED EVENTS</string>
     <string name="hosted_events">HOSTED EVENTS</string>
     <string name="my_events">MY EVENTS</string>
+    <string name="notifications">NOTIFICATIONS</string>
 </resources>
