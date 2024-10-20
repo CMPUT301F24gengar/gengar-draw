@@ -1,66 +1,92 @@
 package Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.gengardraw.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link register#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
+import Classes.UserProfile;
+import Classes.UserProfileManager;
+
 public class register extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    String deviceID;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ImageView userPictureImageView;
+    private EditText nameEditText, emailEditText, phoneEditText;
 
-    public register() {
-        // Required empty public constructor
+    public interface OnRegisterSuccessListener {
+        void loadMainContentFragment();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment register.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static register newInstance(String param1, String param2) {
-        register fragment = new register();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private OnRegisterSuccessListener mListener;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_register, container, false);
+        nameEditText = view.findViewById(R.id.register_name);
+        emailEditText = view.findViewById(R.id.register_email);
+        phoneEditText = view.findViewById(R.id.register_phone);
+        FrameLayout registerButton = view.findViewById(R.id.register_button);
+
+        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        UserProfileManager userProfileManager = new UserProfileManager();
+
+        registerButton.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString();
+            String email = emailEditText.getText().toString();
+            String phone = phoneEditText.getText().toString();
+
+            // Validate input
+            if (name.isEmpty() || email.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter name and email", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Create the UserProfile object and add to Firestore
+            UserProfile userProfile = new UserProfile(
+                    deviceID,
+                    name,
+                    email,
+                    phone,
+                    "default_picture_url", // Placeholder image url for now
+                    "default_facility_url", // Placeholder facility url for now
+                    true, // Default allowNotifications
+                    new ArrayList<>(), // Default empty notificationsArray ,
+                    new ArrayList<>(), // Default empty joinedEvents
+                    false, // Default not an organizer
+                    false  // Default not an admin
+            );
+             userProfileManager.addUserProfile(userProfile, deviceID);
+
+            if (mListener != null) {
+                mListener.loadMainContentFragment();
+            }
+        });
+
+        return view;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnRegisterSuccessListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnRegisterSuccessListener");
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false);
     }
 }

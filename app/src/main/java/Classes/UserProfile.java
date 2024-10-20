@@ -1,5 +1,7 @@
 package Classes;
 
+import java.util.List;
+
 public class UserProfile {
     private String deviceID;
     private String name;
@@ -10,14 +12,16 @@ public class UserProfile {
     private String facilityURL;
 
     private boolean allowNotifications;
-    private String[] notificationsArray;
+    private List<String> notificationsArray;
 
-    private String[] joinedEvents;
+    private List<String> joinedEvents;
 
     private boolean isOrganizer;
     private boolean isAdmin;
 
-    public UserProfile(String deviceID, String name, String email, String phoneNumber, String pictureURL, String facilityURL, boolean allowNotifications, String[] notificationsArray, String[] joinedEvents, boolean isOrganizer, boolean isAdmin){;
+    public UserProfile() {}
+
+    public UserProfile(String deviceID, String name, String email, String phoneNumber, String pictureURL, String facilityURL, boolean allowNotifications, List<String> notificationsArray, List<String> joinedEvents, boolean isOrganizer, boolean isAdmin){;
         this.deviceID = deviceID;
         this.name = name;
         this.email = email;
@@ -52,10 +56,10 @@ public class UserProfile {
     public boolean isAllowNotifications() {
         return allowNotifications;
     }
-    public String[] getNotificationsArray() {
+    public List<String> getNotificationsArray() {
         return notificationsArray;
     }
-    public String[] getJoinedEvents() {
+    public List<String> getJoinedEvents() {
         return joinedEvents;
     }
     public boolean isOrganizer() {
@@ -87,10 +91,10 @@ public class UserProfile {
     public void setAllowNotifications(boolean allowNotifications) {
         this.allowNotifications = allowNotifications;
     }
-    public void setNotificationsArray(String[] notificationsArray) {
+    public void setNotificationsArray(List<String> notificationsArray) {
         this.notificationsArray = notificationsArray;
     }
-    public void setJoinedEvents(String[] joinedEvents) {
+    public void setJoinedEvents(List<String> joinedEvents) {
         this.joinedEvents = joinedEvents;
     }
     public void setOrganizer(boolean isOrganizer) {
