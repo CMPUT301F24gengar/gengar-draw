@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black1"
+    android:gravity="center|top"
+    android:orientation="vertical"
+    tools:context="Fragments.qr_scanner">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/black2">
+
+        <TextView
+            style="@style/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/qr_code_scanner"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_height="match_parent" >
+        <FrameLayout
+            android:id="@+id/qr_scanner_view_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/green"
+            tools:ignore="UselessParent">
+
+            <TextView
+                style="@style/main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/view_event_details"
+                android:textAlignment="center"
+                android:textColor="@color/black1"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/profile_facility_delete_btn"
+            style="@style/main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="30dp"
+            android:text="@string/or"
+            android:textAlignment="center"
+            android:textColor="@color/grey"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:id="@+id/qr_scanner_signup_btn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/green"
+            tools:ignore="UselessParent">
+
+            <TextView
+                style="@style/main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/sign_up_for_event"
+                android:textAlignment="center"
+                android:textColor="@color/black1"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

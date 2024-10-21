@@ -33,4 +33,8 @@
     <string name="hosted_events">HOSTED EVENTS</string>
     <string name="my_events">MY EVENTS</string>
     <string name="notifications">NOTIFICATIONS</string>
+    <string name="view_event_details">VIEW EVENT DETAILS</string>
+    <string name="sign_up_for_event">SIGN UP FOR EVENT</string>
+    <string name="or">OR</string>
+    <string name="qr_code_scanner">QR CODE SCANNER</string>
 </resources>

@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 import Fragments.notifications;
+import Fragments.qr_scanner;
 import Fragments.register;
 
 public class MainActivity extends AppCompatActivity implements register.OnRegisterSuccessListener {
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarNotificationsbutton);
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new notifications()).commit();
             }
         });
         navbarMyEventsbutton.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarScannerbutton);
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new qr_scanner()).commit();
             }
         });
         navbarCreateEventbutton.setOnClickListener(new View.OnClickListener() {
