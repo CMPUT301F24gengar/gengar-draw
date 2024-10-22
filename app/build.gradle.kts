@@ -33,8 +33,11 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.firebase.bom.v3350))
+    implementation(libs.firebase.firestore)
+
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.core)
 
     implementation(libs.appcompat)
     implementation(libs.material)
