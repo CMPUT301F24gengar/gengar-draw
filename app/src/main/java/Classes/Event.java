@@ -5,10 +5,11 @@ import java.util.Date;
 //import java.util.List;
 
 public class Event {
-    private String organizerEmail;
+    //private String organizerEmail;
+    private String organizerID;
     private String eventTitle;
-    private String regOpenDate;
-    private String regDeadlineDate;
+    private Date regOpenDate;
+    private Date regDeadlineDate;
     private Date eventStartDate;
     //private LocalDateTime eventStartTime;
     private Integer maxWinners;
@@ -20,8 +21,9 @@ public class Event {
 
     public Event() {}
 
-    public Event(String organizerEmail, String eventTitle, String regOpenDate, String regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation){
-        this.organizerEmail = organizerEmail;
+    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation){
+        //this.organizerEmail = organizerEmail;
+        this.organizerID = organizerID;
         this.eventTitle = eventTitle;
         this.regOpenDate = regOpenDate;
         this.regDeadlineDate = regDeadlineDate;
@@ -35,16 +37,17 @@ public class Event {
         // TODO: QR code
     }
 
-    public String getOrganizerEmail() {
-        return organizerEmail;
+    //public String getOrganizerEmail() {return organizerEmail;}
+    public String getOrganizerID() {
+        return organizerID;
     }
     public String getEventTitle() {
         return eventTitle;
     }
-    public String getRegOpenDate() {
+    public Date getRegOpenDate() {
         return regOpenDate;
     }
-    public String getRegDeadlineDate() {
+    public Date getRegDeadlineDate() {
         return regDeadlineDate;
     }
     public Date getEventStartDate() {
@@ -62,16 +65,17 @@ public class Event {
     public boolean getEnableGeolocation() { return enableGeolocation; }
     // TODO: get QR code
 
-    public void setOrganizerEmail(String organizerEmail) {
-        this.organizerEmail = organizerEmail;
+    //public void setOrganizerEmail(String organizerEmail) {this.organizerEmail = organizerEmail;}
+    public void setOrganizerID(String organizerID) {
+        this.organizerID = organizerID;
     }
     public void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
     }
-    public void setRegOpenDate(String regOpenDate) {
+    public void setRegOpenDate(Date regOpenDate) {
         this.regOpenDate = regOpenDate;
     }
-    public void setRegDeadlineDate(String regDeadlineDate) { this.regDeadlineDate = regDeadlineDate; }
+    public void setRegDeadlineDate(Date regDeadlineDate) { this.regDeadlineDate = regDeadlineDate; }
     public void setEventStartDate(Date eventStartDate) {
         this.eventStartDate = eventStartDate;
     }
