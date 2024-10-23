@@ -10,26 +10,28 @@ public class Event {
     private String regOpenDate;
     private String regDeadlineDate;
     private Date eventStartDate;
-    private LocalDateTime eventStartTime;
+    //private LocalDateTime eventStartTime;
     private Integer maxWinners;
     private Integer maxEntrants;
     private String eventDetails;
     private String eventPictureURL;
+    private boolean enableGeolocation;
     // TODO: save QR code
 
     public Event() {}
 
-    public Event(String organizerEmail, String eventTitle, String regOpenDate, String regDeadlineDate, Date eventStartDate, LocalDateTime eventStartTime, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL){
+    public Event(String organizerEmail, String eventTitle, String regOpenDate, String regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation){
         this.organizerEmail = organizerEmail;
         this.eventTitle = eventTitle;
         this.regOpenDate = regOpenDate;
         this.regDeadlineDate = regDeadlineDate;
         this.eventStartDate = eventStartDate;
-        this.eventStartTime = eventStartTime;
+        //this.eventStartTime = eventStartTime;
         this.maxWinners = maxWinners;
         this.maxEntrants = maxEntrants;
         this.eventDetails = eventDetails;
         this.eventPictureURL = eventPictureURL;
+        this.enableGeolocation = enableGeolocation;
         // TODO: QR code
     }
 
@@ -48,9 +50,7 @@ public class Event {
     public Date getEventStartDate() {
         return eventStartDate;
     }
-    public LocalDateTime getEventStartTime() {
-        return eventStartTime;
-    }
+    //public LocalDateTime getEventStartTime() { return eventStartTime; }
     public Integer getMaxWinners() {
         return maxWinners;
     }
@@ -59,6 +59,7 @@ public class Event {
     }
     public String getEventDetails() { return eventDetails; }
     public String getEventPictureURL() { return eventPictureURL; }
+    public boolean getEnableGeolocation() { return enableGeolocation; }
     // TODO: get QR code
 
     public void setOrganizerEmail(String organizerEmail) {
@@ -74,12 +75,13 @@ public class Event {
     public void setEventStartDate(Date eventStartDate) {
         this.eventStartDate = eventStartDate;
     }
-    public void setEventStartTime(LocalDateTime eventStartTime) { this.eventStartTime = eventStartTime; }
+    //public void setEventStartTime(LocalDateTime eventStartTime) { this.eventStartTime = eventStartTime; }
     public void setMaxWinners(Integer maxWinners) { this.maxWinners = maxWinners; }
     public void setMaxEntrants(Integer maxEntrants) { this.maxEntrants = maxEntrants; }
     public void setEventDetails(String eventDetails) {
         this.eventDetails = eventDetails;
     }
     public void setEventPictureURL(String eventPictureURL) { this.eventPictureURL = eventPictureURL; }
+    public void setEnableGeolocation(boolean enableGeolocation) { this.enableGeolocation = enableGeolocation; }
     // TODO: set QR code
 }
