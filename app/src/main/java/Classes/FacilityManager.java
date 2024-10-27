@@ -1,5 +1,7 @@
 package Classes;
 
+import android.widget.Button;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,42 +20,53 @@ public class FacilityManager {
         facilitiesRef = db.collection("facilities");
     }
 
-    public boolean checkFacilityExists(String deviceId){return Boolean.TRUE;}
+    // Method to check if user exists by device ID
+    public void checkFacilityExists(String deviceID, FacilityManager.OnFacilityCheckListener listener) {
+        db.collection("facilities")
+                .document(deviceID) // Use the deviceID directly as the document ID
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null && document.exists()) {
+                            // facility exists, create Facility
+                            Facility facility = createFacilityFromDocument(document);
+                            listener.onFacilityExists(facility);
+                        } else {
+                            // Facility does not exist
+                            listener.onFacilityNotExists();
+                        }
+                    } else {
+                        // Handle any error from the task
+                        listener.onError(task.getException());
+                    }
+                });
+    }
+
     public Facility createFacilityFromDocument(DocumentSnapshot document){
         /**
          * create a facility object from information stored in firebase
          */
         String name = document.getString("name");
         String location = document.getString("location");
-        String description = document.getString("location");
+        String description = document.getString("description");
         String pictureURL = document.getString("pictureURL");
-        List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
+        //List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
         String userId = document.getString("DeviceID");
 
-        return new Facility(name, location, description, pictureURL, events, userId);
+        return new Facility(name, location, description, pictureURL, userId);
+    }
 
+    public void addUpdateFacility(Facility facility, String deviceID) {
+        facilitiesRef.document(deviceID).set(facility);
     }
-    public void addFacility(Facility facility){
-        /**
-         * adds facility to firebase by corresponding user ID
-         */
-        if (!checkFacilityExists(facility.getUsrId())){
-            //only add if facility doesn't already exist
-            facilitiesRef.document(facility.getUsrId()).set(facility);
-        }
-    }
-    public void updateFacility(Facility facility, String deviceId){
-        /**
-         * updates the firebase storage with the information from the given facility object
-         * specifically, gives the facility owned by deviceId the attributes of given facility
-         */
-        if (checkFacilityExists(deviceId)){
-            //only update if facility exists
-            facilitiesRef.document(deviceId).set(facility);
 
-        }else{
-            addFacility(facility);
-        }
-    }
     public void deleteFacility(Facility facility){}//to be implemented
+
+    // interface to handle facility check result
+    public interface OnFacilityCheckListener {
+        void onFacilityExists(Facility facility); // case when facility exists
+        void onFacilityNotExists(); // case when facility doesn't exist
+        void onError(Exception e); // Handle errors
+    }
 }
