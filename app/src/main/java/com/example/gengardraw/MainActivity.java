@@ -79,8 +79,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
         navbarNotificationsbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setHighlightedButton(navbarNotificationsbutton);
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new notifications()).commit();
+                showHomeFragment();
             }
         });
         navbarMyEventsbutton.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +129,11 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
         // TODO : Replace the main_content FrameLayout with the main content and set the register FrameLayout visibility to false
         registerFrame.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new notifications()).commit();
-
     }
+
+    public void showHomeFragment() {
+        setHighlightedButton(navbarNotificationsbutton);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new notifications()).commit();
+    }
+
 }

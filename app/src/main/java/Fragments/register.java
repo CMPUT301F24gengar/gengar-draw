@@ -70,7 +70,7 @@ public class register extends Fragment {
                     false, // Default not an organizer
                     false  // Default not an admin
             );
-             userProfileManager.addUserProfile(userProfile, deviceID);
+            userProfileManager.addUserProfile(userProfile, deviceID);
 
             if (mListener != null) {
                 mListener.loadMainContentFragment();

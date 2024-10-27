@@ -82,6 +82,28 @@ public class UserProfileManager {
                 .set(userProfile);
     }
 
+    // Method to update a user profile in Firestore
+    public void updateUserProfile(UserProfile userProfile, String deviceID) {
+        assert db != null;
+        db.collection("users").document(deviceID) // Use deviceID as the document ID
+                .set(userProfile);
+    }
+
+    // Method to delete a user profile from Firestore
+    public void deleteUserProfile(String deviceID) {
+        assert db != null;
+        db.collection("users").document(deviceID) // Use deviceID as the document ID
+                .delete();
+    }
+
+    // Method to return a user profile from Firestore
+    public UserProfile getUserProfile(String deviceID) {
+        assert db != null;
+        DocumentSnapshot document = db.collection("users").document(deviceID) // Use deviceID as the document ID
+                .get().getResult();
+        return createUserProfileFromDocument(document);
+    }
+
     // interface to handle user check result
     public interface OnUserCheckListener {
         void onUserExists(UserProfile userProfile); // case when user exists
