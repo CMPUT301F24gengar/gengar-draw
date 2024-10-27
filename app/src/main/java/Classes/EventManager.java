@@ -17,23 +17,19 @@ import java.util.List;
 public class EventManager {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
+
     public EventManager(){
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
     }
-    //public boolean checkEventExists(String deviceID){return Boolean.TRUE;}
+
     public Event createEventFromDocument(DocumentSnapshot document){
-        /**
-         * create an event object from information stored in firebase
-         */
         String organizerID = document.getString("organizerID");
         String eventTitle = document.getString("eventTitle");
         Date regOpenDate = document.getDate("regOpenDate");
         Date regDeadlineDate = document.getDate("regDeadlineDate");
         Date eventStartDate = document.getDate("eventStartDate");
-        //Integer maxWinners = document.getInteger("maxWinners");
-        //Integer maxEntrants = document.getInteger("maxEntrants");
 
         String maxWinnersString = document.getString("maxWinners");
         Integer maxWinners = Integer.parseInt(maxWinnersString);
@@ -47,10 +43,14 @@ public class EventManager {
         String eventDetails = document.getString("eventDetails");
         String eventPictureURL = document.getString("eventPictureURL");
         boolean enableGeolocation = document.getBoolean("enableGeolocation");
-        //List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>(); //Facility has list of events
+        List<String> waitingList = (List<String>) document.get("waitingList");
+        List<String> chosenEntrantsList = (List<String>) document.get("chosenEntrantsList");
+        List<String> CancelledEntrantsList = (List<String>) document.get("CancelledEntrantsList");
+        List<String> finalList = (List<String>) document.get("finalList");
 
         // Create and return the Event object
-        return new Event(organizerID,
+        return new Event(
+                organizerID,
                 eventTitle,
                 regOpenDate,
                 regDeadlineDate,
@@ -59,34 +59,31 @@ public class EventManager {
                 maxEntrants,
                 eventDetails,
                 eventPictureURL,
-                enableGeolocation);
+                enableGeolocation,
+                waitingList,
+                chosenEntrantsList,
+                CancelledEntrantsList,
+                finalList,
+                null
+        );
     }
 
     public void addEvent(Event event){
-        /**
-         * adds event to firebase
-         */
-        if (!checkEventExists(event.getOrganizerID())){
-            //only add if event doesn't already exist
-            eventsRef.document(event.getOrganizerID()).set(event);
-        }
+//        eventsRef.document(event.getOrganizerID()).set(event);
+        eventsRef.add(event);
     }
 
+    // TODO: implement updateEvent()
     public void updateEvent(Event event, String organizerID){
-        /**
-         * updates the firebase storage with the information from the given event object
-         */
-        if (checkEventExists(event.getOrganizerID())){
-            //only update if event exists
-            eventsRef.document(organizerID).set(event);
-        }else{
-            addEvent(event);
-        }
     }
 
-    public void deleteEvent(Event event){}//to be implemented
-
-    public boolean checkEventExists(String organizerID){
-        return true;
+    public void deleteEvent(Event event){
+        eventsRef.document(event.getOrganizerID()).delete();
     }
+
+    public Event getEvent(String organizerID){
+        DocumentSnapshot document = eventsRef.document(organizerID).get().getResult();
+        return createEventFromDocument(document);
+    }
+
 }
