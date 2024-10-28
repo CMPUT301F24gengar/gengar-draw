@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation(platform(libs.firebase.bom.v3350))
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 
     implementation(libs.zxing.android.embedded)
     implementation(libs.core)
