@@ -44,9 +44,7 @@ public class UserProfile {
     public String getEmail() {
         return email;
     }
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getPhoneNumber() {return phoneNumber; }
     public String getPictureURL() {
         return pictureURL;
     }
@@ -67,6 +65,14 @@ public class UserProfile {
     }
     public boolean isAdmin() {
         return isAdmin;
+    }
+    public String getInitials(){
+        StringBuilder initials = new StringBuilder();
+        String[] newString = name.trim().split("\\s+");
+        for (String letter : newString){
+            initials.append(letter.charAt(0));
+        }
+        return initials.toString().toUpperCase();
     }
 
 
