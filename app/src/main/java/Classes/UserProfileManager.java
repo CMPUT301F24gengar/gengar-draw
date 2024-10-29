@@ -1,21 +1,23 @@
 package Classes;
 
-import android.util.Log;
+import android.net.Uri;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UserProfileManager {
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
 
     public UserProfileManager() {
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
     }
 
     // Method to check if user exists by device ID
@@ -104,10 +106,55 @@ public class UserProfileManager {
         return createUserProfileFromDocument(document);
     }
 
+
+    public void uploadProfilePicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
+        StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
+        storageRef.putFile(picUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess);
+                })
+                .addOnFailureListener(listener::onError);
+    }
+
+    public void updateProfilePictureInFireStore(String deviceID, String picURL, OnUpdateListener listener) {
+        db.collection("users").document(deviceID)
+                .update("pictureURL",picURL)
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(listener::onError);
+    }
+
+
+    public void deleteProfilePicture(String deviceID, OnDeleteListener listener) {
+        StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
+        storageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    db.collection("users").document(deviceID)
+                            .update("pictureURL",null)
+                            .addOnSuccessListener(aVoid1 -> listener.onSuccess())
+                            .addOnFailureListener(listener::onError);
+                })
+                .addOnFailureListener(listener::onError);
+    }
+
     // interface to handle user check result
     public interface OnUserCheckListener {
         void onUserExists(UserProfile userProfile); // case when user exists
         void onUserNotExists(); //case when user doesn't exist
         void onError(Exception e); // Handle errors
+    }
+
+    public interface OnUploadPictureListener {
+        void onSuccess(Uri downloadUrl);
+        void onError(Exception e);
+    }
+
+    public interface OnUpdateListener {
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    public interface OnDeleteListener {
+        void onSuccess();
+        void onError(Exception e);
     }
 }
