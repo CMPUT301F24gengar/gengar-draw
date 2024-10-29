@@ -2,6 +2,7 @@ package Classes;
 
 import android.net.Uri;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
@@ -99,12 +100,25 @@ public class UserProfileManager {
     }
 
     // Method to return a user profile from Firestore
-    public UserProfile getUserProfile(String deviceID) {
+    public void getUserProfile(String deviceID, final OnUserProfileFetchListener callback) {
         assert db != null;
-        DocumentSnapshot document = db.collection("users").document(deviceID) // Use deviceID as the document ID
-                .get().getResult();
-        return createUserProfileFromDocument(document);
+        db.collection("users").document(deviceID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            UserProfile userProfile = createUserProfileFromDocument(document);
+                            callback.onUserProfileFetched(userProfile);
+                        } else {
+                            callback.onUserProfileFetched(null);  // No user profile found
+                        }
+                    } else {
+                        callback.onUserProfileFetchError(task.getException());
+                    }
+                });
     }
+
 
 
     public void uploadProfilePicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
@@ -156,5 +170,10 @@ public class UserProfileManager {
     public interface OnDeleteListener {
         void onSuccess();
         void onError(Exception e);
+    }
+
+    public interface OnUserProfileFetchListener {
+        void onUserProfileFetched(UserProfile userProfile);
+        void onUserProfileFetchError(Exception e);
     }
 }

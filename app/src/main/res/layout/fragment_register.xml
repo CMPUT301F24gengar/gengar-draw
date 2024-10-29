@@ -24,7 +24,7 @@
         android:layout_height="75dp"
         android:layout_margin="20dp"
         android:backgroundTint="@color/black1"
-        app:cardCornerRadius="10dp">
+        app:cardCornerRadius="100dp">
 
         <ImageView
             android:id="@+id/register_user_picture"
@@ -32,6 +32,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/todo"
             android:src="@drawable/user"
+            android:scaleType="centerCrop"
             app:tint="@color/grey" />
     </androidx.cardview.widget.CardView>
 
