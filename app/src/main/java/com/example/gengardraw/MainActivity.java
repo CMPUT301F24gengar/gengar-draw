@@ -24,6 +24,7 @@ import Fragments.facility_profile;
 import Fragments.notifications;
 import Fragments.qr_scanner;
 import Fragments.register;
+import Fragments.user_profile;
 
 public class MainActivity extends AppCompatActivity implements register.OnRegisterSuccessListener {
     String deviceID;
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarProfilebutton);
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
             }
         });
 
@@ -137,5 +138,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
         setHighlightedButton(navbarNotificationsbutton);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new notifications()).commit();
     }
+
+
 
 }

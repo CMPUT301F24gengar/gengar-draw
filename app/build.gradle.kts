@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.firebase.storage)
 
     implementation(libs.zxing.android.embedded)
+    implementation(libs.glide)
     implementation(libs.core)
 
     implementation(libs.appcompat)
