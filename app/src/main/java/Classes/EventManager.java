@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-/** CHANGE COMMENTS !?!?!? **/
+
 
 public class EventManager {
     private FirebaseFirestore db;

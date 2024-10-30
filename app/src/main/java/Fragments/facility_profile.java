@@ -4,16 +4,29 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
+import Classes.Event;
+import Classes.Facility;
+import Classes.FacilityManager;
 import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,17 +42,6 @@ public class facility_profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    //data
-    private UserProfile user;
-
-    private ImageView facilityImage;
-    private EditText nameEditText, locationEditText, descriptionEditText;
-
-
-    public facility_profile() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -59,21 +61,89 @@ public class facility_profile extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    //data
+    //private UserProfile user;
+    String deviceID;
+    private ImageView facilityImage;
+    private EditText nameEditText, locationEditText, descriptionEditText;
+    private TextView createUpdateBtn;
+    private TextView cancelBtn;
+    private List<Event> events;
+    //private FrameLayout createUpdateFrameLayout;
+
+    public facility_profile() {
+        // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
 
+        facilityImage = view.findViewById(R.id.profile_facility_picture);
+        nameEditText = view.findViewById(R.id.profile_facility_name);
+        locationEditText = view.findViewById(R.id.profile_facility_location);
+        descriptionEditText = view.findViewById(R.id.profile_facility_description);
+        createUpdateBtn = view.findViewById(R.id.profile_facility_create_btn);
+        cancelBtn = view.findViewById(R.id.profile_facility_cancel_btn);
+
+        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        FacilityManager facilityManager = new FacilityManager();
+
+        facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
+            @Override
+            public void onFacilityExists(Facility facility) {
+                createUpdateBtn.setText("UPDATE");
+                nameEditText.setText(facility.getName());
+                locationEditText.setText(facility.getLocation());
+                descriptionEditText.setText(facility.getDescription());
+                events = facility.getEvents();  // TODO : test events list is correct
+            }
+
+            @Override
+            public void onFacilityNotExists() {
+                createUpdateBtn.setText("CREATE");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("facility_profile", "Error checking facility", e);
+            }
+        });
+
+
+        createUpdateBtn.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString();
+            String location = locationEditText.getText().toString();
+            String description = descriptionEditText.getText().toString();
+
+            boolean checkValidInput = (name.isEmpty() || location.isEmpty() || description.isEmpty());
+
+            if (checkValidInput) {
+                return;
+            }
+
+            // TODO : get actual picture urls
+            String pictureURL = "picUrlTest";
+            Facility facility = new Facility(name, location, description, pictureURL, events, deviceID);
+            facilityManager.addUpdateFacility(facility, deviceID);
+            closeFragment();
+        });
+
+        cancelBtn.setOnClickListener(v -> {
+            closeFragment();
+        });
+
         return view;
+    }
+
+    // Go back to the home screen
+    private void closeFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showHomeFragment();
+        } else {
+            // Handle error
+        }
     }
 }

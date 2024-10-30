@@ -9,31 +9,31 @@ public class Facility {
     private String description;
 
     private String pictureURL;
-    private List<String> events; //to be replaced with List<Event>
+    private List<Event> events;
 
-    private String usrId;
+    private String deviceID;
     //constructors
-    public Facility(){};
-    public Facility(String name, String location, String description, String pictureURL, List<String> events, String usrId){
+    public Facility(){}
+    public Facility(String name, String location, String description, String pictureURL, List<Event> events, String deviceID){
         this.name = name;
         this.location = location;
         this.description = description;
         this.pictureURL = pictureURL;
         this.events = events;
-        this.usrId = usrId;
+        this.deviceID = deviceID;
     }
     //getters
     public String getName(){return this.name;}
     public String getLocation(){return this.location;}
     public String getDescription(){return this.description;}
     public String getPictureURL(){return this.pictureURL;}
-    public List<String> getEvents(){return this.events;}
-    public String getUsrId(){return this.usrId;}
+    public List<Event> getEvents(){return this.events;}
+    public String getDeviceID(){return this.deviceID;}
     //setters
     public void setName(String name){this.name = name;}
     public void setLocation(String location){this.location = location;}
     public void setDescription(String description){this.description = description;}
     public void setPictureURL(String pictureURL){this.pictureURL = pictureURL;}
-    public void setEvents(List<String> events){this.events = events;}
-    public void setUsrId(String usrId){this.usrId = usrId;}
+    public void setEvents(List<Event> events){this.events = events;}
+    public void setDeviceID(String deviceID){this.deviceID = deviceID;}
 }
