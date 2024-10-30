@@ -69,8 +69,9 @@ public class EventManager {
     }
 
     public void addEvent(Event event){
-//        eventsRef.document(event.getOrganizerID()).set(event);
-        eventsRef.add(event);
+        String docID = eventsRef.document().getId();
+        event.setQRCode(docID);
+        eventsRef.document(docID).set(event);
     }
 
     // TODO: implement updateEvent()
@@ -81,9 +82,28 @@ public class EventManager {
         eventsRef.document(event.getOrganizerID()).delete();
     }
 
-    public Event getEvent(String organizerID){
-        DocumentSnapshot document = eventsRef.document(organizerID).get().getResult();
-        return createEventFromDocument(document);
+    public void getEvent(String eventID, final OnEventFetchListener callback){
+        assert db != null;
+        db.collection("events").document(eventID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Event event = createEventFromDocument(document);
+                            callback.onEventFetched(event);
+                        } else {
+                            callback.onEventFetched(null);  // No user profile found
+                        }
+                    } else {
+                        callback.onEventFetchError(task.getException());
+                    }
+                });
+    }
+
+    public interface OnEventFetchListener {
+        void onEventFetched(Event event);
+        void onEventFetchError(Exception e);
     }
 
 }

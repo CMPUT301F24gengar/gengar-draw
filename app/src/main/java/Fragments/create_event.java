@@ -15,12 +15,14 @@ import android.widget.TextView;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.widget.Toast;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -82,10 +84,12 @@ public class create_event extends Fragment {
             String details = detailsEditText.getText().toString();
             boolean enableGeolocation = checkboxCheckBox.isChecked();
 
-            // TODO : Check if registration opens is before registration deadline etc
-            boolean check = (title.isEmpty() || registrationOpens == null || registrationDeadline == null || eventStarts == null || maxWinners.isEmpty() || Integer.parseInt(maxWinners) <= 0 || details.isEmpty());
+            boolean check = (title.isEmpty() || registrationOpens == null || registrationDeadline == null || eventStarts == null ||
+                    registrationDeadline.before(registrationOpens) || eventStarts.before(registrationDeadline) ||
+                    maxWinners.isEmpty() || Integer.parseInt(maxWinners) <= 0 || details.isEmpty());
 
             if (check) {
+                Toast.makeText(getContext(), "Please fill all the fields correctly", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -96,7 +100,7 @@ public class create_event extends Fragment {
             }
 
 
-            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null, null, null);
+            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
             eventManager.addEvent(event);
 
             // TODO : Add event to facility's event list
