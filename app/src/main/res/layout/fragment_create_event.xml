@@ -30,8 +30,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbarSize="0dp"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:scrollbarSize="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -197,6 +197,7 @@
                     android:backgroundTint="@color/black2"
                     android:gravity="center"
                     android:hint="@string/max_winners"
+                    android:inputType="number"
                     android:textColor="@color/white"
                     android:textColorHint="@color/grey"
                     android:textSize="18sp" />
@@ -219,6 +220,7 @@
                         android:backgroundTint="@color/black2"
                         android:gravity="center"
                         android:hint="@string/max_entrants"
+                        android:inputType="number"
                         android:textColor="@color/white"
                         android:textColorHint="@color/grey"
                         android:textSize="18sp" />
@@ -321,8 +323,6 @@
         </LinearLayout>
 
     </ScrollView>
-
-
 
 
 </LinearLayout>

@@ -69,8 +69,9 @@ public class EventManager {
     }
 
     public void addEvent(Event event){
-//        eventsRef.document(event.getOrganizerID()).set(event);
-        eventsRef.add(event);
+        String docID = eventsRef.document().getId();
+        event.setQRCode(docID);
+        eventsRef.document(docID).set(event);
     }
 
     // TODO: implement updateEvent()
