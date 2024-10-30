@@ -72,6 +72,7 @@
         app:cardCornerRadius="10dp">
 
         <ImageView
+            android:id="@+id/profile_facility_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/todo"
@@ -159,7 +160,7 @@
         android:textSize="18sp" />
 
     <FrameLayout
-        android:id="@+id/profile_facility_save_btn"
+        android:id="@+id/profile_facility_create_frame"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="40dp"
@@ -170,10 +171,11 @@
 
         <TextView
             style="@style/main"
+            android:id="@+id/profile_facility_create_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/create"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@color/black1"
             android:textSize="24sp"
@@ -181,7 +183,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/profile_facility_delete_btn"
+        android:id="@+id/profile_facility_cancel_btn"
         style="@style/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

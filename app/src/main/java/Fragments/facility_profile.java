@@ -20,6 +20,9 @@ import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
+import Classes.Event;
 import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.UserProfile;
@@ -31,10 +34,6 @@ import Classes.UserProfileManager;
  * create an instance of this fragment.
  */
 public class facility_profile extends Fragment {
-    private boolean facilityExists;
-    private FrameLayout createUpdateFrameLayout;
-    private TextView createUpdateText;
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,16 +42,6 @@ public class facility_profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    //data
-    private UserProfile user;
-
-    private ImageView facilityImage;
-    private EditText nameEditText, locationEditText, descriptionEditText;
-
-    public facility_profile() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -72,23 +61,48 @@ public class facility_profile extends Fragment {
         return fragment;
     }
 
+    //data
+    //private UserProfile user;
+    String deviceID;
+    private ImageView facilityImage;
+    private EditText nameEditText, locationEditText, descriptionEditText;
+    private TextView createUpdateBtn;
+    private TextView cancelBtn;
+    private List<Event> events;
+    //private FrameLayout createUpdateFrameLayout;
+
+    public facility_profile() {
+        // Required empty public constructor
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
 
+        facilityImage = view.findViewById(R.id.profile_facility_picture);
+        nameEditText = view.findViewById(R.id.profile_facility_name);
+        locationEditText = view.findViewById(R.id.profile_facility_location);
+        descriptionEditText = view.findViewById(R.id.profile_facility_description);
+        createUpdateBtn = view.findViewById(R.id.profile_facility_create_btn);
+        cancelBtn = view.findViewById(R.id.profile_facility_cancel_btn);
+
+        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         FacilityManager facilityManager = new FacilityManager();
 
-        // TODO: pass actual device ID as parameter
-        facilityManager.checkFacilityExists("deviceIdTest", new FacilityManager.OnFacilityCheckListener() {
+        facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
             @Override
             public void onFacilityExists(Facility facility) {
-                facilityExists = true;
+                createUpdateBtn.setText("UPDATE");
+                nameEditText.setText(facility.getName());
+                locationEditText.setText(facility.getLocation());
+                descriptionEditText.setText(facility.getDescription());
+                events = facility.getEvents();  // TODO : test events list is correct
             }
 
             @Override
             public void onFacilityNotExists() {
-                facilityExists = false;
+                createUpdateBtn.setText("CREATE");
             }
 
             @Override
@@ -97,39 +111,39 @@ public class facility_profile extends Fragment {
             }
         });
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
+        createUpdateBtn.setOnClickListener(v -> {
+            String name = nameEditText.getText().toString();
+            String location = locationEditText.getText().toString();
+            String description = descriptionEditText.getText().toString();
 
-        // change button text based on if facility exists
-        createUpdateFrameLayout = view.findViewById(R.id.profile_facility_save_btn);
-        createUpdateText = (TextView) createUpdateFrameLayout.getChildAt(0);
-        if (facilityExists) {
-            createUpdateText.setText("UPDATE");
-        } else {
-            createUpdateText.setText("CREATE");
-        }
+            boolean checkValidInput = (name.isEmpty() || location.isEmpty() || description.isEmpty());
+
+            if (checkValidInput) {
+                return;
+            }
+
+            // TODO : get actual picture urls
+            String pictureURL = "picUrlTest";
+            Facility facility = new Facility(name, location, description, pictureURL, events, deviceID);
+            facilityManager.addUpdateFacility(facility, deviceID);
+            closeFragment();
+        });
+
+        cancelBtn.setOnClickListener(v -> {
+            closeFragment();
+        });
 
         return view;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        FacilityManager facilityManager = new FacilityManager();
-        // TODO: get actual facility info
-        Facility facility = new Facility("nameTest", "locationTest", "descriptionTest", "URLTest", "idTest");
-        createUpdateFrameLayout.setOnClickListener(v -> {
-            facilityManager.addUpdateFacility(facility, "idTest");
-        });
+    // Go back to the home screen
+    private void closeFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showHomeFragment();
+        } else {
+            // Handle error
+        }
     }
-
 }

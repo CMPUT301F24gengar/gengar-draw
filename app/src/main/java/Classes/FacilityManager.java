@@ -51,10 +51,10 @@ public class FacilityManager {
         String location = document.getString("location");
         String description = document.getString("description");
         String pictureURL = document.getString("pictureURL");
-        //List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
+        List<Event> events = document.contains("events") ? (List<Event>) document.get("events") : new ArrayList<>();
         String userId = document.getString("DeviceID");
 
-        return new Facility(name, location, description, pictureURL, userId);
+        return new Facility(name, location, description, pictureURL, events, userId);
     }
 
     public void addUpdateFacility(Facility facility, String deviceID) {
