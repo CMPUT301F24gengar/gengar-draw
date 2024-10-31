@@ -84,27 +84,53 @@ public class create_event extends Fragment {
             String details = detailsEditText.getText().toString();
             boolean enableGeolocation = checkboxCheckBox.isChecked();
 
-            boolean check = (title.isEmpty() || registrationOpens == null || registrationDeadline == null || eventStarts == null ||
-                    registrationDeadline.before(registrationOpens) || eventStarts.before(registrationDeadline) ||
-                    maxWinners.isEmpty() || Integer.parseInt(maxWinners) <= 0 || details.isEmpty());
-
-            if (check) {
-                Toast.makeText(getContext(), "Please fill all the fields correctly", Toast.LENGTH_SHORT).show();
+            if (title.isEmpty()) {
+                Toast.makeText(getContext(), "Title cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (registrationOpens == null) {
+                Toast.makeText(getContext(), "Please set the registration open date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (registrationDeadline == null) {
+                Toast.makeText(getContext(), "Please set the registration deadline date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (eventStarts == null) {
+                Toast.makeText(getContext(), "Please set the event start date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (registrationDeadline.before(registrationOpens)) {
+                Toast.makeText(getContext(), "Registration deadline must be after registration opens", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (eventStarts.before(registrationDeadline)) {
+                Toast.makeText(getContext(), "Event start date must be after registration deadline", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (maxWinners.isEmpty() || Integer.parseInt(maxWinners) <= 0) {
+                Toast.makeText(getContext(), "Please enter a valid number for max winners", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!maxEntrants.isEmpty() && Integer.parseInt(maxEntrants) < Integer.parseInt(maxWinners) ) {
+                Toast.makeText(getContext(), "Please enter a valid number for max entrants", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (details.isEmpty()) {
+                Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
-            Integer maxEntrantsInt = null;
-            if (!maxEntrants.isEmpty()) {
-                maxEntrantsInt = Integer.parseInt(maxEntrants);
-            }
+            Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
-
-            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null);
+            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
             eventManager.addEvent(event);
 
             // TODO : Add event to facility's event list
 
+
+            Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
             closeFragment();
         });
 
@@ -128,9 +154,9 @@ public class create_event extends Fragment {
                 date.set(Calendar.MINUTE, minute);
 
                 editText.setText(String.format(Locale.getDefault(), "%02d/%02d/%d %02d:%02d",
-                        date.get(Calendar.YEAR),
                         date.get(Calendar.MONTH) + 1,
                         date.get(Calendar.DAY_OF_MONTH),
+                        date.get(Calendar.YEAR),
                         date.get(Calendar.HOUR_OF_DAY),
                         date.get(Calendar.MINUTE)));
             },
@@ -149,7 +175,14 @@ public class create_event extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
 
         try {
-            return format.parse(dateString);  // Parses the text into a Date object
+            Date date = format.parse(dateString);
+            if (date != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                cal.set(Calendar.MILLISECOND, 0);  // Zero out milliseconds
+                return cal.getTime();
+            }
+            return null;
         } catch (ParseException e) {
             return null;  // Return null if parsing fails
         }

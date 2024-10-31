@@ -43,10 +43,9 @@ public class EventManager {
         String eventDetails = document.getString("eventDetails");
         String eventPictureURL = document.getString("eventPictureURL");
         boolean enableGeolocation = document.getBoolean("enableGeolocation");
-        List<String> waitingList = (List<String>) document.get("waitingList");
-        List<String> chosenEntrantsList = (List<String>) document.get("chosenEntrantsList");
-        List<String> CancelledEntrantsList = (List<String>) document.get("CancelledEntrantsList");
-        List<String> finalList = (List<String>) document.get("finalList");
+        String listReference = document.getString("ListReference");
+        String locationReference = document.getString("LocationReference");
+        String QRCode = document.getString("QRCode");
 
         // Create and return the Event object
         return new Event(
@@ -60,17 +59,18 @@ public class EventManager {
                 eventDetails,
                 eventPictureURL,
                 enableGeolocation,
-                waitingList,
-                chosenEntrantsList,
-                CancelledEntrantsList,
-                finalList,
-                null
+                listReference,
+                locationReference,
+                QRCode
         );
     }
 
     public void addEvent(Event event){
         String docID = eventsRef.document().getId();
         event.setQRCode(docID);
+
+        // TODO : Add list reference and location reference to event object AND change QR code logic
+
         eventsRef.document(docID).set(event);
     }
 
