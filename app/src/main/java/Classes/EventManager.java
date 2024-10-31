@@ -13,13 +13,17 @@ import java.util.Date;
 public class EventManager {
     private final FirebaseFirestore db;
     private final CollectionReference eventsRef;
+    private final CollectionReference qrCodesRef;
     private final FirebaseStorage storage;
+    private QRcodeManager qrcodeManager;
 
     public EventManager() {
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
+        qrCodesRef = db.collection("qrcodes");
         storage = FirebaseStorage.getInstance();
+        qrcodeManager = new QRcodeManager();
     }
 
     public Event createEventFromDocument(DocumentSnapshot document) {
@@ -56,9 +60,12 @@ public class EventManager {
         );
     }
 
-    public void addEvent(Event event, Uri imageURI, OnUploadPictureListener uploadListener) {
+    public void addEvent(Event event, QRcode qrcode, Uri imageURI, OnUploadPictureListener uploadListener) {
         String docID = eventsRef.document().getId();
-        event.setQRCode(docID);
+        qrcode.setEventID(docID);
+
+        String QRCodeID = qrcodeManager.addQRcode(qrcode);
+        event.setQRCode(QRCodeID);
 
         eventsRef.document(docID).set(event).addOnSuccessListener(aVoid -> {
             if (imageURI != null) {
@@ -83,8 +90,6 @@ public class EventManager {
                 });
             }
         });
-
-        // TODO : Add list reference and location reference to event object AND change QR code logic
     }
 
     public void getEvent(String eventID, OnEventFetchListener callback) {

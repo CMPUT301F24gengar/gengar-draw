@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 public class Event {
-    //private String organizerEmail;
     private String organizerID;
     private String eventTitle;
     private Date regOpenDate;

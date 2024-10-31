@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
+import Classes.QRcode;
 
 public class create_event extends Fragment {
 
@@ -126,8 +127,9 @@ public class create_event extends Fragment {
 
             String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
+            QRcode qrcode = new QRcode();
 
-            eventManager.addEvent(event, imageURI, new EventManager.OnUploadPictureListener() {
+            eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
                 @Override
                 public void onSuccess(Uri downloadUrl) {
                     Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
