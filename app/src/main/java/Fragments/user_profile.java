@@ -46,7 +46,6 @@ public class user_profile extends Fragment {
     private TextView removeProfilePicture;
     private TextView addProfilePicture;
     private TextView cancelButton;
-    private String profile_image_uri = null; //by default, uri is null until you add a profile picture
     private Uri ImageURI=null;
     private FrameLayout saveButton;
     UserProfile userProfile = new UserProfile();
@@ -200,7 +199,6 @@ public class user_profile extends Fragment {
             if (resultCode== Activity.RESULT_OK){
                 assert data != null;
                 ImageURI = data.getData();
-                profile_image_uri = ImageURI.toString(); // converting to string to upload to firebase
                 profileImage.setImageURI(ImageURI);
                 profileImage.setImageTintList(null);
             }

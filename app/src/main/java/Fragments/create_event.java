@@ -1,10 +1,12 @@
 package Fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
-
+import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.widget.Toast;
@@ -22,22 +23,14 @@ import com.example.gengardraw.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
-import Classes.Facility;
-import Classes.FacilityManager;
-import Classes.UserProfile;
-import Classes.UserProfileManager;
 
 public class create_event extends Fragment {
-
-    String deviceID;
-    Facility facility;
 
     private ImageView eventImage;
     private EditText titleEditText;
@@ -48,9 +41,13 @@ public class create_event extends Fragment {
     private TextView createBtn;
     private TextView cancelBtn;
 
+    private Uri imageURI = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
+
+        // Initializing views
         eventImage = view.findViewById(R.id.create_event_picture);
         titleEditText = view.findViewById(R.id.create_event_title);
         registrationOpensEditText = view.findViewById(R.id.create_event_registration_opens);
@@ -63,27 +60,31 @@ public class create_event extends Fragment {
         createBtn = view.findViewById(R.id.create_event_create_btn);
         cancelBtn = view.findViewById(R.id.create_event_cancel_btn);
 
-        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        FacilityManager facilityManager = new FacilityManager();
         EventManager eventManager = new EventManager();
 
         registrationOpensEditText.setOnClickListener(v -> showDateTimePicker(registrationOpensEditText));
         registrationDeadlineEditText.setOnClickListener(v -> showDateTimePicker(registrationDeadlineEditText));
         eventStartsEditText.setOnClickListener(v -> showDateTimePicker(eventStartsEditText));
 
+        eventImage.setOnClickListener(view1 -> {
+            Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(OpenGalleryIntent, 1000);
+        });
+
         createBtn.setOnClickListener(v -> {
             String title = titleEditText.getText().toString();
-
             Date registrationOpens = getDateFromEditText(registrationOpensEditText);
             Date registrationDeadline = getDateFromEditText(registrationDeadlineEditText);
             Date eventStarts = getDateFromEditText(eventStartsEditText);
-
             String maxWinners = maxWinnersEditText.getText().toString();
             String maxEntrants = maxEntrantsEditText.getText().toString();
-
             String details = detailsEditText.getText().toString();
             boolean enableGeolocation = checkboxCheckBox.isChecked();
 
+            if (imageURI == null) {
+                Toast.makeText(getContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (title.isEmpty()) {
                 Toast.makeText(getContext(), "Title cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
@@ -120,75 +121,57 @@ public class create_event extends Fragment {
                 Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
             Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
+            String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
-            eventManager.addEvent(event);
 
-            // TODO : Add event to facility's event list
-
-
-            Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
-            closeFragment();
+            eventManager.addEvent(event, imageURI, new EventManager.OnUploadPictureListener() {
+                @Override
+                public void onSuccess(Uri downloadUrl) {
+                    Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
+                    closeFragment();
+                }
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
-        cancelBtn.setOnClickListener(v -> {
-            closeFragment();
-        });
-
-
+        cancelBtn.setOnClickListener(v -> closeFragment());
         return view;
     }
 
-    private void showDateTimePicker(final EditText editText) {
-        final Calendar currentDate = Calendar.getInstance();
-        final Calendar date = Calendar.getInstance();
-
-        new DatePickerDialog(requireContext(), (view, year, monthOfYear, dayOfMonth) -> {
-            date.set(year, monthOfYear, dayOfMonth);
-
-            new TimePickerDialog(requireContext(), (view1, hourOfDay, minute) -> {
-                date.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                date.set(Calendar.MINUTE, minute);
-
-                editText.setText(String.format(Locale.getDefault(), "%02d/%02d/%d %02d:%02d",
-                        date.get(Calendar.MONTH) + 1,
-                        date.get(Calendar.DAY_OF_MONTH),
-                        date.get(Calendar.YEAR),
-                        date.get(Calendar.HOUR_OF_DAY),
-                        date.get(Calendar.MINUTE)));
-            },
-                    currentDate.get(Calendar.HOUR_OF_DAY),
-                    currentDate.get(Calendar.MINUTE),
-                    false).show();
-
-        },
-                currentDate.get(Calendar.YEAR),
-                currentDate.get(Calendar.MONTH),
-                currentDate.get(Calendar.DATE)).show();
-    }
-
     private Date getDateFromEditText(EditText editText) {
-        String dateString = editText.getText().toString();
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
-
+        String dateText = editText.getText().toString();
         try {
-            Date date = format.parse(dateString);
-            if (date != null) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                cal.set(Calendar.MILLISECOND, 0);  // Zero out milliseconds
-                return cal.getTime();
-            }
-            return null;
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(dateText);
         } catch (ParseException e) {
-            return null;  // Return null if parsing fails
+            return null;
         }
     }
 
-    // Go back to the home screen
+    private void showDateTimePicker(EditText editText) {
+        Calendar calendar = Calendar.getInstance();
+        new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+            new TimePickerDialog(getContext(), (timeView, hourOfDay, minute) -> {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                editText.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(calendar.getTime()));
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -198,4 +181,14 @@ public class create_event extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                imageURI = data.getData();
+                eventImage.setImageURI(imageURI);
+            }
+        }
+    }
 }
