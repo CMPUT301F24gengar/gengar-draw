@@ -143,9 +143,8 @@ public class facility_profile extends Fragment {
                 return;
             }
 
-            // TODO : get actual picture urls
-            String pictureURL = "picUrlTest";
-            Facility facility = new Facility(name, location, description, pictureURL, events, deviceID);
+            // update image to database
+            Facility facility = new Facility(name, location, description, ImageURI_string, events, deviceID);
             facilityManager.addUpdateFacility(facility, deviceID);
             closeFragment();
         });
