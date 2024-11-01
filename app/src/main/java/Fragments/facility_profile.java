@@ -111,6 +111,12 @@ public class facility_profile extends Fragment {
             }
         });
 
+        facilityImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         createUpdateBtn.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
