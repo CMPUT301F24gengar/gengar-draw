@@ -22,6 +22,8 @@ import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import Classes.Event;
@@ -68,7 +70,7 @@ public class facility_profile extends Fragment {
     String deviceID;
     private ImageView facilityImage;
     private EditText nameEditText, locationEditText, descriptionEditText;
-    private TextView createUpdateBtn, cancelBtn;
+    private TextView createUpdateBtn, cancelBtn, addFacilityImage, removeFacilityImage;
     private List<Event> events;
     //private FrameLayout createUpdateFrameLayout;
 
@@ -82,11 +84,14 @@ public class facility_profile extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
 
         facilityImage = (ImageView) view.findViewById(R.id.profile_facility_picture);
+        addFacilityImage = (TextView) view.findViewById(R.id.profile_facility_picture_add);
+        removeFacilityImage = (TextView) view.findViewById(R.id.profile_facility_picture_remove);
         nameEditText = (EditText) view.findViewById(R.id.profile_facility_name);
         locationEditText = (EditText) view.findViewById(R.id.profile_facility_location);
         descriptionEditText = (EditText) view.findViewById(R.id.profile_facility_description);
         createUpdateBtn = (TextView) view.findViewById(R.id.profile_facility_create_btn);
         cancelBtn = (TextView) view.findViewById(R.id.profile_facility_cancel_btn);
+
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         FacilityManager facilityManager = new FacilityManager();
