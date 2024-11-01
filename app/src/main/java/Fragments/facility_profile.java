@@ -70,6 +70,7 @@ public class facility_profile extends Fragment {
     //data
     private static final int PICK_IMAGE = 1000;//request code for image gallery
     private URI ImageURI = null;
+    private String ImageURI_string;
     //private UserProfile user;
     String deviceID;
     private ImageView facilityImage;
@@ -162,9 +163,9 @@ public class facility_profile extends Fragment {
             if (resultCode== Activity.RESULT_OK){
                 assert data != null;
                 ImageURI = data.getData();
-                profile_image_uri = ImageURI.toString(); // converting to string to upload to firebase
-                profileImage.setImageURI(ImageURI);
-                profileImage.setImageTintList(null);
+                ImageURI_string = ImageURI.toString(); // converting to string to upload to firebase
+                facilityImage.setImageURI(ImageURI);
+                facilityImage.setImageTintList(null);
             }
         }
     }
