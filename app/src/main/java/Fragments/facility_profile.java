@@ -35,6 +35,7 @@ public class facility_profile extends Fragment {
 
     String deviceID;
 
+    private TextView userProfileButton;
     private ImageView facilityImage;
     private EditText nameEditText, locationEditText, descriptionEditText;
     private TextView createUpdateBtn;
@@ -49,6 +50,13 @@ public class facility_profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
+        userProfileButton = view.findViewById(R.id.profile_facility_user_btn);
+        userProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openUserProfileFragment();
+            }
+        });
 
         facilityImage = view.findViewById(R.id.profile_facility_picture);
         nameEditText = view.findViewById(R.id.profile_facility_name);
@@ -141,6 +149,15 @@ public class facility_profile extends Fragment {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
             activity.showHomeFragment();
+        } else {
+            // Handle error
+        }
+    }
+
+    private void openUserProfileFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
         } else {
             // Handle error
         }
