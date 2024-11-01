@@ -82,12 +82,12 @@ public class facility_profile extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_facility_profile, container, false);
 
-        facilityImage = view.findViewById(R.id.profile_facility_picture);
-        nameEditText = view.findViewById(R.id.profile_facility_name);
-        locationEditText = view.findViewById(R.id.profile_facility_location);
-        descriptionEditText = view.findViewById(R.id.profile_facility_description);
-        createUpdateBtn = view.findViewById(R.id.profile_facility_create_btn);
-        cancelBtn = view.findViewById(R.id.profile_facility_cancel_btn);
+        facilityImage = (ImageView) view.findViewById(R.id.profile_facility_picture);
+        nameEditText = (EditText) view.findViewById(R.id.profile_facility_name);
+        locationEditText = (EditText) view.findViewById(R.id.profile_facility_location);
+        descriptionEditText = (EditText) view.findViewById(R.id.profile_facility_description);
+        createUpdateBtn = (TextView) view.findViewById(R.id.profile_facility_create_btn);
+        cancelBtn = (TextView) view.findViewById(R.id.profile_facility_cancel_btn);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         FacilityManager facilityManager = new FacilityManager();
