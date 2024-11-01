@@ -66,6 +66,7 @@ public class facility_profile extends Fragment {
     }
 
     //data
+    private static final int PICK_IMAGE = 1000;//request code for image gallery
     //private UserProfile user;
     String deviceID;
     private ImageView facilityImage;
@@ -121,8 +122,10 @@ public class facility_profile extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(OpenGalleryIntent, PICK_IMAGE);
             }
         });
+
 
         createUpdateBtn.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
