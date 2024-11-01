@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.net.URI;
 import java.util.List;
 
 import Classes.Event;
@@ -67,6 +69,7 @@ public class facility_profile extends Fragment {
 
     //data
     private static final int PICK_IMAGE = 1000;//request code for image gallery
+    private URI ImageURI = null;
     //private UserProfile user;
     String deviceID;
     private ImageView facilityImage;
@@ -151,7 +154,20 @@ public class facility_profile extends Fragment {
 
         return view;
     }
-
+    // setting user_picture to image
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode==1000){
+            if (resultCode== Activity.RESULT_OK){
+                assert data != null;
+                ImageURI = data.getData();
+                profile_image_uri = ImageURI.toString(); // converting to string to upload to firebase
+                profileImage.setImageURI(ImageURI);
+                profileImage.setImageTintList(null);
+            }
+        }
+    }
     // Go back to the home screen
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
