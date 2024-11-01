@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
+import Classes.FacilityManager;
 import Classes.QRcode;
 
 public class create_event extends Fragment {
@@ -47,6 +48,7 @@ public class create_event extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
+        String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initializing views
         eventImage = view.findViewById(R.id.create_event_picture);
@@ -61,6 +63,7 @@ public class create_event extends Fragment {
         createBtn = view.findViewById(R.id.create_event_create_btn);
         cancelBtn = view.findViewById(R.id.create_event_cancel_btn);
 
+        FacilityManager facilityManager = new FacilityManager();
         EventManager eventManager = new EventManager();
 
         registrationOpensEditText.setOnClickListener(v -> showDateTimePicker(registrationOpensEditText));
@@ -125,13 +128,14 @@ public class create_event extends Fragment {
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
             Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
-            String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
             QRcode qrcode = new QRcode();
 
             eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
                 @Override
                 public void onSuccess(Uri downloadUrl) {
+                    // add eventref to facility
+
                     Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
                     closeFragment();
                 }

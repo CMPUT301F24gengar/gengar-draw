@@ -21,7 +21,7 @@ public class FacilityManager {
     }
 
     // Method to check if user exists by device ID
-    public void checkFacilityExists(String deviceID, FacilityManager.OnFacilityCheckListener listener) {
+    public void checkFacilityExists(String deviceID, OnFacilityCheckListener listener) {
         db.collection("facilities")
                 .document(deviceID) // Use the deviceID directly as the document ID
                 .get()
@@ -51,14 +51,18 @@ public class FacilityManager {
         String location = document.getString("location");
         String description = document.getString("description");
         String pictureURL = document.getString("pictureURL");
-        List<Event> events = document.contains("events") ? (List<Event>) document.get("events") : new ArrayList<>();
-        String userId = document.getString("DeviceID");
+        List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
+        String userId = document.getString("deviceID");
 
         return new Facility(name, location, description, pictureURL, events, userId);
     }
 
-    public void addUpdateFacility(Facility facility, String deviceID) {
-        facilitiesRef.document(deviceID).set(facility);
+    public void addFacility(Facility facility) {
+        facilitiesRef.document(facility.getDeviceID()).set(facility);
+    }
+
+    public void updateFacility(Facility facility) {
+        facilitiesRef.document(facility.getDeviceID()).set(facility);
     }
 
     public void deleteFacility(Facility facility){}//to be implemented

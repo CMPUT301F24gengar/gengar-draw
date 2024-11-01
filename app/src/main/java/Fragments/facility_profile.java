@@ -14,12 +14,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Event;
@@ -28,48 +30,16 @@ import Classes.FacilityManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link facility_profile#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class facility_profile extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment facility_profile.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static facility_profile newInstance(String param1, String param2) {
-        facility_profile fragment = new facility_profile();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    //data
-    //private UserProfile user;
     String deviceID;
+
     private ImageView facilityImage;
     private EditText nameEditText, locationEditText, descriptionEditText;
     private TextView createUpdateBtn;
     private TextView cancelBtn;
-    private List<Event> events;
-    //private FrameLayout createUpdateFrameLayout;
+    Facility facilityProfile;
 
     public facility_profile() {
         // Required empty public constructor
@@ -93,11 +63,11 @@ public class facility_profile extends Fragment {
         facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
             @Override
             public void onFacilityExists(Facility facility) {
+                facilityProfile = facility;
                 createUpdateBtn.setText("UPDATE");
-                nameEditText.setText(facility.getName());
-                locationEditText.setText(facility.getLocation());
-                descriptionEditText.setText(facility.getDescription());
-                events = facility.getEvents();  // TODO : test events list is correct
+                nameEditText.setText(facilityProfile.getName());
+                locationEditText.setText(facilityProfile.getLocation());
+                descriptionEditText.setText(facilityProfile.getDescription());
             }
 
             @Override
@@ -125,8 +95,37 @@ public class facility_profile extends Fragment {
 
             // TODO : get actual picture urls
             String pictureURL = "picUrlTest";
-            Facility facility = new Facility(name, location, description, pictureURL, events, deviceID);
-            facilityManager.addUpdateFacility(facility, deviceID);
+
+            if (facilityProfile != null) {
+                Log.e("facility_profile", "exists");
+                facilityProfile.setName(name);
+                facilityProfile.setLocation(location);
+                facilityProfile.setDescription(description);
+                facilityProfile.setPictureURL(pictureURL);
+                Log.e("facility_profile", "fac:" + facilityProfile.toString());
+
+                facilityManager.updateFacility(facilityProfile);
+                Toast.makeText(getContext(), "Facility updated successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                facilityProfile = new Facility(name, location, description, pictureURL, new ArrayList<>(), deviceID);
+                // update the users facilityURL
+                UserProfileManager userProfileManager = new UserProfileManager();
+                userProfileManager.getUserProfile(deviceID , new UserProfileManager.OnUserProfileFetchListener() {
+                    @Override
+                    public void onUserProfileFetched(UserProfile userProfile) {
+                        userProfile.setFacilityURL(deviceID);
+                        userProfile.setOrganizer(true);
+                        userProfileManager.updateUserProfile(userProfile, deviceID);
+                        }
+                    @Override
+                    public void onUserProfileFetchError(Exception e) {
+                        Log.e("facility_profile", "Error fetching user profile", e);
+                    }
+                });
+
+                facilityManager.addFacility(facilityProfile);
+                Toast.makeText(getContext(), "Facility created successfully", Toast.LENGTH_SHORT).show();
+            }
             closeFragment();
         });
 
