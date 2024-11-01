@@ -7,12 +7,15 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -29,10 +32,16 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
+import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.QRcode;
 
 public class create_event extends Fragment {
+
+    private FrameLayout blackFrame;
+    private LinearLayout facilityCreateLayout;
+    private FrameLayout facilityProceedBtn;
+    private FrameLayout facilityCancelBtn;
 
     private ImageView eventImage;
     private EditText titleEditText;
@@ -43,7 +52,8 @@ public class create_event extends Fragment {
     private TextView createBtn;
     private TextView cancelBtn;
 
-    private Uri imageURI = null;
+    private Uri imageURI;
+    private Facility facilityProfile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +61,11 @@ public class create_event extends Fragment {
         String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Initializing views
+        blackFrame = view.findViewById(R.id.black_frame);
+        facilityCreateLayout = view.findViewById(R.id.facility_create_proceed_layout);
+        facilityProceedBtn = view.findViewById(R.id.facility_create_proceed_btn);
+        facilityCancelBtn = view.findViewById(R.id.facility_create_cancel_btn);
+
         eventImage = view.findViewById(R.id.create_event_picture);
         titleEditText = view.findViewById(R.id.create_event_title);
         registrationOpensEditText = view.findViewById(R.id.create_event_registration_opens);
@@ -65,6 +80,31 @@ public class create_event extends Fragment {
 
         FacilityManager facilityManager = new FacilityManager();
         EventManager eventManager = new EventManager();
+
+        facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
+            @Override
+            public void onFacilityExists(Facility facility) {
+                facilityProfile = facility;
+                blackFrame.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFacilityNotExists() {
+                facilityCreateLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("facility_profile", "Error checking facility", e);
+            }
+        });
+
+        facilityProceedBtn.setOnClickListener(v -> {
+            openFacilityFragment();
+        });
+        facilityCancelBtn.setOnClickListener(v -> {
+            closeFragment();
+        });
 
         registrationOpensEditText.setOnClickListener(v -> showDateTimePicker(registrationOpensEditText));
         registrationDeadlineEditText.setOnClickListener(v -> showDateTimePicker(registrationDeadlineEditText));
@@ -131,11 +171,10 @@ public class create_event extends Fragment {
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
             QRcode qrcode = new QRcode();
 
-            eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
+            String docID;
+            docID = eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
                 @Override
                 public void onSuccess(Uri downloadUrl) {
-                    // add eventref to facility
-
                     Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
                     closeFragment();
                 }
@@ -144,6 +183,10 @@ public class create_event extends Fragment {
                     Toast.makeText(getContext(), "Failed to create event", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            facilityProfile.addEvent(docID);
+            facilityManager.updateFacility(facilityProfile);
+
         });
 
         cancelBtn.setOnClickListener(v -> closeFragment());
@@ -195,6 +238,15 @@ public class create_event extends Fragment {
                 imageURI = data.getData();
                 eventImage.setImageURI(imageURI);
             }
+        }
+    }
+
+    private void openFacilityFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
+        } else {
+            // Handle error
         }
     }
 }

@@ -60,7 +60,7 @@ public class EventManager {
         );
     }
 
-    public void addEvent(Event event, QRcode qrcode, Uri imageURI, OnUploadPictureListener uploadListener) {
+    public String addEvent(Event event, QRcode qrcode, Uri imageURI, OnUploadPictureListener uploadListener) {
         String docID = eventsRef.document().getId();
         qrcode.setEventID(docID);
 
@@ -90,6 +90,8 @@ public class EventManager {
                 });
             }
         });
+
+        return docID;
     }
 
     public void getEvent(String eventID, OnEventFetchListener callback) {
