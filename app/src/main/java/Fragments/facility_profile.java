@@ -144,8 +144,11 @@ public class facility_profile extends Fragment {
             }
 
             // update image to database
-            Facility facility = new Facility(name, location, description, ImageURI_string, events, deviceID);
-            facilityManager.addUpdateFacility(facility, deviceID);
+            if (ImageURI!=null){
+                Facility facility = new Facility(name, location, description, ImageURI_string, events, deviceID);
+                facilityManager.addUpdateFacility(facility, deviceID);
+            }
+
             closeFragment();
         });
 
