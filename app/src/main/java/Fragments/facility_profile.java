@@ -68,8 +68,7 @@ public class facility_profile extends Fragment {
     String deviceID;
     private ImageView facilityImage;
     private EditText nameEditText, locationEditText, descriptionEditText;
-    private TextView createUpdateBtn;
-    private TextView cancelBtn;
+    private TextView createUpdateBtn, cancelBtn;
     private List<Event> events;
     //private FrameLayout createUpdateFrameLayout;
 
