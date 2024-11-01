@@ -117,7 +117,7 @@ public class facility_profile extends Fragment {
             }
         });
 
-        facilityImage.setOnClickListener(new View.OnClickListener(){
+        addFacilityImage.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
