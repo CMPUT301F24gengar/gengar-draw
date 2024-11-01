@@ -16,26 +16,12 @@ import com.google.zxing.integration.android.IntentResult;
 
 public class qr_scanner extends Fragment {
 
-    private boolean signup;
     private String eventID;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
-
-        FrameLayout viewBtn = view.findViewById(R.id.qr_scanner_view_btn);
-        FrameLayout signUpBtn = view.findViewById(R.id.qr_scanner_signup_btn);
-
-        viewBtn.setOnClickListener(v -> {
-            signup = false;
-            initQRCodeScanner();
-        });
-
-        signUpBtn.setOnClickListener(v -> {
-            signup = true;
-            initQRCodeScanner();
-        });
-
+        initQRCodeScanner();
         return view;
     }
 
@@ -64,13 +50,8 @@ public class qr_scanner extends Fragment {
     }
 
     // Handles the scanned data
-    private void handleScannedData(String eventID) {
-        if (signup) {
-            Log.d("QRScanner", "Sign up with scanned data: " + eventID);
-            // TODO : Add logic for signing up here
-        } else {
-            Log.d("QRScanner", "View details with scanned data: " + eventID);
-            // TODO : Add logic for viewing details here
-        }
+    private void handleScannedData(String QRcode) {
+        Log.d("QRScanner", "scanned data: " + QRcode);
+        // TODO : Add logic for viewing details here
     }
 }
