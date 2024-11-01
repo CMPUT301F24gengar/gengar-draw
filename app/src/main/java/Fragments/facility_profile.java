@@ -2,6 +2,7 @@ package Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -69,7 +70,7 @@ public class facility_profile extends Fragment {
 
     //data
     private static final int PICK_IMAGE = 1000;//request code for image gallery
-    private URI ImageURI = null;
+    private Uri ImageURI = null;
     private String ImageURI_string;
     //private UserProfile user;
     String deviceID;
