@@ -130,7 +130,7 @@ public class facility_activity extends Fragment {
                     name,
                     location,
                     description,
-                    null, //handle pictureURL separately
+                    ImageURI_string, //handle pictureURL separately
                     new ArrayList<>(), //default empty event list
                     deviceID
             );
@@ -153,7 +153,7 @@ public class facility_activity extends Fragment {
 
             // update image to database
             if (ImageURI!=null){
-                facility.setPictureURL(ImageURI_string);
+               // facility.setPictureURL(ImageURI_string);
                 facilityManager.uploadFacilityImage(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
                     @Override
                     public void onSuccess(Uri downloadUrl) {
