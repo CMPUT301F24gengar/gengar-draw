@@ -40,7 +40,7 @@ public class facility_activity extends Fragment {
     private ImageView facilityImage;
     private EditText nameEditText, locationEditText, descriptionEditText;
     private TextView createUpdateBtn, cancelBtn, addFacilityImage, removeFacilityImage;
-    private List<Event> events;
+    private List<String> events;
     //private FrameLayout createUpdateFrameLayout;
 
     public facility_activity() {
