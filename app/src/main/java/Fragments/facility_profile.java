@@ -146,7 +146,17 @@ public class facility_profile extends Fragment {
             // update image to database
             if (ImageURI!=null){
                 Facility facility = new Facility(name, location, description, ImageURI_string, events, deviceID);
-                facilityManager.addUpdateFacility(facility, deviceID);
+                facilityManager.uploadFacilityImage(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
+                    @Override
+                    public void onSuccess(Uri downloadUrl) {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
             }
 
             closeFragment();
