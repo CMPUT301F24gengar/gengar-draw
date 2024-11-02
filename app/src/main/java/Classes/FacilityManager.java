@@ -77,7 +77,12 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
-    public void updateFacilityImage(String imgUrl, String deviceId, FacilityManager.OnUpdateListener listener){}
+    public void updateFacilityImage(String imgUrl, String deviceId, FacilityManager.OnUpdateListener listener){
+        db.collection("facilities").document(deviceId)
+                .update("pictureURL",imgUrl)
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(listener::onError);
+    }
     public void deleteFacilityImage(String deviceId, FacilityManager.OnDeleteListener listener){}
 
     // interface to handle facility check result
