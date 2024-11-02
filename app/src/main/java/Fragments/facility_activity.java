@@ -121,6 +121,7 @@ public class facility_activity extends Fragment {
             }
             if (description.isEmpty()){
                 Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
+                return;
             }
             //delete image (if deleted)
             if (ImageURI == null){
