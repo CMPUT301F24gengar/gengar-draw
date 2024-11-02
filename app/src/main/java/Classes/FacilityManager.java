@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +69,12 @@ public class FacilityManager {
     public void deleteFacility(Facility facility){}//to be implemented
 
     public void uploadFacilityImage(Uri imgUri, String deviceId, UserProfileManager.OnUploadPictureListener listener){
-
+        StorageReference storageRef = storage.getReference().child("facilityImages/" + deviceId);
+        storageRef.putFile(imgUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess);
+                })
+                .addOnFailureListener(listener::onError);
     }
 
     // interface to handle facility check result
