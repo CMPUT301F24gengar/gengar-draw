@@ -134,6 +134,7 @@ public class facility_activity extends Fragment {
                     new ArrayList<>(), //default empty event list
                     deviceID
             );
+            facilityManager.addUpdateFacility(facility, deviceID);
 
             //delete image (if deleted)
             if (ImageURI == null){
