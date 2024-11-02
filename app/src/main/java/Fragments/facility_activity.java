@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
@@ -111,7 +112,9 @@ public class facility_activity extends Fragment {
 
             boolean checkValidInput = (name.isEmpty() || location.isEmpty() || description.isEmpty());
 
+            //validate input
             if (checkValidInput) {
+                Toast.makeText(getContext(), "Please enter facility name, location, and description", Toast.LENGTH_SHORT).show();
                 return;
             }
             //delete image (if deleted)
