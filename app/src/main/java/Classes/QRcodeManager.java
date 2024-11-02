@@ -41,6 +41,20 @@ public class QRcodeManager {
                 .addOnFailureListener(callback::onQRcodeFetchError);
     }
 
+    public void searchQRcode(String value, onQRcodeFetchListener callback) {
+        qrCodesRef.whereEqualTo("qrcodes", value)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        callback.onQRcodeFetched(createQRcodeFromDocument(document));
+                    } else {
+                        callback.onQRcodeFetched(null); // No document found with the specified value
+                    }
+                })
+                .addOnFailureListener(callback::onQRcodeFetchError);
+    }
+
     public interface onQRcodeFetchListener {
         void onQRcodeFetched(QRcode qrcode);
         void onQRcodeFetchError(Exception e);
