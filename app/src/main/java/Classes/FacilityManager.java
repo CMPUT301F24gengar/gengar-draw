@@ -68,7 +68,7 @@ public class FacilityManager {
 
     public void deleteFacility(Facility facility){}//to be implemented
 
-    public void uploadFacilityImage(Uri imgUri, String deviceId, UserProfileManager.OnUploadPictureListener listener){
+    public void uploadFacilityImage(Uri imgUri, String deviceId, FacilityManager.OnUploadPictureListener listener){
         StorageReference storageRef = storage.getReference().child("facilityImages/" + deviceId);
         storageRef.putFile(imgUri)
                 .addOnSuccessListener(taskSnapshot -> {
@@ -77,12 +77,27 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
-    public void updateFacilityImage(String imgUrl, String deviceId, UserProfileManager.OnUpdateListener listener){}
+    public void updateFacilityImage(String imgUrl, String deviceId, FacilityManager.OnUpdateListener listener){}
 
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
         void onFacilityExists(Facility facility); // case when facility exists
         void onFacilityNotExists(); // case when facility doesn't exist
         void onError(Exception e); // Handle errors
+    }
+
+    public interface OnUploadPictureListener{
+        void onSuccess(Uri downloadUrl);
+        void onError(Exception e);
+    }
+
+    public interface OnUpdateListener{
+        void onSuccess();
+        void onError(Exception e);
+    }
+
+    public interface OnDeleteListener {
+        void onSuccess();
+        void onError(Exception e);
     }
 }
