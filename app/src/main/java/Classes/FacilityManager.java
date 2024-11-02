@@ -6,6 +6,7 @@ import android.widget.Button;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +14,14 @@ import java.util.List;
 
 public class FacilityManager {
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
     private CollectionReference facilitiesRef;
 
     public FacilityManager(){
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
         facilitiesRef = db.collection("facilities");
+        storage = FirebaseStorage.getInstance();
     }
 
     // Method to check if user exists by device ID
@@ -64,7 +67,9 @@ public class FacilityManager {
 
     public void deleteFacility(Facility facility){}//to be implemented
 
-    public void uploadFacilityImage(Uri imgUri, String deviceId, UserProfileManager.OnUploadPictureListener listener){}
+    public void uploadFacilityImage(Uri imgUri, String deviceId, UserProfileManager.OnUploadPictureListener listener){
+
+    }
 
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
