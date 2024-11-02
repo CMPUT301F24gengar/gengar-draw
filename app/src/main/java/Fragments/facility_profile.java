@@ -114,6 +114,20 @@ public class facility_profile extends Fragment {
             if (checkValidInput) {
                 return;
             }
+            //delete image (if deleted)
+            if (ImageURI == null){
+                facilityManager.deleteFacilityImage(deviceID, new FacilityManager.OnDeleteListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+            }
 
             // update image to database
             if (ImageURI!=null){

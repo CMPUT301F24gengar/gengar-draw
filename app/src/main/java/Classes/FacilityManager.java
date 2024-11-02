@@ -26,7 +26,7 @@ public class FacilityManager {
     }
 
     // Method to check if user exists by device ID
-    public void checkFacilityExists(String deviceID, FacilityManager.OnFacilityCheckListener listener) {
+    public void checkFacilityExists(String deviceID, OnFacilityCheckListener listener) {
         db.collection("facilities")
                 .document(deviceID) // Use the deviceID directly as the document ID
                 .get()
