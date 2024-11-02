@@ -9,12 +9,12 @@ public class Facility {
     private String description;
 
     private String pictureURL;
-    private List<Event> events;
+    private List<String> events;
 
     private String deviceID;
     //constructors
     public Facility(){}
-    public Facility(String name, String location, String description, String pictureURL, List<Event> events, String deviceID){
+    public Facility(String name, String location, String description, String pictureURL, List<String> events, String deviceID){
         this.name = name;
         this.location = location;
         this.description = description;
@@ -27,13 +27,13 @@ public class Facility {
     public String getLocation(){return this.location;}
     public String getDescription(){return this.description;}
     public String getPictureURL(){return this.pictureURL;}
-    public List<Event> getEvents(){return this.events;}
+    public List<String> getEvents(){return this.events;}
     public String getDeviceID(){return this.deviceID;}
     //setters
     public void setName(String name){this.name = name;}
     public void setLocation(String location){this.location = location;}
     public void setDescription(String description){this.description = description;}
     public void setPictureURL(String pictureURL){this.pictureURL = pictureURL;}
-    public void setEvents(List<Event> events){this.events = events;}
+    public void setEvents(List<String> events){this.events = events;}
     public void setDeviceID(String deviceID){this.deviceID = deviceID;}
 }
