@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Event;
@@ -123,6 +124,17 @@ public class facility_activity extends Fragment {
                 Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            //Create the Facility object and add to Firestore
+            Facility facility = new Facility(
+                    name,
+                    location,
+                    description,
+                    null, //handle pictureURL separately
+                    new ArrayList<>(), //default empty event list
+                    deviceID
+            );
+
             //delete image (if deleted)
             if (ImageURI == null){
                 facilityManager.deleteFacilityImage(deviceID, new FacilityManager.OnDeleteListener() {
@@ -140,7 +152,7 @@ public class facility_activity extends Fragment {
 
             // update image to database
             if (ImageURI!=null){
-                Facility facility = new Facility(name, location, description, ImageURI_string, events, deviceID);
+                facility.setPictureURL(ImageURI_string);
                 facilityManager.uploadFacilityImage(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
                     @Override
                     public void onSuccess(Uri downloadUrl) {
