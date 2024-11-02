@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 
@@ -176,9 +177,23 @@ public class facility_activity extends Fragment {
 
         return view;
     }
-    // setting user_picture to image
+    public void setDetails(Facility facility){
+        /**
+         * sets activity views to reflect given facility object data
+         */
+        nameEditText.setText(facility.getName());
+        locationEditText.setText(facility.getLocation());
+        descriptionEditText.setText(facility.getDescription());
+        if (facility.getPictureURL() != null){
+            Glide.with(this).load(facility.getPictureURL()).into(facilityImage);
+            facilityImage.setImageTintList(null);
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
+        /**
+         * setting user_picture to image
+         */
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode==1000){
             if (resultCode== Activity.RESULT_OK){
