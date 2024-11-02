@@ -43,6 +43,8 @@ public class facility_activity extends Fragment {
     private EditText nameEditText, locationEditText, descriptionEditText;
     private TextView createUpdateBtn, cancelBtn, addFacilityImage, removeFacilityImage;
     private List<String> events;
+
+    Facility facility = new Facility();
     //private FrameLayout createUpdateFrameLayout;
 
     public facility_activity() {
@@ -69,12 +71,10 @@ public class facility_activity extends Fragment {
 
         facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
             @Override
-            public void onFacilityExists(Facility facility) {
+            public void onFacilityExists(Facility facilityFetched) {
                 createUpdateBtn.setText("UPDATE");
-                nameEditText.setText(facility.getName());
-                locationEditText.setText(facility.getLocation());
-                descriptionEditText.setText(facility.getDescription());
-                events = facility.getEvents();  // TODO : test events list is correct
+                setDetails(facilityFetched);
+                facility = facilityFetched;
             }
 
             @Override
