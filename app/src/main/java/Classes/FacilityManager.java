@@ -1,5 +1,6 @@
 package Classes;
 
+import android.net.Uri;
 import android.widget.Button;
 
 import com.google.firebase.firestore.CollectionReference;
@@ -62,6 +63,8 @@ public class FacilityManager {
     }
 
     public void deleteFacility(Facility facility){}//to be implemented
+
+    public void uploadFacilityImage(Uri imgUri, String deviceId, UserProfileManager.OnUploadPictureListener listener){}
 
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
