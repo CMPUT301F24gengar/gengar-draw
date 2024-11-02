@@ -36,4 +36,8 @@ public class Facility {
     public void setPictureURL(String pictureURL){this.pictureURL = pictureURL;}
     public void setEvents(List<String> events){this.events = events;}
     public void setDeviceID(String deviceID){this.deviceID = deviceID;}
+
+    public void addEvent(String eventID){
+        this.events.add(eventID);
+    }
 }

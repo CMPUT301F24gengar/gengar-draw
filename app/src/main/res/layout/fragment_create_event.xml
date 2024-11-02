@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,321 +8,411 @@
     android:orientation="vertical"
     tools:context="Fragments.create_event">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/rounded_corner"
-        android:backgroundTint="@color/black2">
-
-        <TextView
-            style="@style/main"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/create_event"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
-    </FrameLayout>
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbarSize="0dp"
-        android:layout_margin="10dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
             android:background="@drawable/rounded_corner"
-            android:backgroundTint="@color/black3"
-            android:gravity="center|top"
-            android:orientation="vertical"
-            android:paddingBottom="20dp">
+            android:backgroundTint="@color/black2">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:backgroundTint="@color/black2"
-                app:cardCornerRadius="10dp">
-
-                <ImageView
-                    android:id="@+id/create_event_picture"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/rounded_corner"
-                    android:contentDescription="@string/todo"
-                    android:padding="30dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/image" />
-            </androidx.cardview.widget.CardView>
-
-            <EditText
-                android:id="@+id/create_event_title"
+            <TextView
                 style="@style/main"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/rounded_corner"
-                android:backgroundTint="@color/black2"
-                android:hint="@string/event_title"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/create_event"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="18sp" />
+                android:textSize="24sp" />
+        </FrameLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp">
 
-                <EditText
-                    android:id="@+id/create_event_registration_opens"
-                    style="@style/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/black2"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="@string/registration_opens"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/grey"
-                    android:textSize="18sp"
-                    tools:ignore="KeyboardInaccessibleWidget" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="end"
-                    android:contentDescription="@string/todo"
-                    android:padding="5dp"
-                    android:src="@drawable/events"
-                    app:tint="@color/grey" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp">
-
-                <EditText
-                    android:id="@+id/create_event_registration_deadline"
-                    style="@style/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/black2"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="@string/registration_deadline"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/grey"
-                    android:textSize="18sp"
-                    tools:ignore="KeyboardInaccessibleWidget" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="end"
-                    android:contentDescription="@string/todo"
-                    android:padding="5dp"
-                    android:src="@drawable/events"
-                    app:tint="@color/grey" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp">
-
-                <EditText
-                    android:id="@+id/create_event_event_starts"
-                    style="@style/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/black2"
-                    android:clickable="true"
-                    android:focusable="false"
-                    android:hint="@string/event_starts"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/grey"
-                    android:textSize="18sp"
-                    tools:ignore="KeyboardInaccessibleWidget" />
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="end"
-                    android:contentDescription="@string/todo"
-                    android:padding="5dp"
-                    android:src="@drawable/events"
-                    app:tint="@color/grey" />
-            </FrameLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:scrollbarSize="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:orientation="horizontal">
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="@color/black3"
+                android:gravity="center|top"
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:backgroundTint="@color/black2"
+                    app:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/todo"
+                        android:padding="30dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/image" />
+
+                    <ImageView
+                        android:id="@+id/create_event_picture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/rounded_corner"
+                        android:contentDescription="@string/todo"
+                        android:scaleType="centerCrop" />
+
+                </androidx.cardview.widget.CardView>
 
                 <EditText
-                    android:id="@+id/create_event_max_winners"
+                    android:id="@+id/create_event_title"
                     style="@style/main"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="0.5"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/rounded_corner"
                     android:backgroundTint="@color/black2"
-                    android:gravity="center"
-                    android:hint="@string/max_winners"
+                    android:hint="@string/event_title"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/grey"
                     android:textSize="18sp" />
 
                 <FrameLayout
-                    style="@style/main"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="0.5">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp">
 
                     <EditText
-                        android:id="@+id/create_event_max_entrants"
+                        android:id="@+id/create_event_registration_opens"
                         style="@style/main"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_marginStart="5dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/black2"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:hint="@string/registration_opens"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/grey"
+                        android:textSize="18sp"
+                        tools:ignore="KeyboardInaccessibleWidget" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/todo"
+                        android:padding="5dp"
+                        android:src="@drawable/events"
+                        app:tint="@color/grey" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp">
+
+                    <EditText
+                        android:id="@+id/create_event_registration_deadline"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/black2"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:hint="@string/registration_deadline"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/grey"
+                        android:textSize="18sp"
+                        tools:ignore="KeyboardInaccessibleWidget" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/todo"
+                        android:padding="5dp"
+                        android:src="@drawable/events"
+                        app:tint="@color/grey" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp">
+
+                    <EditText
+                        android:id="@+id/create_event_event_starts"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/black2"
+                        android:clickable="true"
+                        android:focusable="false"
+                        android:hint="@string/event_starts"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/grey"
+                        android:textSize="18sp"
+                        tools:ignore="KeyboardInaccessibleWidget" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="end"
+                        android:contentDescription="@string/todo"
+                        android:padding="5dp"
+                        android:src="@drawable/events"
+                        app:tint="@color/grey" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/create_event_max_winners"
+                        style="@style/main"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="0.5"
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/black2"
                         android:gravity="center"
-                        android:hint="@string/max_entrants"
+                        android:hint="@string/max_winners"
+                        android:inputType="number"
                         android:textColor="@color/white"
                         android:textColorHint="@color/grey"
                         android:textSize="18sp" />
 
+                    <FrameLayout
+                        style="@style/main"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="0.5">
+
+                        <EditText
+                            android:id="@+id/create_event_max_entrants"
+                            style="@style/main"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/rounded_corner"
+                            android:backgroundTint="@color/black2"
+                            android:gravity="center"
+                            android:hint="@string/max_entrants"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/grey"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/optional"
+                            android:textAlignment="center"
+                            android:textColor="@color/grey"
+                            android:textSize="12sp" />
+
+                    </FrameLayout>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/create_event_details"
+                    style="@style/main"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/black2"
+                    android:hint="@string/event_details"
+                    android:paddingStart="15dp"
+                    android:paddingTop="13dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="13dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/grey"
+                    android:textSize="18sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/black2"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/create_event_checkbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:buttonTint="@color/grey" />
+
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:text="@string/optional"
+                        android:text="@string/enable_geolocation"
                         android:textAlignment="center"
                         android:textColor="@color/grey"
-                        android:textSize="12sp" />
+                        android:textSize="18sp" />
+                </LinearLayout>
 
-                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/create_event_create_btn"
+                        style="@style/main"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="@string/create"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/create_event_cancel_btn"
+                        style="@style/main"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/red"
+                        android:gravity="center"
+                        android:text="@string/cancel"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/create_event_details"
-                style="@style/main"
+        </ScrollView>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/black_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black1">
+        <LinearLayout
+            android:id="@+id/facility_create_proceed_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2">
+            <TextView
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/rounded_corner"
-                android:backgroundTint="@color/black2"
-                android:hint="@string/event_details"
-                android:paddingStart="15dp"
-                android:paddingTop="13dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="13dp"
+                android:layout_gravity="center"
+                android:text="@string/permission_denied"
+                android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textColorHint="@color/grey"
-                android:textSize="18sp" />
-
-            <LinearLayout
+                android:textStyle="bold"
+                android:textSize="28sp" />
+            <TextView
+                android:layout_margin="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/rounded_corner"
-                android:backgroundTint="@color/black2"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/create_event_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:buttonTint="@color/grey" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="@string/enable_geolocation"
-                    android:textAlignment="center"
-                    android:textColor="@color/grey"
-                    android:textSize="18sp" />
-            </LinearLayout>
-
-            <LinearLayout
+                android:layout_height="wrap_content"
+                android:text="@string/you_are_not_an_organizer_would_you_like_to_create_a_facility"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+            <FrameLayout
+                android:id="@+id/facility_create_proceed_btn"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="30dp"
-                android:orientation="horizontal">
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="@color/green">
 
                 <TextView
-                    android:id="@+id/create_event_create_btn"
                     style="@style/main"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/green"
-                    android:gravity="center"
-                    android:text="@string/create"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/proceed"
+                    android:textAlignment="center"
                     android:textColor="@color/black1"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
+            </FrameLayout>
+            <FrameLayout
+                android:id="@+id/facility_create_cancel_btn"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="@color/red">
 
                 <TextView
-                    android:id="@+id/create_event_cancel_btn"
                     style="@style/main"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/rounded_corner"
-                    android:backgroundTint="@color/red"
-                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="@string/cancel"
+                    android:textAlignment="center"
                     android:textColor="@color/black1"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
-            </LinearLayout>
+            </FrameLayout>
+
         </LinearLayout>
+    </FrameLayout>
 
-    </ScrollView>
-
-
-
-
-</LinearLayout>
+</FrameLayout>

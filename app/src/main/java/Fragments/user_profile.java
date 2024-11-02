@@ -38,6 +38,7 @@ public class user_profile extends Fragment {
 
     String deviceId;
 
+    private TextView facilityButton;
     private ImageView profileImage;
     private EditText nameEditText;
     private EditText emailEditText;
@@ -45,7 +46,6 @@ public class user_profile extends Fragment {
     private TextView removeProfilePicture;
     private TextView addProfilePicture;
     private TextView cancelButton;
-    private String profile_image_uri = null; //by default, uri is null until you add a profile picture
     private Uri ImageURI=null;
     private FrameLayout saveButton;
     UserProfile userProfile = new UserProfile();
@@ -55,6 +55,14 @@ public class user_profile extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        facilityButton = view.findViewById(R.id.profile_user_facility_btn);
+        facilityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFacilityFragment();
+            }
+        });
+
         profileImage = view.findViewById(R.id.profile_user_picture);
         nameEditText = view.findViewById(R.id.profile_user_name);
         emailEditText = view.findViewById(R.id.profile_user_email);
@@ -155,7 +163,8 @@ public class user_profile extends Fragment {
                         }
                     });
                 }
-                closeFragment();
+
+                Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -190,7 +199,6 @@ public class user_profile extends Fragment {
             if (resultCode== Activity.RESULT_OK){
                 assert data != null;
                 ImageURI = data.getData();
-                profile_image_uri = ImageURI.toString(); // converting to string to upload to firebase
                 profileImage.setImageURI(ImageURI);
                 profileImage.setImageTintList(null);
             }
@@ -206,5 +214,14 @@ public class user_profile extends Fragment {
         }
     }
 
+    // replace current fragment with facility fragment
+    private void openFacilityFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
+        } else {
+            // Handle error
+        }
+    }
 
 }
