@@ -83,7 +83,17 @@ public class FacilityManager {
                 .addOnSuccessListener(aVoid -> listener.onSuccess())
                 .addOnFailureListener(listener::onError);
     }
-    public void deleteFacilityImage(String deviceId, FacilityManager.OnDeleteListener listener){}
+    public void deleteFacilityImage(String deviceId, FacilityManager.OnDeleteListener listener){
+        StorageReference storageRef = storage.getReference().child("facilityImages/" + deviceId);
+        storageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    db.collection("facilities").document(deviceId)
+                            .update("pictureURL",null)
+                            .addOnSuccessListener(aVoid1 -> listener.onSuccess())
+                            .addOnFailureListener(listener::onError);
+                })
+                .addOnFailureListener(listener::onError);
+    }
 
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
