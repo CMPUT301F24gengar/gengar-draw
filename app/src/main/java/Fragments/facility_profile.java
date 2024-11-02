@@ -107,6 +107,8 @@ public class facility_profile extends Fragment {
             @Override
             public void onClick(View view) {
                 ImageURI = null;
+                facilityImage.setImageDrawable(getResources().getDrawable(R.drawable.facility));
+                facilityImage.setImageTintList(getResources().getColorStateList(R.color.grey));
             }
         });
 
