@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 import Fragments.create_event;
+import Fragments.facility_activity;
 import Fragments.notifications;
 import Fragments.qr_scanner;
 import Fragments.register;
@@ -101,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarProfilebutton);
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
                 // for testing facility
-//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_activity()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_activity()).commit();
             }
         });
 
