@@ -25,14 +25,13 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Classes.Event;
 import Classes.Facility;
 import Classes.FacilityManager;
 
 /**
  * facility profile fragment
  */
-public class facility_activity extends Fragment {
+public class facility_profile extends Fragment {
     //data
     String deviceID;
     private static final int PICK_IMAGE = 1000;//request code for image gallery
@@ -48,7 +47,7 @@ public class facility_activity extends Fragment {
     Facility facility = new Facility();
     //private FrameLayout createUpdateFrameLayout;
 
-    public facility_activity() {
+    public facility_profile() {
         // Required empty public constructor
     }
 
