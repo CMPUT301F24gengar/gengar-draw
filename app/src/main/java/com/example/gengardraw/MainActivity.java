@@ -102,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarProfilebutton);
-//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
                 // for testing facility
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_activity()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_activity()).commit();
             }
         });
 
