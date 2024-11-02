@@ -1,9 +1,13 @@
 package Fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
@@ -37,14 +42,16 @@ public class facility_profile extends Fragment {
 
     private TextView userProfileButton;
     private ImageView facilityImage;
-    private EditText nameEditText, locationEditText, descriptionEditText;
+    private EditText nameEditText;
+    private EditText locationEditText;
+    private EditText descriptionEditText;
+    private TextView removeFacilityPicture;
+    private TextView addFacilityPicture;
+    private TextView cancelButton;
+    private Uri ImageURI=null;
+    private FrameLayout saveButton;
     private TextView createUpdateBtn;
-    private TextView cancelBtn;
     Facility facilityProfile;
-
-    public facility_profile() {
-        // Required empty public constructor
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,8 +69,11 @@ public class facility_profile extends Fragment {
         nameEditText = view.findViewById(R.id.profile_facility_name);
         locationEditText = view.findViewById(R.id.profile_facility_location);
         descriptionEditText = view.findViewById(R.id.profile_facility_description);
+        removeFacilityPicture = view.findViewById(R.id.profile_facility_picture_remove);
+        addFacilityPicture = view.findViewById(R.id.profile_facility_picture_add);
+        saveButton = view.findViewById(R.id.profile_facility_create_frame);
+        cancelButton = view.findViewById(R.id.profile_facility_cancel_btn);
         createUpdateBtn = view.findViewById(R.id.profile_facility_create_btn);
-        cancelBtn = view.findViewById(R.id.profile_facility_cancel_btn);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         FacilityManager facilityManager = new FacilityManager();
@@ -73,9 +83,7 @@ public class facility_profile extends Fragment {
             public void onFacilityExists(Facility facility) {
                 facilityProfile = facility;
                 createUpdateBtn.setText("UPDATE");
-                nameEditText.setText(facilityProfile.getName());
-                locationEditText.setText(facilityProfile.getLocation());
-                descriptionEditText.setText(facilityProfile.getDescription());
+                setDetails();
             }
 
             @Override
@@ -89,33 +97,52 @@ public class facility_profile extends Fragment {
             }
         });
 
+        removeFacilityPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageURI=null;
+                facilityImage.setImageDrawable(getResources().getDrawable(R.drawable.facility));
+                facilityImage.setImageTintList(getResources().getColorStateList(R.color.grey));
+            }
+        });
+
+        addFacilityPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(OpenGalleryIntent,1001); //request code is 1000 for this activity.;
+
+            }
+        });
 
         createUpdateBtn.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
             String location = locationEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
 
-            boolean checkValidInput = (name.isEmpty() || location.isEmpty() || description.isEmpty());
-
-            if (checkValidInput) {
+            if (name.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (location.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter a location", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (description.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (ImageURI == null) {
+                Toast.makeText(getContext(), "Please select a picture", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // TODO : get actual picture urls
-            String pictureURL = "picUrlTest";
 
             if (facilityProfile != null) {
                 Log.e("facility_profile", "exists");
                 facilityProfile.setName(name);
                 facilityProfile.setLocation(location);
                 facilityProfile.setDescription(description);
-                facilityProfile.setPictureURL(pictureURL);
-                Log.e("facility_profile", "fac:" + facilityProfile.toString());
-
-                facilityManager.updateFacility(facilityProfile);
+                facilityManager.updateFacility(facilityProfile,deviceID);
                 Toast.makeText(getContext(), "Facility updated successfully", Toast.LENGTH_SHORT).show();
             } else {
-                facilityProfile = new Facility(name, location, description, pictureURL, new ArrayList<>(), deviceID);
+                facilityProfile = new Facility(name, location, description, null, new ArrayList<>(), deviceID);
                 // update the users facilityURL
                 UserProfileManager userProfileManager = new UserProfileManager();
                 userProfileManager.getUserProfile(deviceID , new UserProfileManager.OnUserProfileFetchListener() {
@@ -124,24 +151,81 @@ public class facility_profile extends Fragment {
                         userProfile.setFacilityURL(deviceID);
                         userProfile.setOrganizer(true);
                         userProfileManager.updateUserProfile(userProfile, deviceID);
-                        }
+                    }
                     @Override
                     public void onUserProfileFetchError(Exception e) {
                         Log.e("facility_profile", "Error fetching user profile", e);
                     }
                 });
 
-                facilityManager.addFacility(facilityProfile);
+                facilityManager.addFacility(facilityProfile, deviceID);
                 Toast.makeText(getContext(), "Facility created successfully", Toast.LENGTH_SHORT).show();
             }
-            closeFragment();
+
+            if(ImageURI==null){
+                facilityManager.deleteFacilityPicture(deviceID, new FacilityManager.OnDeleteListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+            } else {
+                facilityManager.uploadFacilityPicture(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
+                    @Override
+                    public void onSuccess(Uri downloadUrl) {
+                        facilityManager.updateFacilityPictureInFirestore(deviceID, ImageURI.toString(), new FacilityManager.OnUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+                            @Override
+                            public void onError(Exception e) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.e("facility_profile", "Error uploading facility picture", e);
+                    }
+                });
+            }
         });
 
-        cancelBtn.setOnClickListener(v -> {
+        cancelButton.setOnClickListener(v -> {
             closeFragment();
         });
 
         return view;
+    }
+
+    public void setDetails() {
+        nameEditText.setText(facilityProfile.getName());
+        locationEditText.setText(facilityProfile.getLocation());
+        descriptionEditText.setText(facilityProfile.getDescription());
+        if(facilityProfile.getPictureURL()!=null){
+            Glide.with(this).load(facilityProfile.getPictureURL()).into(facilityImage);
+            facilityImage.setImageTintList(null);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode==1001){
+            if (resultCode== Activity.RESULT_OK){
+                assert data != null;
+                ImageURI = data.getData();
+                facilityImage.setImageURI(ImageURI);
+                facilityImage.setImageTintList(null);
+            }
+        }
     }
 
     // Go back to the home screen

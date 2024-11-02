@@ -185,7 +185,7 @@ public class create_event extends Fragment {
             });
 
             facilityProfile.addEvent(docID);
-            facilityManager.updateFacility(facilityProfile);
+            facilityManager.updateFacility(facilityProfile, deviceID);
 
         });
 
