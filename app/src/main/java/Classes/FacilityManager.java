@@ -78,6 +78,7 @@ public class FacilityManager {
     }
 
     public void updateFacilityImage(String imgUrl, String deviceId, FacilityManager.OnUpdateListener listener){}
+    public void deleteFacilityImage(String deviceId, FacilityManager.OnDeleteListener listener){}
 
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
