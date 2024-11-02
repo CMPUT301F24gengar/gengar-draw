@@ -110,12 +110,17 @@ public class facility_activity extends Fragment {
             String location = locationEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
 
-            boolean checkValidInput = (name.isEmpty() || location.isEmpty() || description.isEmpty());
-
             //validate input
-            if (checkValidInput) {
-                Toast.makeText(getContext(), "Please enter facility name, location, and description", Toast.LENGTH_SHORT).show();
+            if (name.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter the facility name", Toast.LENGTH_SHORT).show();
                 return;
+            }
+            if (location.isEmpty()){
+                Toast.makeText(getContext(), "Please enter the facility location", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (description.isEmpty()){
+                Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
             }
             //delete image (if deleted)
             if (ImageURI == null){
