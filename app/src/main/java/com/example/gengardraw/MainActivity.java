@@ -7,20 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 import Fragments.create_event;
-import Fragments.facility_profile;
 import Fragments.notifications;
 import Fragments.qr_scanner;
 import Fragments.register;
@@ -110,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
                 setHighlightedButton(navbarProfilebutton);
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
                 // for testing facility
-//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
+//                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_activity()).commit();
             }
         });
 

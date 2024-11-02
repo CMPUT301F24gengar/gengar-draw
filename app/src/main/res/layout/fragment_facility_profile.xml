@@ -6,7 +6,7 @@
     android:background="@color/black1"
     android:gravity="center|top"
     android:orientation="vertical"
-    tools:context="Fragments.facility_profile">
+    tools:context="Fragments.facility_activity">
 
     <FrameLayout
         android:layout_width="match_parent"

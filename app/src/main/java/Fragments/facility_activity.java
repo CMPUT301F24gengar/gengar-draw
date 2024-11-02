@@ -13,32 +13,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.w3c.dom.Text;
-
-import java.net.URI;
 import java.util.List;
 
 import Classes.Event;
 import Classes.Facility;
 import Classes.FacilityManager;
-import Classes.UserProfile;
-import Classes.UserProfileManager;
 
 /**
  * facility profile fragment
  */
-public class facility_profile extends Fragment {
+public class facility_activity extends Fragment {
     //data
     String deviceID;
     private static final int PICK_IMAGE = 1000;//request code for image gallery
@@ -52,7 +43,7 @@ public class facility_profile extends Fragment {
     private List<Event> events;
     //private FrameLayout createUpdateFrameLayout;
 
-    public facility_profile() {
+    public facility_activity() {
         // Required empty public constructor
     }
 
@@ -91,7 +82,7 @@ public class facility_profile extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                Log.e("facility_profile", "Error checking facility", e);
+                Log.e("facility_activity", "Error checking facility", e);
             }
         });
 
