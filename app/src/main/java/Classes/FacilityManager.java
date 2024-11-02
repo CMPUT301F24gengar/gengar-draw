@@ -77,6 +77,8 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
+    public void updateFacilityImage(String imgUrl, String deviceId, UserProfileManager.OnUpdateListener listener){}
+
     // interface to handle facility check result
     public interface OnFacilityCheckListener {
         void onFacilityExists(Facility facility); // case when facility exists
