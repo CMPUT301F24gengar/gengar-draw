@@ -14,9 +14,16 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="70dp"
         tools:ignore="UselessParent">
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/admin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginBottom="70dp">
 
         <LinearLayout
-            android:id="@+id/admin_panel"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="bottom|start"

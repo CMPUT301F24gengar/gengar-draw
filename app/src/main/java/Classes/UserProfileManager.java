@@ -58,8 +58,8 @@ public class UserProfileManager {
         List<String> notificationsArray = document.contains("notificationsArray") ? (List<String>) document.get("notificationsArray") : new ArrayList<>();
         List<String> joinedEvents = document.contains("joinedEvents") ? (List<String>) document.get("joinedEvents") : new ArrayList<>();
 
-        Boolean isOrganizer = document.getBoolean("isOrganizer");
-        Boolean isAdmin = document.getBoolean("isAdmin");
+        Boolean isOrganizer = document.getBoolean("organizer");
+        Boolean isAdmin = document.getBoolean("admin");
 
         // Create and return the UserProfile object
         return new UserProfile(
@@ -69,11 +69,11 @@ public class UserProfileManager {
                 phoneNumber,
                 pictureURL,
                 facilityURL,
-                allowNotifications != null ? allowNotifications : false,
+                Boolean.TRUE.equals(allowNotifications),
                 notificationsArray,
                 joinedEvents,
-                isOrganizer != null ? isOrganizer : false,
-                isAdmin != null ? isAdmin : false
+                Boolean.TRUE.equals(isOrganizer),
+                Boolean.TRUE.equals(isAdmin)
         );
     }
 
