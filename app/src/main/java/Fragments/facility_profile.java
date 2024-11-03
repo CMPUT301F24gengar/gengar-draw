@@ -39,7 +39,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
+import android.Manifest;
+import android.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,8 +110,8 @@ public class facility_profile extends Fragment {
         }
 
         // temp for testing
-//        latitude = 53.5232;
-//        longitude = -113.5263;
+        latitude = 53.5232;
+        longitude = -113.5263;
         location = getLocationDetails(latitude, longitude);
         FacilityManager facilityManager = new FacilityManager();
 
@@ -119,6 +120,7 @@ public class facility_profile extends Fragment {
             public void onFacilityExists(Facility facility) {
                 facilityProfile = facility;
                 createUpdateBtn.setText("UPDATE");
+
                 setDetails();
             }
 
@@ -133,8 +135,8 @@ public class facility_profile extends Fragment {
                     getLastLocation();
                 }
                 // temp for testing
-//                latitude = 53.5232;
-//                longitude = -113.5263;
+                latitude = 53.5232;
+                longitude = -113.5263;
                 location = getLocationDetails(latitude, longitude);
                 locationEditText.setText(location);
             }
@@ -190,7 +192,7 @@ public class facility_profile extends Fragment {
                 facilityManager.updateFacility(facilityProfile,deviceID);
                 Toast.makeText(getContext(), "Facility updated successfully", Toast.LENGTH_SHORT).show();
             } else {
-                facilityProfile = new Facility(name, latitude, longitude, location, description, pictureURL, new ArrayList<>(), deviceID);
+                facilityProfile = new Facility(name, latitude, longitude, location, description, null, new ArrayList<>(), deviceID);
                 // update the users facilityURL
                 UserProfileManager userProfileManager = new UserProfileManager();
                 userProfileManager.getUserProfile(deviceID , new UserProfileManager.OnUserProfileFetchListener() {
