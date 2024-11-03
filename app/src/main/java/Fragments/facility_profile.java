@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -277,6 +278,33 @@ public class facility_profile extends Fragment {
             activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new user_profile()).commit();
         } else {
             // Handle error
+        }
+    }
+
+    private void getLastLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                Location location = task.getResult();
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+
+                                // temp for testing
+//                                latitude = 53.5232;
+//                                longitude = -113.5263;
+
+                                Log.d("facility_profile", "getLastLocation " + location + " " + latitude + " " + longitude);
+                            } else {
+                                // Handle the case where Location is null
+                            }
+                        }
+                    });
+        } else {
+            // Handle the case where permission is not granted
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 }
