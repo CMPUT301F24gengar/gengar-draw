@@ -85,7 +85,15 @@ public class my_events extends Fragment {
                 });
             }
         });
-
+        joinedEventsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //switch views
+                setHighlightedButton(joinedEventsBtn);
+                missingFacilityFrame.setVisibility(View.GONE);
+                eventListView.setVisibility(View.VISIBLE);
+            }
+        });
         return view;
     }
 
