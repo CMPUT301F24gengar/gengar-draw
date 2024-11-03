@@ -1,8 +1,6 @@
 package Classes;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 public class Event {
     private String organizerID;
@@ -43,8 +41,8 @@ public class Event {
     public String getEventTitle() {
         return eventTitle;
     }
-    public Date getRegOpenDate() {
-        return regOpenDate;
+    public CharSequence getRegOpenDate() {
+        return (CharSequence) regOpenDate;
     }
     public Date getRegDeadlineDate() {
         return regDeadlineDate;
