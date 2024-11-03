@@ -10,6 +10,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserProfileManager {
     private FirebaseFirestore db;
@@ -58,8 +59,8 @@ public class UserProfileManager {
         List<String> notificationsArray = document.contains("notificationsArray") ? (List<String>) document.get("notificationsArray") : new ArrayList<>();
         List<String> joinedEvents = document.contains("joinedEvents") ? (List<String>) document.get("joinedEvents") : new ArrayList<>();
 
-        Boolean isOrganizer = document.getBoolean("isOrganizer");
-        Boolean isAdmin = document.getBoolean("isAdmin");
+        Boolean isOrganizer = document.getBoolean("organizer");
+        Boolean isAdmin = document.getBoolean("admin");
 
         // Create and return the UserProfile object
         return new UserProfile(
@@ -69,11 +70,11 @@ public class UserProfileManager {
                 phoneNumber,
                 pictureURL,
                 facilityURL,
-                allowNotifications != null ? allowNotifications : false,
+                Boolean.TRUE.equals(allowNotifications),
                 notificationsArray,
                 joinedEvents,
-                isOrganizer != null ? isOrganizer : false,
-                isAdmin != null ? isAdmin : false
+                Boolean.TRUE.equals(isOrganizer),
+                Boolean.TRUE.equals(isAdmin)
         );
     }
 
@@ -123,19 +124,36 @@ public class UserProfileManager {
 
     public void uploadProfilePicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
-        storageRef.putFile(picUri)
+        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
+
+        imageFilePath.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess);
+                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        listener.onSuccess(uri);
+                        updateProfilePictureInFireStore(deviceID, downloadUrl, new OnUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                // Handle success if needed
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                // Handle error if needed
+                            }
+                        });
+                    });
                 })
                 .addOnFailureListener(listener::onError);
     }
 
     public void updateProfilePictureInFireStore(String deviceID, String picURL, OnUpdateListener listener) {
         db.collection("users").document(deviceID)
-                .update("pictureURL",picURL)
+                .update("pictureURL", picURL)
                 .addOnSuccessListener(aVoid -> listener.onSuccess())
                 .addOnFailureListener(listener::onError);
     }
+
 
 
     public void deleteProfilePicture(String deviceID, OnDeleteListener listener) {
