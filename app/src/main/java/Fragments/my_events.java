@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
@@ -16,6 +17,7 @@ import com.example.gengardraw.R;
  */
 public class my_events extends Fragment {
     //activity views
+    private TextView hostedEventsBtn;
     //data
     public my_events() {
         // Required empty public constructor
@@ -25,7 +27,20 @@ public class my_events extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_events, container, false);
+
+        //get views
+        hostedEventsBtn = (TextView) view.findViewById(R.id.my_events_hosted_btn);
+
+        //onclick listeners
+        hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        return view;
     }
 
     private void closeFragment() {
