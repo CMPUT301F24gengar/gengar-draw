@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 public class Event {
-    //private String organizerEmail;
     private String organizerID;
     private String eventTitle;
     private Date regOpenDate;
@@ -16,17 +15,13 @@ public class Event {
     private String eventDetails;
     private String eventPictureURL;
     private boolean enableGeolocation;
-
-    private List<String> waitingList;
-    private List<String> chosenEntrantsList;
-    private List<String> CancelledEntrantsList;
-    private List<String> finalList;
-
+    private String ListReference; // Stores the docID of the EventLists
+    private String LocationReference; // Stores the docID of the Locations;
     private String QRCode;
 
     public Event() {}
 
-    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, List<String> waitingList, List<String> chosenEntrantsList, List<String> CancelledEntrantsList, List<String> finalList, String QRCode){
+    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode){
         this.organizerID = organizerID;
         this.eventTitle = eventTitle;
         this.regOpenDate = regOpenDate;
@@ -37,10 +32,8 @@ public class Event {
         this.eventDetails = eventDetails;
         this.eventPictureURL = eventPictureURL;
         this.enableGeolocation = enableGeolocation;
-        this.waitingList = waitingList;
-        this.chosenEntrantsList = chosenEntrantsList;
-        this.CancelledEntrantsList = CancelledEntrantsList;
-        this.finalList = finalList;
+        this.ListReference = listReference;
+        this.LocationReference = LocationReference;
         this.QRCode = QRCode;
     }
 
@@ -68,10 +61,8 @@ public class Event {
     public String getEventDetails() { return eventDetails; }
     public String getEventPictureURL() { return eventPictureURL; }
     public boolean getEnableGeolocation() { return enableGeolocation; }
-    public List<String> getWaitingList() { return waitingList; }
-    public List<String> getChosenEntrantsList() { return chosenEntrantsList; }
-    public List<String> getCancelledEntrantsList() { return CancelledEntrantsList; }
-    public List<String> getFinalList() { return finalList; }
+    public String getListReference() { return ListReference; }
+    public String getLocationReference() { return LocationReference; }
     public String getQRCode() { return QRCode; }
 
     public void setOrganizerID(String organizerID) {
@@ -94,9 +85,7 @@ public class Event {
     }
     public void setEventPictureURL(String eventPictureURL) { this.eventPictureURL = eventPictureURL; }
     public void setEnableGeolocation(boolean enableGeolocation) { this.enableGeolocation = enableGeolocation; }
-    public void setWaitingList(List<String> waitingList) { this.waitingList = waitingList; }
-    public void setChosenEntrantsList(List<String> chosenEntrantsList) { this.chosenEntrantsList = chosenEntrantsList; }
-    public void setCancelledEntrantsList(List<String> CancelledEntrantsList) { this.CancelledEntrantsList = CancelledEntrantsList; }
-    public void setFinalList(List<String> finalList) { this.finalList = finalList; }
+    public void setListReference(String listReference) { this.ListReference = listReference; }
+    public void setLocationReference(String locationReference) { this.LocationReference = locationReference; }
     public void setQRCode(String QRCode) { this.QRCode = QRCode; }
 }
