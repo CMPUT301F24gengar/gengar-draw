@@ -1,7 +1,9 @@
 package Fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.gengardraw.MainActivity;
@@ -29,6 +32,8 @@ public class my_events extends Fragment {
     private View eventListView;
     //data
     private String deviceID;
+    TextView highlightedButton;
+
     public my_events() {
         // Required empty public constructor
     }
@@ -40,6 +45,7 @@ public class my_events extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_events, container, false);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        highlightedButton = (TextView) view.findViewById(R.id.my_events_joined_btn);
 
         //get views
         hostedEventsBtn = (TextView) view.findViewById(R.id.my_events_hosted_btn);
@@ -63,6 +69,7 @@ public class my_events extends Fragment {
                         //missing facility layout
                         missingFacilityFrame.setVisibility(View.VISIBLE);
                         eventListView.setVisibility(View.INVISIBLE);
+                        setHighlightedButton(hostedEventsBtn);
                     }
 
                     @Override
@@ -83,6 +90,13 @@ public class my_events extends Fragment {
         } else {
             // Handle error
         }
+    }
+    private void setHighlightedButton(TextView button) {
+        highlightedButton.setTextColor(getResources().getColor(R.color.grey));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black2)));
+        highlightedButton = button;
+        highlightedButton.setTextColor(getResources().getColor(R.color.black1));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
     }
 
     // replace current fragment with HostedEvents fragment
