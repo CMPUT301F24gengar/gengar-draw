@@ -3,6 +3,8 @@ package Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationRequest;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,8 +32,10 @@ import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import Classes.Event;
 import Classes.Facility;
@@ -328,5 +332,25 @@ public class facility_profile extends Fragment {
                 // Permission denied, handle accordingly
             }
         }
+    }
+
+    private String getLocationDetails(double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String country = address.getCountryName();
+                String city = address.getLocality();
+                String addressLine = address.getAddressLine(0);
+                return addressLine;
+            } else {
+                // Handle exception
+            }
+        } catch (IOException e) {
+            // Handle exception
+            //throw new RuntimeException(e);
+        }
+        return "";
     }
 }
