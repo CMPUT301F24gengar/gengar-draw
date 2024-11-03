@@ -25,13 +25,14 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/profile_user_text"
         style="@style/main"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
-        android:layout_height="wrap_content"
         android:text="@string/todo"
-        android:layout_gravity="start|center"
         android:textColor="@color/grey"
         android:textSize="20sp" />
 

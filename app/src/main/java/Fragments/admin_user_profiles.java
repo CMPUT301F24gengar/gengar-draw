@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +21,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+import Classes.CustomAdapter;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 public class admin_user_profiles extends Fragment {
 
     private FirebaseFirestore db;
+    private RecyclerView recyclerView;
     private UserProfileManager userProfileManager;
-    ArrayList<UserProfile> userProfiles = new ArrayList<>();
+    private ArrayList<UserProfile> userProfiles;
+    private RecyclerView.LayoutManager layoutManager;
+    CustomAdapter customAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,14 +41,21 @@ public class admin_user_profiles extends Fragment {
         View view = inflater.inflate(R.layout.fragment_admin_user_profiles, container, false);
 
         db = FirebaseFirestore.getInstance();
+        recyclerView=view.findViewById(R.id.admin_user_profiles_list);
         userProfileManager= new UserProfileManager();
+        userProfiles = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(getActivity());
+        customAdapter = new CustomAdapter(getContext(),userProfiles);
+
 
         fetchUserProfiles(new OnProfilesLoadedListener() {
             @Override
             public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
-                for (int i=0;i<userProfiles.size();i++){
-                    Log.d("userprofilename","name: "+userProfiles.get(i).getName());
-                }
+
+                //adding userProfiles to adapter
+                recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
+                recyclerView.setAdapter(customAdapter);
+
             }
         });
 
