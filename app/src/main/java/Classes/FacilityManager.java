@@ -9,6 +9,7 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FacilityManager {
     private FirebaseFirestore db;
@@ -93,9 +94,25 @@ public class FacilityManager {
     // Upload a facility picture
     public void uploadFacilityPicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
-        storageRef.putFile(picUri)
+        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
+
+        imageFilePath.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess);
+                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        listener.onSuccess(uri);
+                        updateFacilityPictureInFirestore(deviceID, downloadUrl, new OnUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                // Handle success if needed
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                // Handle error if needed
+                            }
+                        });
+                    });
                 })
                 .addOnFailureListener(listener::onError);
     }
