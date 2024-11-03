@@ -5,6 +5,8 @@ import java.util.List;
 public class Facility {
     //data
     private String name;
+    private double latitude;
+    private double longitude;
     private String location;//location to be updated to match project's geolocation implementation
     private String description;
 
@@ -14,8 +16,10 @@ public class Facility {
     private String deviceID;
     //constructors
     public Facility(){}
-    public Facility(String name, String location, String description, String pictureURL, List<String> events, String deviceID){
+    public Facility(String name, double latitude, double longitude, String location, String description, String pictureURL, List<String> events, String deviceID){
         this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.location = location;
         this.description = description;
         this.pictureURL = pictureURL;
@@ -24,6 +28,8 @@ public class Facility {
     }
     //getters
     public String getName(){return this.name;}
+    public double getLatitude(){return this.latitude;}
+    public double getLongitude(){return this.longitude;}
     public String getLocation(){return this.location;}
     public String getDescription(){return this.description;}
     public String getPictureURL(){return this.pictureURL;}
@@ -31,6 +37,8 @@ public class Facility {
     public String getDeviceID(){return this.deviceID;}
     //setters
     public void setName(String name){this.name = name;}
+    public void setLatitude(double latitude){this.latitude = latitude;}
+    public void setLongitude(double longitude){this.longitude = longitude;}
     public void setLocation(String location){this.location = location;}
     public void setDescription(String description){this.description = description;}
     public void setPictureURL(String pictureURL){this.pictureURL = pictureURL;}
