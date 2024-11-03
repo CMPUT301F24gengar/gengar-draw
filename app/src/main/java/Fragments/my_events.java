@@ -3,12 +3,14 @@ package Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.gengardraw.MainActivity;
@@ -23,6 +25,8 @@ import Classes.FacilityManager;
 public class my_events extends Fragment {
     //activity views
     private TextView hostedEventsBtn;
+    private FrameLayout missingFacilityFrame;
+    private View eventListView;
     //data
     private String deviceID;
     public my_events() {
@@ -39,6 +43,8 @@ public class my_events extends Fragment {
 
         //get views
         hostedEventsBtn = (TextView) view.findViewById(R.id.my_events_hosted_btn);
+        missingFacilityFrame = (FrameLayout) view.findViewById(R.id.missing_facility);
+        eventListView = view.findViewById(R.id.my_events_list);
 
         //onclick listeners
         hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
