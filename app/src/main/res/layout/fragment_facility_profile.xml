@@ -127,7 +127,7 @@
         android:id="@+id/profile_facility_location"
         style="@style/main"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="75dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:layout_marginBottom="10dp"
@@ -136,9 +136,12 @@
         android:hint="@string/location"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:textColor="@color/white"
+        android:textColor="@color/dark_grey"
         android:textColorHint="@color/grey"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:clickable="false"
+        android:focusable="false"
+        tools:ignore="KeyboardInaccessibleWidget" />
 
     <EditText
         android:id="@+id/profile_facility_description"
