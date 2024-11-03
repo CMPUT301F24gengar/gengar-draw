@@ -31,6 +31,7 @@ public class my_events extends Fragment {
     //activity views
     private TextView hostedEventsBtn;
     private TextView joinedEventsBtn;
+    private TextView createFacilityBtn;
     private FrameLayout missingFacilityFrame;
     private View eventListView;
     //data
@@ -76,6 +77,7 @@ public class my_events extends Fragment {
                         missingFacilityFrame.setVisibility(View.VISIBLE);
                         eventListView.setVisibility(View.INVISIBLE);
                         setHighlightedButton(hostedEventsBtn);
+                        createFacilityBtn = (TextView) view.findViewById(R.id.my_events_facility_create_btn);
                     }
 
                     @Override
@@ -92,6 +94,12 @@ public class my_events extends Fragment {
                 setHighlightedButton(joinedEventsBtn);
                 missingFacilityFrame.setVisibility(View.GONE);
                 eventListView.setVisibility(View.VISIBLE);
+            }
+        });
+        createFacilityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
         return view;

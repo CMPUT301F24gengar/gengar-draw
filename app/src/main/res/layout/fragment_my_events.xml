@@ -96,7 +96,7 @@
 
                 <TextView
                     style="@style/main"
-                    android:id="@+id/profile_facility_create_btn"
+                    android:id="@+id/my_events_facility_create_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
