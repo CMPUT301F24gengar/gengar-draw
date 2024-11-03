@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 
+import org.w3c.dom.Text;
+
 import Classes.Facility;
 import Classes.FacilityManager;
 
@@ -28,6 +30,7 @@ import Classes.FacilityManager;
 public class my_events extends Fragment {
     //activity views
     private TextView hostedEventsBtn;
+    private TextView joinedEventsBtn;
     private FrameLayout missingFacilityFrame;
     private View eventListView;
     //data
@@ -45,12 +48,15 @@ public class my_events extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_events, container, false);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        highlightedButton = (TextView) view.findViewById(R.id.my_events_joined_btn);
 
         //get views
         hostedEventsBtn = (TextView) view.findViewById(R.id.my_events_hosted_btn);
+        joinedEventsBtn = (TextView) view.findViewById(R.id.my_events_joined_btn);
         missingFacilityFrame = (FrameLayout) view.findViewById(R.id.missing_facility);
         eventListView = view.findViewById(R.id.my_events_list);
+
+        //set highlighted button
+        highlightedButton = joinedEventsBtn;
 
         //onclick listeners
         hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
