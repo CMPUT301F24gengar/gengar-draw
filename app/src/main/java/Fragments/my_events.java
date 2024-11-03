@@ -8,53 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link my_events#newInstance} factory method to
- * create an instance of this fragment.
+ * "My Events" fragment handler
  */
 public class my_events extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    //activity views
+    //data
     public my_events() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment my_events.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static my_events newInstance(String param1, String param2) {
-        my_events fragment = new my_events();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +26,34 @@ public class my_events extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_my_events, container, false);
+    }
+
+    private void closeFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showHomeFragment();
+        } else {
+            // Handle error
+        }
+    }
+
+    // replace current fragment with HostedEvents fragment
+    private void openHostedEventsFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new hosted_events()).commit();
+        } else {
+            // Handle error
+        }
+    }
+
+    // replace current fragment with MissingFacility fragment
+    private void openMissingFacilityFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
+        } else {
+            // Handle error
+        }
     }
 }
