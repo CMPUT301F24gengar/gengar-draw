@@ -21,7 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-import Classes.CustomAdapter;
+import Adapters.UserProfileAdapter;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
@@ -32,7 +32,7 @@ public class admin_user_profiles extends Fragment {
     private UserProfileManager userProfileManager;
     private ArrayList<UserProfile> userProfiles;
     private RecyclerView.LayoutManager layoutManager;
-    CustomAdapter customAdapter;
+    UserProfileAdapter customAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +45,7 @@ public class admin_user_profiles extends Fragment {
         userProfileManager= new UserProfileManager();
         userProfiles = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new CustomAdapter(getContext(),userProfiles);
+        customAdapter = new UserProfileAdapter(getContext(),userProfiles);
 
 
         fetchUserProfiles(new OnProfilesLoadedListener() {
