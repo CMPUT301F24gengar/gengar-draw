@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class EventManager {
     private final FirebaseFirestore db;
@@ -109,8 +110,26 @@ public class EventManager {
 
     public void uploadEventPicture(Uri picUri, String docID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("eventPictures/" + docID);
-        storageRef.putFile(picUri)
-                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess))
+        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
+
+        imageFilePath.putFile(picUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        listener.onSuccess(uri);
+                        updateEventPictureInFirestore(docID, downloadUrl, new OnUpdatePictureListener() {
+                            @Override
+                            public void onSuccess() {
+                                // Handle success if needed
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                // Handle error if needed
+                            }
+                        });
+                    });
+                })
                 .addOnFailureListener(listener::onError);
     }
 
