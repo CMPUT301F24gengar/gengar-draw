@@ -49,11 +49,12 @@ public class my_events extends Fragment {
                 facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
                     @Override
                     public void onFacilityExists(Facility facility) {
-
+                        //list layout
                     }
 
                     @Override
                     public void onFacilityNotExists() {
+                        //missing facility layout
 
                     }
 
