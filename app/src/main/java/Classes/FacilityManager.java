@@ -42,13 +42,15 @@ public class FacilityManager {
     // Create Facility object from Firestore DocumentSnapshot
     private Facility createFacilityFromDocument(DocumentSnapshot document) {
         String name = document.getString("name");
+        double latitude = document.getDouble("latitude");
+        double longitude = document.getDouble("longitude");
         String location = document.getString("location");
         String description = document.getString("description");
         String pictureURL = document.getString("pictureURL");
         List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
         String deviceID = document.getString("deviceID");
 
-        return new Facility(name, location, description, pictureURL, events, deviceID);
+        return new Facility(name, latitude, longitude, location, description, pictureURL, events, deviceID);
     }
 
     // Add new facility to Firestore
