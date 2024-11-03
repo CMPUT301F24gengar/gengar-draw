@@ -109,7 +109,7 @@ public class EventManager {
     }
 
     public void uploadEventPicture(Uri picUri, String docID, OnUploadPictureListener listener) {
-        StorageReference storageRef = storage.getReference().child("facilityPictures/" + docID);
+        StorageReference storageRef = storage.getReference().child("eventPictures/" + docID);
         StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
 
         imageFilePath.putFile(picUri)
