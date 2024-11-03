@@ -215,6 +215,7 @@ public class facility_profile extends Fragment {
 
                 facilityManager.addFacility(facilityProfile, deviceID);
                 Toast.makeText(getContext(), "Facility created successfully", Toast.LENGTH_SHORT).show();
+                createUpdateBtn.setText("UPDATE");
             }
 
             if(ImageURI==null){
@@ -233,21 +234,10 @@ public class facility_profile extends Fragment {
                 facilityManager.uploadFacilityPicture(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
                     @Override
                     public void onSuccess(Uri downloadUrl) {
-                        facilityManager.updateFacilityPictureInFirestore(deviceID, ImageURI.toString(), new FacilityManager.OnUpdateListener() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-                            @Override
-                            public void onError(Exception e) {
-
-                            }
-                        });
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        Log.e("facility_profile", "Error uploading facility picture", e);
                     }
                 });
             }
