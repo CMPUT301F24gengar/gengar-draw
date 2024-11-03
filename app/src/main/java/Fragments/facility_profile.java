@@ -2,9 +2,11 @@ package Fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -52,6 +54,13 @@ public class facility_profile extends Fragment {
     private FrameLayout saveButton;
     private TextView createUpdateBtn;
     Facility facilityProfile;
+    private double latitude;
+    private double longitude;
+    private String location;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
+    private TextView addressTextView;
+    private LocationCallback locationCallback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,6 +85,18 @@ public class facility_profile extends Fragment {
         createUpdateBtn = view.findViewById(R.id.profile_facility_create_btn);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getLastLocation();
+        }
+
+        // temp for testing
+//        latitude = 53.5232;
+//        longitude = -113.5263;
+        location = getLocationDetails(latitude, longitude);
         FacilityManager facilityManager = new FacilityManager();
 
         facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
