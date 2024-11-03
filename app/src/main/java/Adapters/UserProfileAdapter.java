@@ -42,6 +42,9 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
+        } else {
+            holder.profilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+            holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
         }
     }
 

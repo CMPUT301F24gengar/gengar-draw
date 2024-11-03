@@ -176,7 +176,6 @@
         android:id="@+id/register"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black1"
-        android:visibility="gone" />
+        android:background="@color/black1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

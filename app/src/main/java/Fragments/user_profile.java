@@ -143,17 +143,6 @@ public class user_profile extends Fragment {
                     userProfileManager.uploadProfilePicture(ImageURI, deviceID, new UserProfileManager.OnUploadPictureListener() {
                         @Override
                         public void onSuccess(Uri downloadUrl) {
-                            userProfileManager.updateProfilePictureInFireStore(deviceID, ImageURI.toString(), new UserProfileManager.OnUpdateListener() {
-                                @Override
-                                public void onSuccess() {
-
-                                }
-
-                                @Override
-                                public void onError(Exception e) {
-
-                                }
-                            });
 
                         }
 
@@ -186,7 +175,6 @@ public class user_profile extends Fragment {
             Glide.with(this).load(userProfile.getPictureURL()).into(profileImage);
             profileImage.setImageTintList(null);
         }
-
         Log.d("userprof","userprof: "+ userProfile.getPictureURL());
 
     }
