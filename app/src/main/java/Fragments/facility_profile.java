@@ -54,6 +54,11 @@ import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 
+/* SOURCES
+https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/
+https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin
+*/
+
 public class facility_profile extends Fragment {
 
     String deviceID;
