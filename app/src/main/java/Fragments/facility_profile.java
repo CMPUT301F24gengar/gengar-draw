@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationRequest;
+//import android.location.LocationRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationRequest;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -29,8 +32,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
