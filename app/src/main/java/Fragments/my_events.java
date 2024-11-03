@@ -99,7 +99,7 @@ public class my_events extends Fragment {
         createFacilityBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                openHostedEventsFragment();
             }
         });
         return view;
@@ -121,23 +121,4 @@ public class my_events extends Fragment {
         highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
     }
 
-    // replace current fragment with HostedEvents fragment
-    private void openHostedEventsFragment() {
-        if (getActivity() instanceof MainActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new hosted_events()).commit();
-        } else {
-            // Handle error
-        }
-    }
-
-    // replace current fragment with MissingFacility fragment
-    private void openMissingFacilityFragment() {
-        if (getActivity() instanceof MainActivity) {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new facility_profile()).commit();
-        } else {
-            // Handle error
-        }
-    }
 }
