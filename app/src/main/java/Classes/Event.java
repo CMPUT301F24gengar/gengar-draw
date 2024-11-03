@@ -44,8 +44,8 @@ public class Event {
     public CharSequence getRegOpenDate() {
         return (CharSequence) regOpenDate;
     }
-    public CharSequence getRegDeadlineDate() {
-        return (CharSequence) regDeadlineDate;
+    public Date getRegDeadlineDate() {
+        return regDeadlineDate;
     }
     public Date getEventStartDate() {
         return eventStartDate;

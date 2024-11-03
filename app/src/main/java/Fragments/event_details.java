@@ -18,6 +18,10 @@ import com.example.gengardraw.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import Classes.Event;
 import Classes.EventManager;
 
@@ -70,8 +74,8 @@ public class event_details extends Fragment {
                 if (event != null) {
                     // Populate your views with event data
                     ((TextView) view.findViewById(R.id.view_event_title)).setText(event.getEventTitle());
-                    ((TextView) view.findViewById(R.id.view_event_registration_opens)).setText(event.getRegOpenDate().toString());
-                    ((TextView) view.findViewById(R.id.view_event_registration_deadline)).setText(event.getRegDeadlineDate().toString());
+                    ((TextView) view.findViewById(R.id.view_event_registration_opens)).setText(formatDate(event.getEventStartDate()));
+                    ((TextView) view.findViewById(R.id.view_event_registration_deadline)).setText(formatDate(event.getRegDeadlineDate()));
                     ((TextView) view.findViewById(R.id.view_event_max_winners)).setText(String.valueOf(event.getMaxWinners()));
                     ((TextView) view.findViewById(R.id.view_event_description)).setText(event.getEventDetails());
 
@@ -91,5 +95,13 @@ public class event_details extends Fragment {
 
     private void joinEvent(String eventID) {
         // Implement joining event logic
+    }
+
+    private String formatDate(Date date) {
+        if (date != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("d MMM yyyy", Locale.getDefault());
+            return formatter.format(date).toUpperCase(); // Convert to uppercase to match the format
+        }
+        return ""; // Return empty string for null dates
     }
 }
