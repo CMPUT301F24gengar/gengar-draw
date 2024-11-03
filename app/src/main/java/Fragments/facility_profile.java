@@ -110,6 +110,18 @@ public class facility_profile extends Fragment {
             @Override
             public void onFacilityNotExists() {
                 createUpdateBtn.setText("CREATE");
+                fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                } else {
+                    getLastLocation();
+                }
+                // temp for testing
+//                latitude = 53.5232;
+//                longitude = -113.5263;
+                location = getLocationDetails(latitude, longitude);
+                locationEditText.setText(location);
             }
 
             @Override
