@@ -53,6 +53,7 @@ public class my_events extends Fragment {
         //get views
         hostedEventsBtn = (TextView) view.findViewById(R.id.my_events_hosted_btn);
         joinedEventsBtn = (TextView) view.findViewById(R.id.my_events_joined_btn);
+        createFacilityBtn = (TextView) view.findViewById(R.id.my_events_facility_create_btn);
         missingFacilityFrame = (FrameLayout) view.findViewById(R.id.missing_facility);
         eventListView = view.findViewById(R.id.my_events_list);
 
@@ -77,7 +78,6 @@ public class my_events extends Fragment {
                         missingFacilityFrame.setVisibility(View.VISIBLE);
                         eventListView.setVisibility(View.INVISIBLE);
                         setHighlightedButton(hostedEventsBtn);
-                        createFacilityBtn = (TextView) view.findViewById(R.id.my_events_facility_create_btn);
                     }
 
                     @Override
@@ -102,6 +102,7 @@ public class my_events extends Fragment {
                 openFacilityFragment();
             }
         });
+
         return view;
     }
 
