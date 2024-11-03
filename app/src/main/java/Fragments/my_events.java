@@ -61,7 +61,8 @@ public class my_events extends Fragment {
                     @Override
                     public void onFacilityNotExists() {
                         //missing facility layout
-
+                        missingFacilityFrame.setVisibility(View.VISIBLE);
+                        eventListView.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
