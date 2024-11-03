@@ -21,6 +21,7 @@ import Classes.UserProfile;
 import Classes.UserProfileManager;
 import Fragments.create_event;
 import Fragments.facility_profile;
+import Fragments.my_events;
 import Fragments.notifications;
 import Fragments.qr_scanner;
 import Fragments.register;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedButton(navbarMyEventsbutton);
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new my_events()).commit();
             }
         });
         navbarScannerbutton.setOnClickListener(new View.OnClickListener() {
