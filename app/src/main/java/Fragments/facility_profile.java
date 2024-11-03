@@ -150,15 +150,15 @@ public class facility_profile extends Fragment {
 
         createUpdateBtn.setOnClickListener(v -> {
             String name = nameEditText.getText().toString();
-            String location = locationEditText.getText().toString();
+            //String location = locationEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
 
             if (name.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
                 return;
-            } else if (location.isEmpty()) {
-                Toast.makeText(getContext(), "Please enter a location", Toast.LENGTH_SHORT).show();
-                return;
+//            } else if (location.isEmpty()) {
+//                Toast.makeText(getContext(), "Please enter a location", Toast.LENGTH_SHORT).show();
+//                return;
             } else if (description.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
                 return;
@@ -175,7 +175,7 @@ public class facility_profile extends Fragment {
                 facilityManager.updateFacility(facilityProfile,deviceID);
                 Toast.makeText(getContext(), "Facility updated successfully", Toast.LENGTH_SHORT).show();
             } else {
-                facilityProfile = new Facility(name, location, description, null, new ArrayList<>(), deviceID);
+                facilityProfile = new Facility(name, latitude, longitude, location, description, pictureURL, new ArrayList<>(), deviceID);
                 // update the users facilityURL
                 UserProfileManager userProfileManager = new UserProfileManager();
                 userProfileManager.getUserProfile(deviceID , new UserProfileManager.OnUserProfileFetchListener() {
