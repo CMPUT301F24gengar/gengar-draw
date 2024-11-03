@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class my_events extends Fragment {
 
                     @Override
                     public void onError(Exception e) {
-
+                        Log.e("my events","Error checking facility exists", e);
                     }
                 });
             }
