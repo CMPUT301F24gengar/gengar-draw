@@ -121,6 +121,43 @@ public class EventListsManager {
                 .addOnFailureListener(listener::onError);
     }
 
+    public void chooseWinners(String eventID, OnEventListsUpdateListener listener) {
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+                    EventLists eventLists = createEventListsFromDocument(snapshot);
+
+                    List<String> waitingList = eventLists.getWaitingList();
+                    List<String> chosenList = eventLists.getChosenList();
+                    Integer maxWinners = eventLists.getMaxWinners();
+
+                    int slotsLeft = maxWinners - chosenList.size();
+
+                    if (slotsLeft >= waitingList.size()) {
+                        slotsLeft = waitingList.size();
+                    }
+
+                    if (slotsLeft > 0) {
+                        // Shuffle waiting list
+                        Collections.shuffle(waitingList);
+                        List<String> winners = waitingList.subList(0, slotsLeft);
+
+                        // Move winners from waitingList to chosenList
+                        chosenList.addAll(winners);
+                        waitingList.removeAll(winners); // Remove the winners from the waitingList
+
+                        // Update the eventLists object
+                        eventLists.setChosenList(chosenList);
+                        eventLists.setWaitingList(waitingList);
+
+                        // Save the updated eventLists back to Firestore
+                        transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    }
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(listener::onError);
+    }
+
     public interface OnEventListsFetchListener {
         void onEventListsFetched(EventLists eventLists);
         void onEventListsFetchError(Exception e);
