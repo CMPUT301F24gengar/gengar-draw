@@ -44,6 +44,17 @@ public class event_details extends Fragment {
     ImageView qrCodeImage;
     TextView qrCodeBack;
 
+    TextView viewEventTitle;
+    TextView viewEventStartDay;
+    TextView viewEventStartMonth;
+    TextView viewEventStartTime;
+    TextView viewEventRegistrationOpens;
+    TextView viewEventRegistrationDeadline;
+    TextView viewEventMaxWinners;
+    TextView viewEventMaxEntrantsTitle;
+    TextView viewEventMaxEntrants;
+    TextView viewEventDescription;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,6 +75,18 @@ public class event_details extends Fragment {
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
+
+        viewEventTitle = view.findViewById(R.id.view_event_title);
+        viewEventStartDay = view.findViewById(R.id.view_event_day);
+        viewEventStartMonth = view.findViewById(R.id.view_event_month);
+        viewEventStartTime = view.findViewById(R.id.view_event_time);
+        viewEventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
+        viewEventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
+        viewEventMaxWinners = view.findViewById(R.id.view_event_max_winners);
+        viewEventMaxEntrantsTitle = view.findViewById(R.id.view_event_max_entrants_1);
+        viewEventMaxEntrants = view.findViewById(R.id.view_event_max_entrants_2);
+        viewEventDescription = view.findViewById(R.id.view_event_description);
+
 
         // Load event details using eventManager
         loadEventDetails(eventID, view);
@@ -93,14 +116,24 @@ public class event_details extends Fragment {
             @Override
             public void onEventFetched(Event event) {
                 if (event != null) {
-                    // Populate your views with event data
-                    ((TextView) view.findViewById(R.id.view_event_title)).setText(event.getEventTitle());
-                    ((TextView) view.findViewById(R.id.view_event_registration_opens)).setText(formatDate(event.getEventStartDate()));
-                    ((TextView) view.findViewById(R.id.view_event_registration_deadline)).setText(formatDate(event.getRegDeadlineDate()));
-                    ((TextView) view.findViewById(R.id.view_event_max_winners)).setText(String.valueOf(event.getMaxWinners()));
-                    ((TextView) view.findViewById(R.id.view_event_description)).setText(event.getEventDetails());
+                    viewEventTitle.setText(event.getEventTitle());
 
-                    // Load the image using Glide
+                    viewEventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
+                    viewEventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
+                    viewEventStartTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
+
+                    viewEventRegistrationOpens.setText(formatDate(event.getRegOpenDate()));
+                    viewEventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
+                    viewEventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
+                    viewEventDescription.setText(event.getEventDetails());
+                    if (event.getMaxEntrants() != null) {
+                        viewEventMaxEntrantsTitle.setVisibility(View.VISIBLE);
+                        viewEventMaxEntrants.setText(String.valueOf(event.getMaxEntrants()));
+                        viewEventMaxEntrants.setVisibility(View.VISIBLE);
+                    }
+
+
+
                     Glide.with(view.getContext())
                             .load(event.getEventPictureURL())
                             .into((ImageView) view.findViewById(R.id.view_event_picture));
