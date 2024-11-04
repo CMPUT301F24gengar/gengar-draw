@@ -43,4 +43,6 @@
     <string name="proceed">PROCEED</string>
     <string name="search">SEARCH</string>
     <string name="location_unknown">LOCATION UNKNOWN</string>
+    <string name="qr_code">QR CODE</string>
+    <string name="back_arrow"><![CDATA[<]]></string>
 </resources>
