@@ -109,13 +109,6 @@ public class EventLists {
         }
     }
 
-    public void addToLocationHashmap(String userID, Integer latitude, Integer longitude) {
-        Map<String, Integer> coordinates = new HashMap<>();
-        coordinates.put("latitude", latitude);
-        coordinates.put("longitude", longitude);
-        locationList.put(userID, coordinates);
-    }
-
     public void removeFromWaitingList(String userID) {
         waitingList.remove(userID);
     }
