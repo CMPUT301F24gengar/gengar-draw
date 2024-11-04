@@ -38,7 +38,7 @@ public class register extends Fragment {
     private Uri ImageURI=null;
 
     public interface OnRegisterSuccessListener {
-        void loadMainContentFragment();
+        void loadMainContentFragment(UserProfile userProfile);
     }
 
     private OnRegisterSuccessListener mListener;
@@ -102,7 +102,7 @@ public class register extends Fragment {
 
 
             if (mListener != null) {
-                mListener.loadMainContentFragment();
+                mListener.loadMainContentFragment(userProfile);
             }
         });
 

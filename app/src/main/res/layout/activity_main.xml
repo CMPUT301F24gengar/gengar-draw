@@ -13,7 +13,95 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="70dp"
-        tools:ignore="UselessParent" />
+        tools:ignore="UselessParent"></FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/admin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="70dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="20dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/black2"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+
+            <ImageView
+                android:id="@+id/admin_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle_background"
+                android:backgroundTint="@color/red"
+                android:contentDescription="@string/todo"
+                android:padding="5dp"
+                android:src="@drawable/admin"
+                app:tint="@color/black1" />
+
+            <LinearLayout
+                android:id="@+id/admin_buttons_expanded"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:gravity="center|start"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/admin_profile_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/black2"
+                    android:contentDescription="@string/todo"
+                    android:padding="5dp"
+                    android:src="@drawable/user"
+                    app:tint="@color/grey" />
+
+                <ImageView
+                    android:id="@+id/admin_events_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/black2"
+                    android:contentDescription="@string/todo"
+                    android:padding="5dp"
+                    android:src="@drawable/events"
+                    app:tint="@color/grey" />
+
+                <ImageView
+                    android:id="@+id/admin_images_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/black2"
+                    android:contentDescription="@string/todo"
+                    android:padding="8dp"
+                    android:src="@drawable/image"
+                    app:tint="@color/grey" />
+
+                <ImageView
+                    android:id="@+id/admin_facilities_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/black2"
+                    android:contentDescription="@string/todo"
+                    android:padding="8dp"
+                    android:src="@drawable/facility"
+                    app:tint="@color/grey" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -84,11 +172,10 @@
 
     </LinearLayout>
 
-<!--    u wanna put the register fragment in here and remove the frame if user has an account -->
     <FrameLayout
         android:id="@+id/register"
-        android:background="@color/black1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@color/black1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

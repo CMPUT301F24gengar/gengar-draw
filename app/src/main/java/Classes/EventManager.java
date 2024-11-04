@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class EventManager {
     private final FirebaseFirestore db;
@@ -16,6 +17,7 @@ public class EventManager {
     private final CollectionReference qrCodesRef;
     private final FirebaseStorage storage;
     private QRcodeManager qrcodeManager;
+    private EventListsManager eventListsManager;
 
     public EventManager() {
         // Initialize Firestore instance
@@ -24,6 +26,7 @@ public class EventManager {
         qrCodesRef = db.collection("qrcodes");
         storage = FirebaseStorage.getInstance();
         qrcodeManager = new QRcodeManager();
+        eventListsManager = new EventListsManager();
     }
 
     public Event createEventFromDocument(DocumentSnapshot document) {
@@ -60,12 +63,15 @@ public class EventManager {
         );
     }
 
-    public String addEvent(Event event, QRcode qrcode, Uri imageURI, OnUploadPictureListener uploadListener) {
+    public String addEvent(Event event, QRcode qrcode, EventLists eventLists, Uri imageURI, OnUploadPictureListener uploadListener) {
         String docID = eventsRef.document().getId();
+        eventLists.setEventID(docID);
         qrcode.setEventID(docID);
 
         String QRCodeID = qrcodeManager.addQRcode(qrcode);
         event.setQRCode(QRCodeID);
+
+        eventListsManager.addEventLists(eventLists);
 
         eventsRef.document(docID).set(event).addOnSuccessListener(aVoid -> {
             if (imageURI != null) {
@@ -109,8 +115,26 @@ public class EventManager {
 
     public void uploadEventPicture(Uri picUri, String docID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("eventPictures/" + docID);
-        storageRef.putFile(picUri)
-                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess))
+        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
+
+        imageFilePath.putFile(picUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        listener.onSuccess(uri);
+                        updateEventPictureInFirestore(docID, downloadUrl, new OnUpdatePictureListener() {
+                            @Override
+                            public void onSuccess() {
+                                // Handle success if needed
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                // Handle error if needed
+                            }
+                        });
+                    });
+                })
                 .addOnFailureListener(listener::onError);
     }
 

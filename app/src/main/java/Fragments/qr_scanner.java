@@ -10,32 +10,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.qrcode.encoder.QRCode;
+
+import Classes.Event;
+import Classes.EventManager;
+import Classes.QRcode;
+import Classes.QRcodeManager;
 
 public class qr_scanner extends Fragment {
 
-    private boolean signup;
     private String eventID;
+    private EventManager eventManager;
+    private QRcode qrcode;;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
-
-        FrameLayout viewBtn = view.findViewById(R.id.qr_scanner_view_btn);
-        FrameLayout signUpBtn = view.findViewById(R.id.qr_scanner_signup_btn);
-
-        viewBtn.setOnClickListener(v -> {
-            signup = false;
-            initQRCodeScanner();
-        });
-
-        signUpBtn.setOnClickListener(v -> {
-            signup = true;
-            initQRCodeScanner();
-        });
-
+        initQRCodeScanner();
         return view;
     }
 
@@ -63,14 +60,68 @@ public class qr_scanner extends Fragment {
         }
     }
 
-    // Handles the scanned data
-    private void handleScannedData(String eventID) {
-        if (signup) {
-            Log.d("QRScanner", "Sign up with scanned data: " + eventID);
-            // TODO : Add logic for signing up here
-        } else {
-            Log.d("QRScanner", "View details with scanned data: " + eventID);
-            // TODO : Add logic for viewing details here
-        }
+
+    private void handleScannedData(String QRcode) {
+        Log.d("QRScanner", "scanned data: " + QRcode);
+
+        // Create an instance of QRcodeManager
+        QRcodeManager qrCodeManager = new QRcodeManager();
+        eventManager = new EventManager();
+        // Search for the QR code
+        qrCodeManager.searchQRcode(QRcode, new QRcodeManager.OnQRcodeSearchListener() {
+            @Override
+            public void onQRcodeFound(QRcode qrCodeObject) {
+                // Retrieve the eventID from the found QR code object
+                String eventID = qrCodeObject.getEventID();
+                Log.d("QRScanner", "scanned data: " + QRcode);
+
+                // Fetch the event details using the eventID
+                eventManager.getEvent(eventID, new EventManager.OnEventFetchListener() {
+                    @Override
+                    public void onEventFetched(Event event) {
+                        if (event != null) {
+                            // Prepare to navigate to the event details fragment
+                            Bundle bundle = new Bundle();
+                            bundle.putString("eventID", eventID);
+
+                            event_details eventDetailsFragment = new event_details();
+                            eventDetailsFragment.setArguments(bundle); // Pass the eventID to the fragment
+                            // Navigate to event details fragment
+
+                            if (getActivity() instanceof MainActivity) {
+                                MainActivity activity = (MainActivity) getActivity();
+                                activity.getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.main_content, eventDetailsFragment) // Replace with your container ID
+                                        .addToBackStack(null) // Optional: to add to back stack
+                                        .commit();
+                            } else {
+                                // Handle the error
+                                Log.e("QRScanner", "Activity is not an instance of MainActivity");
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Event not found!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onEventFetchError(Exception e) {
+                        Log.e("QRScanner", "Error fetching event: ", e);
+                        Toast.makeText(getContext(), "Error fetching event details.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onQRcodeNotFound() {
+                Toast.makeText(getContext(), "QR code not found!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("QRScanner", "Error searching QR code: ", e);
+                Toast.makeText(getContext(), "Error occurred while searching QR code.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
