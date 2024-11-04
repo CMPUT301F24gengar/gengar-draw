@@ -1,6 +1,8 @@
 package Classes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EventLists {
     private String eventID;
@@ -11,10 +13,11 @@ public class EventLists {
     private List<String> chosenList;
     private List<String> cancelledList;
     private List<String> winnersList;
-    private List<String> locationList;
+    Map<String, Object> locationList;
 
     public EventLists() {}
-    public EventLists(String eventID, Integer maxWinners, Integer maxEntrants, boolean enableGeolocation, List<String> waitingList, List<String> chosenList, List<String> cancelledList, List<String> winnersList, List<String> locationList) {
+
+    public EventLists(String eventID, Integer maxWinners, Integer maxEntrants, boolean enableGeolocation, List<String> waitingList, List<String> chosenList, List<String> cancelledList, List<String> winnersList, Map<String, Object> locationList) {
         this.eventID = eventID;
         this.maxWinners = maxWinners;
         this.maxEntrants = maxEntrants;
@@ -50,7 +53,7 @@ public class EventLists {
     public List<String> getWinnersList() {
         return winnersList;
     }
-    public List<String> getLocationList() {
+    public Map<String, Object> getLocationList() {
         return locationList;
     }
 
@@ -78,8 +81,70 @@ public class EventLists {
     public void setWinnersList(List<String> winnersList) {
         this.winnersList = winnersList;
     }
-    public void setLocationList(List<String> locationList) {
+    public void setLocationList(Map<String, Object> locationList) {
         this.locationList = locationList;
+    }
+
+    public void addToWaitingList(String userID) {
+        if (!waitingList.contains(userID) && !isWaitingListFull() ) {
+            waitingList.add(userID);
+        }
+    }
+
+    public void addToChosenList(String userID) {
+        if (!chosenList.contains(userID) && !isChosenListFull() ) {
+            chosenList.add(userID);
+        }
+    }
+
+    public void addToCancelledList(String userID) {
+        if (!cancelledList.contains(userID)) {
+            cancelledList.add(userID);
+        }
+    }
+
+    public void addToWinnersList(String userID) {
+        if (!winnersList.contains(userID)) {
+            winnersList.add(userID);
+        }
+    }
+
+    public void addToLocationHashmap(String userID, Integer latitude, Integer longitude) {
+        Map<String, Integer> coordinates = new HashMap<>();
+        coordinates.put("latitude", latitude);
+        coordinates.put("longitude", longitude);
+        locationList.put(userID, coordinates);
+    }
+
+    public void removeFromWaitingList(String userID) {
+        waitingList.remove(userID);
+    }
+
+    public void removeFromChosenList(String userID) {
+        chosenList.remove(userID);
+    }
+
+    public void removeFromCancelledList(String userID) {
+        cancelledList.remove(userID);
+    }
+
+    public void removeFromWinnersList(String userID) {
+        winnersList.remove(userID);
+    }
+
+    public void removeFromLocationHashmap(String userID) {
+        locationList.remove(userID);
+    }
+
+    public boolean isWaitingListFull() {
+        if (maxEntrants == null) {
+            return false;
+        }
+        return waitingList.size() >= maxEntrants;
+    }
+
+    public boolean isChosenListFull() {
+        return chosenList.size() >= maxWinners;
     }
 
 }
