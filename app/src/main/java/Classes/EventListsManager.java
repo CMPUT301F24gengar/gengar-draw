@@ -104,7 +104,7 @@ public class EventListsManager {
                     List<String> waitingList = eventLists.getWaitingList();
 
                     if (waitingList.contains(userID)) {
-                        eventLists.getWaitingList().remove(userID);
+                        eventLists.removeFromWaitingList(userID);
 
                         // Remove user from locationList if present
 //                        Map<String, Object> locationList = eventLists.getLocationList();
@@ -137,24 +137,50 @@ public class EventListsManager {
                     }
 
                     if (slotsLeft > 0) {
-                        // Shuffle waiting list
                         Collections.shuffle(waitingList);
                         List<String> winners = waitingList.subList(0, slotsLeft);
 
-                        // Move winners from waitingList to chosenList
                         chosenList.addAll(winners);
                         waitingList.removeAll(winners); // Remove the winners from the waitingList
 
-                        // Update the eventLists object
                         eventLists.setChosenList(chosenList);
                         eventLists.setWaitingList(waitingList);
 
-                        // Save the updated eventLists back to Firestore
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     }
                     return null;
                 })
                 .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(listener::onError);
+    }
+
+    public void addUserToCancelledList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+                    EventLists eventLists = createEventListsFromDocument(snapshot);
+
+                    eventLists.removeFromChosenList(userID);
+                    eventLists.addToCancelledList(userID);
+
+                    transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> {listener.onSuccess();})
+                .addOnFailureListener(listener::onError);
+    }
+
+    public void addUserToWinnersList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+                    EventLists eventLists = createEventListsFromDocument(snapshot);
+
+                    eventLists.removeFromChosenList(userID);
+                    eventLists.addToWinnersList(userID);
+
+                    transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> {listener.onSuccess();})
                 .addOnFailureListener(listener::onError);
     }
 
