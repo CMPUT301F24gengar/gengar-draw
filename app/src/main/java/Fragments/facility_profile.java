@@ -114,9 +114,6 @@ public class facility_profile extends Fragment {
             getLastLocation();
         }
 
-        // temp for testing
-        latitude = 53.5232;
-        longitude = -113.5263;
         location = getLocationDetails(latitude, longitude);
         FacilityManager facilityManager = new FacilityManager();
 
@@ -139,11 +136,9 @@ public class facility_profile extends Fragment {
                 } else {
                     getLastLocation();
                 }
-                // temp for testing
-                latitude = 53.5232;
-                longitude = -113.5263;
-                location = getLocationDetails(latitude, longitude);
-                locationEditText.setText(location);
+
+//                location = getLocationDetails(latitude, longitude);
+//                locationEditText.setText(location);
             }
 
             @Override
@@ -174,6 +169,11 @@ public class facility_profile extends Fragment {
             String name = nameEditText.getText().toString();
             //String location = locationEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (name.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
@@ -299,15 +299,12 @@ public class facility_profile extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Location> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
-                                Location location = task.getResult();
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
+                                Location location2 = task.getResult();
+                                latitude = location2.getLatitude();
+                                longitude = location2.getLongitude();
+                                location = getLocationDetails(latitude, longitude);
+                                locationEditText.setText(location);
 
-                                // temp for testing
-//                                latitude = 53.5232;
-//                                longitude = -113.5263;
-
-                                Log.d("facility_profile", "getLastLocation " + location + " " + latitude + " " + longitude);
                             } else {
                                 // Handle the case where Location is null
                             }
@@ -317,14 +314,6 @@ public class facility_profile extends Fragment {
             // Handle the case where permission is not granted
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         }
-    }
-
-    private void getLocation(LocationRequest locationRequest) {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     @Override
