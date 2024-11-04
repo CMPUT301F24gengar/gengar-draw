@@ -45,4 +45,7 @@
     <string name="location_unknown">LOCATION UNKNOWN</string>
     <string name="qr_code">QR CODE</string>
     <string name="back_arrow"><![CDATA[<]]></string>
+    <string name="join">JOIN</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
 </resources>
