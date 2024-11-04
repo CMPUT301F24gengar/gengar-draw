@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EventListsManager {
     private FirebaseFirestore db;
@@ -67,6 +69,8 @@ public class EventListsManager {
     }
 
     public void addUserToWaitingList(String eventID, String userID, OnEventListsUpdateListener listener, Double latitude, Double longitude) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean added = new AtomicBoolean(false);
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -76,6 +80,8 @@ public class EventListsManager {
 
                     if ((maxEntrants == null || waitingList.size() < maxEntrants) && !waitingList.contains(userID)) {
                         eventLists.addToWaitingList(userID);
+                        message.set("Joined the waiting list");
+                        added.set(true);
 
                         // If latitude and longitude are provided [enabled geolocation], add them to the location list
                         if (latitude != null && longitude != null) {
@@ -89,14 +95,19 @@ public class EventListsManager {
                         }
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    } else {
+                        message.set("Waiting list is full");
+                        added.set(false);
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> {listener.onSuccess();})
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
     public void removeUserFromWaitingList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean removed = new AtomicBoolean(false);
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -105,6 +116,8 @@ public class EventListsManager {
 
                     if (waitingList.contains(userID)) {
                         eventLists.removeFromWaitingList(userID);
+                        message.set("Left the waiting list");
+                        removed.set(true);
 
                         // Remove user from locationList if present
 //                        Map<String, Object> locationList = eventLists.getLocationList();
@@ -114,14 +127,19 @@ public class EventListsManager {
 //                        }
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    } else {
+                        message.set("Not in the waiting list");
+                        removed.set(false);
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), removed.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
     public void chooseWinners(String eventID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean chosen = new AtomicBoolean(false);
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -146,15 +164,23 @@ public class EventListsManager {
                         eventLists.setChosenList(chosenList);
                         eventLists.setWaitingList(waitingList);
 
+                        message.set("Winners chosen");
+                        chosen.set(true);
+
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    } else {
+                        message.set("Winners list is full");
+                        chosen.set(false);
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
     public void addUserToCancelledList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean cancelled = new AtomicBoolean(false);
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -162,14 +188,19 @@ public class EventListsManager {
                     eventLists.removeFromChosenList(userID);
                     eventLists.addToCancelledList(userID);
 
+                    message.set("Cancelled");
+                    cancelled.set(true);
+
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> {listener.onSuccess();})
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
     public void addUserToWinnersList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean added = new AtomicBoolean(false);
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -177,10 +208,13 @@ public class EventListsManager {
                     eventLists.removeFromChosenList(userID);
                     eventLists.addToWinnersList(userID);
 
+                    message.set("Accepted");
+                    added.set(true);
+
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> {listener.onSuccess();})
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -190,7 +224,7 @@ public class EventListsManager {
     }
 
     public interface OnEventListsUpdateListener {
-        void onSuccess();
+        void onSuccess(String message, boolean boolValue);
         void onError(Exception e);
     }
 
