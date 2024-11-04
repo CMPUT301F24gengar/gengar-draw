@@ -26,11 +26,14 @@ import com.example.gengardraw.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import Classes.Event;
+import Classes.EventLists;
 import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
@@ -171,8 +174,10 @@ public class create_event extends Fragment {
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
             QRcode qrcode = new QRcode();
 
+            EventLists eventLists = new EventLists(null, maxWinnersInt, maxEntrantsInt, enableGeolocation, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new HashMap<>());
+
             String docID;
-            docID = eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
+            docID = eventManager.addEvent(event, qrcode, eventLists, imageURI, new EventManager.OnUploadPictureListener() {
                 @Override
                 public void onSuccess(Uri downloadUrl) {
                     Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
@@ -185,6 +190,7 @@ public class create_event extends Fragment {
             });
 
             facilityProfile.addEvent(docID);
+            
             facilityManager.updateFacility(facilityProfile, deviceID);
 
         });

@@ -17,6 +17,7 @@ public class EventManager {
     private final CollectionReference qrCodesRef;
     private final FirebaseStorage storage;
     private QRcodeManager qrcodeManager;
+    private EventListsManager eventListsManager;
 
     public EventManager() {
         // Initialize Firestore instance
@@ -25,6 +26,7 @@ public class EventManager {
         qrCodesRef = db.collection("qrcodes");
         storage = FirebaseStorage.getInstance();
         qrcodeManager = new QRcodeManager();
+        eventListsManager = new EventListsManager();
     }
 
     public Event createEventFromDocument(DocumentSnapshot document) {
@@ -61,12 +63,15 @@ public class EventManager {
         );
     }
 
-    public String addEvent(Event event, QRcode qrcode, Uri imageURI, OnUploadPictureListener uploadListener) {
+    public String addEvent(Event event, QRcode qrcode, EventLists eventLists, Uri imageURI, OnUploadPictureListener uploadListener) {
         String docID = eventsRef.document().getId();
+        eventLists.setEventID(docID);
         qrcode.setEventID(docID);
 
         String QRCodeID = qrcodeManager.addQRcode(qrcode);
         event.setQRCode(QRCodeID);
+
+        eventListsManager.addEventLists(eventLists);
 
         eventsRef.document(docID).set(event).addOnSuccessListener(aVoid -> {
             if (imageURI != null) {
