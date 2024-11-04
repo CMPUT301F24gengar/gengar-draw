@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import Classes.UserProfile;
 import Classes.UserProfileManager;
+import Fragments.admin_facility_profiles;
 import Fragments.admin_user_profiles;
 import Fragments.create_event;
 import Fragments.facility_profile;
@@ -177,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
             @Override
             public void onClick(View v) {
                 setHighlightedAdminButton(adminFacilitiesButton, isExpanded, false);
+                setHighlightedButton(highlightedButton, true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new admin_facility_profiles()).commit();
             }
         });
     }
