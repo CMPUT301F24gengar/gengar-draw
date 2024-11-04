@@ -1,22 +1,29 @@
 package Fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,6 +37,12 @@ public class event_details extends Fragment {
 
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
+    ImageView eventPicture;
+    TextView viewEventQRCode;
+    FrameLayout joinButton;
+    LinearLayout qrCodeContainer;
+    ImageView qrCodeImage;
+    TextView qrCodeBack;
 
     @Nullable
     @Override
@@ -45,9 +58,12 @@ public class event_details extends Fragment {
         eventManager = new EventManager();
 
         // Initialize Views
-        ImageView eventPicture = view.findViewById(R.id.view_event_picture);
-        TextView viewEventQRCode = view.findViewById(R.id.view_qr_code);
-        FrameLayout joinButton = view.findViewById(R.id.view_event_btn);
+        eventPicture = view.findViewById(R.id.view_event_picture);
+        viewEventQRCode = view.findViewById(R.id.view_qr_code);
+        joinButton = view.findViewById(R.id.view_event_btn);
+        qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
+        qrCodeImage = view.findViewById(R.id.qr_code_image);
+        qrCodeBack = view.findViewById(R.id.qr_code_back);
 
         // Load event details using eventManager
         loadEventDetails(eventID, view);
@@ -56,6 +72,11 @@ public class event_details extends Fragment {
         viewEventQRCode.setOnClickListener(v -> {
             // Handle View QR Code action
             // Show QR code logic
+            qrCodeContainer.setVisibility(View.VISIBLE);
+        });
+
+        qrCodeBack.setOnClickListener(v -> {
+            qrCodeContainer.setVisibility(View.GONE);
         });
 
         joinButton.setOnClickListener(v -> {
@@ -83,6 +104,9 @@ public class event_details extends Fragment {
                     Glide.with(view.getContext())
                             .load(event.getEventPictureURL())
                             .into((ImageView) view.findViewById(R.id.view_event_picture));
+
+                    generateQRCode(event.getQRCode());
+
                 }
             }
 
@@ -91,6 +115,18 @@ public class event_details extends Fragment {
                 // Handle the error while fetching the event
             }
         });
+    }
+
+    private void generateQRCode(String QRcode){
+        try {
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(QRcode, BarcodeFormat.QR_CODE, 300, 300);
+            qrCodeImage.setImageBitmap(bitmap); // Set the generated QR code to ImageView
+            Log.e("event_details", "QR code generated successfully");
+        } catch (WriterException e) {
+            Log.e("event_details", "Error generating QR code: " + e.getMessage(), e);
+            Toast.makeText(getContext(), "Failed to generate QR code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void joinEvent(String eventID) {
