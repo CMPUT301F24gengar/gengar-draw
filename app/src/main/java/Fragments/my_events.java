@@ -70,6 +70,7 @@ public class my_events extends Fragment {
                     @Override
                     public void onFacilityExists(Facility facility) {
                         //list layout
+                        setHighlightedButton(hostedEventsBtn);
                     }
 
                     @Override
