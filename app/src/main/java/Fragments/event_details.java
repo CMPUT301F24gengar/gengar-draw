@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,18 +29,25 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import Classes.Event;
+import Classes.EventLists;
+import Classes.EventListsManager;
 import Classes.EventManager;
 
 
 public class event_details extends Fragment {
 
+    private String deviceID;
+    private Date currentDate;
+
+    private EventListsManager eventListsManager = new EventListsManager();
+
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
     ImageView eventPicture;
     TextView viewEventQRCode;
-    TextView joinButton;
     LinearLayout qrCodeContainer;
     ImageView qrCodeImage;
     TextView qrCodeBack;
@@ -54,6 +62,19 @@ public class event_details extends Fragment {
     TextView viewEventMaxEntrantsTitle;
     TextView viewEventMaxEntrants;
     TextView viewEventDescription;
+
+    TextView join_leaveButton;
+    TextView chooseEntrantsButton;
+
+    LinearLayout accept_declineLayout;
+    TextView acceptButton;
+    TextView declineButton;
+
+    TextView waitingListButton;
+    TextView mapButton;
+    TextView chosenEntrantsButton;
+    TextView cancelledEntrantsButton;
+    TextView winnersListButton;
 
     @Nullable
     @Override
@@ -71,7 +92,6 @@ public class event_details extends Fragment {
         // Initialize Views
         eventPicture = view.findViewById(R.id.view_event_picture);
         viewEventQRCode = view.findViewById(R.id.view_qr_code);
-        joinButton = view.findViewById(R.id.view_event_join_leave);
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
@@ -87,25 +107,30 @@ public class event_details extends Fragment {
         viewEventMaxEntrants = view.findViewById(R.id.view_event_max_entrants_2);
         viewEventDescription = view.findViewById(R.id.view_event_description);
 
+        join_leaveButton = view.findViewById(R.id.view_event_join_leave);
+        chooseEntrantsButton = view.findViewById(R.id.view_event_choose_entrants);
 
-        // Load event details using eventManager
-        loadEventDetails(eventID, view);
+        accept_declineLayout = view.findViewById(R.id.view_event_accept_decline);
+        acceptButton = view.findViewById(R.id.view_event_accept);
+        declineButton = view.findViewById(R.id.view_event_decline);
 
-        // Set Click Listeners
+        waitingListButton = view.findViewById(R.id.view_event_waiting_list);
+        mapButton = view.findViewById(R.id.view_event_map);
+        chosenEntrantsButton = view.findViewById(R.id.view_event_chosen_entrants);
+        cancelledEntrantsButton = view.findViewById(R.id.view_event_cancelled_entrants);
+        winnersListButton = view.findViewById(R.id.view_event_winners);
+
         viewEventQRCode.setOnClickListener(v -> {
-            // Handle View QR Code action
-            // Show QR code logic
             qrCodeContainer.setVisibility(View.VISIBLE);
         });
-
         qrCodeBack.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.GONE);
         });
 
-        joinButton.setOnClickListener(v -> {
-            // Handle Join action
-            joinEvent(eventID); // Join the event
-        });
+        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        currentDate = new Date();
+
+        loadEventDetails(eventID, view);
 
         return view;
     }
@@ -131,14 +156,13 @@ public class event_details extends Fragment {
                         viewEventMaxEntrants.setText(String.valueOf(event.getMaxEntrants()));
                         viewEventMaxEntrants.setVisibility(View.VISIBLE);
                     }
-
-
-
                     Glide.with(view.getContext())
                             .load(event.getEventPictureURL())
                             .into((ImageView) view.findViewById(R.id.view_event_picture));
 
                     generateQRCode(event.getQRCode());
+
+                    setupButtons(event, eventID);
 
                 }
             }
@@ -146,6 +170,28 @@ public class event_details extends Fragment {
             @Override
             public void onEventFetchError(Exception e) {
                 // Handle the error while fetching the event
+            }
+        });
+    }
+
+    private void setupButtons(Event event, String eventID) {
+        eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+            @Override
+            public void onEventListsFetched(EventLists eventLists) {
+                if (eventLists != null) {
+
+                    Toast.makeText(getContext(), "Event found", Toast.LENGTH_SHORT).show();
+                    if (Objects.equals(deviceID, eventID)) {
+                        join_leaveButton.setVisibility(View.VISIBLE);
+                    } else {
+                        chooseEntrantsButton.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            }
+            @Override
+            public void onEventListsFetchError(Exception e) {
+                // Handle the error while fetching the event lists
             }
         });
     }
@@ -160,10 +206,6 @@ public class event_details extends Fragment {
             Log.e("event_details", "Error generating QR code: " + e.getMessage(), e);
             Toast.makeText(getContext(), "Failed to generate QR code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void joinEvent(String eventID) {
-        // Implement joining event logic
     }
 
     private String formatDate(Date date) {
