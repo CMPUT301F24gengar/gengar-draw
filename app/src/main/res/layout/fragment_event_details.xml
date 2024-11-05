@@ -328,38 +328,51 @@
                         android:textColor="@color/green"
                         android:textSize="16sp" />
 
-                    <FrameLayout
-                        android:id="@+id/view_event_btn"
+                    <TextView
+                        android:id="@+id/view_event_join_leave"
+                        style="@style/main"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:background="@drawable/rounded_corner"
-                        android:backgroundTint="@color/green">
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="@string/join"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
-                        <TextView
-                            style="@style/main"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/join"
-                            android:textAlignment="center"
-                            android:textColor="@color/black1"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-                    </FrameLayout>
+                    <TextView
+                        android:id="@+id/view_event_choose_entrants"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="CHOOSE ENTRANTS"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/view_event_accept_decline"
                         android:layout_width="match_parent"
-                        android:visibility="gone"
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp">
+                        android:layout_marginEnd="10dp"
+                        android:visibility="gone">
 
                         <TextView
+                            android:id="@+id/view_event_accept"
                             style="@style/main"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -375,6 +388,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/view_event_decline"
                             style="@style/main"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -390,6 +404,91 @@
                             android:textStyle="bold" />
 
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/view_event_waiting_list"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="VIEW WAITING LIST"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/view_event_map"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="VIEW MAP"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/view_event_chosen_entrants"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="VIEW CHOSEN ENTRANTS"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/view_event_cancelled_entrants"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="VIEW CANCELLED ENTRANTS"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/view_event_winners"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/rounded_corner"
+                        android:backgroundTint="@color/green"
+                        android:gravity="center"
+                        android:text="VIEW WINNERS"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 

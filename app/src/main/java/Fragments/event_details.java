@@ -39,7 +39,7 @@ public class event_details extends Fragment {
     private EventManager eventManager;
     ImageView eventPicture;
     TextView viewEventQRCode;
-    FrameLayout joinButton;
+    TextView joinButton;
     LinearLayout qrCodeContainer;
     ImageView qrCodeImage;
     TextView qrCodeBack;
@@ -71,7 +71,7 @@ public class event_details extends Fragment {
         // Initialize Views
         eventPicture = view.findViewById(R.id.view_event_picture);
         viewEventQRCode = view.findViewById(R.id.view_qr_code);
-        joinButton = view.findViewById(R.id.view_event_btn);
+        joinButton = view.findViewById(R.id.view_event_join_leave);
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
