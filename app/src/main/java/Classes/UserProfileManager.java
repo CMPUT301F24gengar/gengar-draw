@@ -124,25 +124,23 @@ public class UserProfileManager {
 
     public void uploadProfilePicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
-        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
 
-        imageFilePath.putFile(picUri)
+        storageRef.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
-                        listener.onSuccess(uri);
                         updateProfilePictureInFireStore(deviceID, downloadUrl, new OnUpdateListener() {
                             @Override
                             public void onSuccess() {
-                                // Handle success if needed
+                                listener.onSuccess(uri);
                             }
 
                             @Override
                             public void onError(Exception e) {
-                                // Handle error if needed
+                                listener.onError(e);
                             }
                         });
-                    });
+                    }).addOnFailureListener(listener::onError);
                 })
                 .addOnFailureListener(listener::onError);
     }

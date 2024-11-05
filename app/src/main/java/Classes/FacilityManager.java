@@ -94,25 +94,23 @@ public class FacilityManager {
     // Upload a facility picture
     public void uploadFacilityPicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
-        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
 
-        imageFilePath.putFile(picUri)
+        storageRef.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
-                        listener.onSuccess(uri);
                         updateFacilityPictureInFirestore(deviceID, downloadUrl, new OnUpdateListener() {
                             @Override
                             public void onSuccess() {
-                                // Handle success if needed
+                                listener.onSuccess(uri);
                             }
 
                             @Override
                             public void onError(Exception e) {
-                                // Handle error if needed
+                                listener.onError(e);
                             }
                         });
-                    });
+                    }).addOnFailureListener(listener::onError);
                 })
                 .addOnFailureListener(listener::onError);
     }
@@ -128,6 +126,7 @@ public class FacilityManager {
     // Delete a facility picture
     public void deleteFacilityPicture(String deviceID, OnDeleteListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
+
         storageRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     db.collection("facilities").document(deviceID)
@@ -137,6 +136,7 @@ public class FacilityManager {
                 })
                 .addOnFailureListener(listener::onError);
     }
+
     // Listener interfaces
     public interface OnFacilityCheckListener {
         void onFacilityExists(Facility facility);
