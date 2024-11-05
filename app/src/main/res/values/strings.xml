@@ -42,4 +42,7 @@
     <string name="you_are_not_an_organizer_would_you_like_to_create_a_facility">YOU ARE NOT AN ORGANIZER. WOULD YOU LIKE TO CREATE A FACILITY?</string>
     <string name="proceed">PROCEED</string>
     <string name="search">SEARCH</string>
+    <string name="user_profile_images">USER PROFILE IMAGES</string>
+    <string name="facility_images">FACILITY IMAGES</string>
+    <string name="event_images">EVENT IMAGES</string>
 </resources>
