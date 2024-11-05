@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -39,8 +40,15 @@ import Classes.EventManager;
 
 public class event_details extends Fragment {
 
+    private Boolean buttonDebounce = false;
+
     private String deviceID;
     private Date currentDate;
+
+    private Boolean inWaitingList;
+    private Boolean inChosenList;
+    private Boolean inCancelledList;
+    private Boolean inWinnersList;
 
     private EventListsManager eventListsManager = new EventListsManager();
 
@@ -175,15 +183,68 @@ public class event_details extends Fragment {
     }
 
     private void setupButtons(Event event, String eventID) {
+        join_leaveButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            if (!inWaitingList) {
+                eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                    @Override
+                    public void onSuccess(String message, boolean boolValue) {
+                        inWaitingList = boolValue;
+                        setJoinLeaveButtonText(inWaitingList);
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        buttonDebounce = false;
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        buttonDebounce = false;
+                    }
+                }
+                ,null, null);
+            } else {
+                eventListsManager.removeUserFromWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                    @Override
+                    public void onSuccess(String message, boolean boolValue) {
+                        inWaitingList = !boolValue;
+                        setJoinLeaveButtonText(inWaitingList);
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        buttonDebounce = false;
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        buttonDebounce = false;
+                    }
+                });
+            }
+        });
+
+
         eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+
+            String organizerID = event.getOrganizerID();
+
+            Date regOpenDate = event.getRegOpenDate();
+            Date regDeadlineDate = event.getRegDeadlineDate();
+            Date eventStartDate = event.getEventStartDate();
+
             @Override
             public void onEventListsFetched(EventLists eventLists) {
                 if (eventLists != null) {
 
-                    Toast.makeText(getContext(), "Event found", Toast.LENGTH_SHORT).show();
-                    if (Objects.equals(deviceID, eventID)) {
-                        join_leaveButton.setVisibility(View.VISIBLE);
-                    } else {
+                    inWaitingList = eventLists.getWaitingList().contains(deviceID);
+                    inChosenList = eventLists.getChosenList().contains(deviceID);
+                    inCancelledList = eventLists.getCancelledList().contains(deviceID);
+                    inWinnersList = eventLists.getWinnersList().contains(deviceID);
+
+                    if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
+                        if (currentDate.before(regOpenDate)) {
+                            // do nothing
+                        } else if (currentDate.before(regDeadlineDate)) {
+                            join_leaveButton.setVisibility(View.VISIBLE);
+                            setJoinLeaveButtonText(inWaitingList);
+                        }
+                    } else { // ORGANIZER
                         chooseEntrantsButton.setVisibility(View.VISIBLE);
                     }
 
@@ -194,6 +255,7 @@ public class event_details extends Fragment {
                 // Handle the error while fetching the event lists
             }
         });
+
     }
 
     private void generateQRCode(String QRcode){
@@ -214,5 +276,15 @@ public class event_details extends Fragment {
             return formatter.format(date).toUpperCase(); // Convert to uppercase to match the format
         }
         return ""; // Return empty string for null dates
+    }
+
+    public void setJoinLeaveButtonText(Boolean inWaitingList) {
+        if (inWaitingList) {
+            join_leaveButton.setText("LEAVE");
+            join_leaveButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red)));
+        } else {
+            join_leaveButton.setText("JOIN");
+            join_leaveButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
+        }
     }
 }
