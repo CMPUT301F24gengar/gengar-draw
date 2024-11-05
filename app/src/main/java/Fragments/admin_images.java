@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -48,6 +49,9 @@ public class admin_images extends Fragment {
     private TextView facilityImagesButton;
     private TextView eventImagesButton;
 
+    TextView highlightedButton;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,12 +70,12 @@ public class admin_images extends Fragment {
         userProfileImagesButton = view.findViewById(R.id.admin_user_profile_images_button);
         facilityImagesButton = view.findViewById(R.id.admin_facility_images_button);
         eventImagesButton = view.findViewById(R.id.admin_event_images_button);
+        highlightedButton = userProfileImagesButton;
 
         userProfileImagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //for now toast message, replace with background color change
-                Toast.makeText(getActivity(),"user button clicked!",Toast.LENGTH_LONG).show();
+                setHighlightedButton(userProfileImagesButton);
 
                 userProfiles.clear();
                 fetchUserProfiles(new OnProfilesLoadedListener() {
@@ -87,8 +91,7 @@ public class admin_images extends Fragment {
         facilityImagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //for now toast message, replace with background color change
-                Toast.makeText(getActivity(),"facility button clicked!",Toast.LENGTH_LONG).show();
+                setHighlightedButton(facilityImagesButton);
 
                 facilities.clear(); //clear if already loaded from previous click.
                 fetchFacilities(new OnFacilitiesLoadedListener() {
@@ -106,6 +109,7 @@ public class admin_images extends Fragment {
         fetchUserProfiles(new OnProfilesLoadedListener() {
             @Override
             public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                setHighlightedButton(userProfileImagesButton);
 
                 //adding userProfiles to adapter
                 recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
@@ -201,6 +205,12 @@ public class admin_images extends Fragment {
                 });
     }
 
-
+    private void setHighlightedButton(TextView button) {
+        highlightedButton.setTextColor(getResources().getColor(R.color.grey));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black1)));
+        highlightedButton = button;
+        highlightedButton.setTextColor(getResources().getColor(R.color.black1));
+        highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
+    }
 
 }
