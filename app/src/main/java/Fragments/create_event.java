@@ -58,6 +58,8 @@ public class create_event extends Fragment {
     private Uri imageURI;
     private Facility facilityProfile;
 
+    private boolean buttonClicked = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
@@ -119,6 +121,10 @@ public class create_event extends Fragment {
         });
 
         createBtn.setOnClickListener(v -> {
+            if (buttonClicked) {
+                return;
+            }
+
             String title = titleEditText.getText().toString();
             Date registrationOpens = getDateFromEditText(registrationOpensEditText);
             Date registrationDeadline = getDateFromEditText(registrationDeadlineEditText);
@@ -168,6 +174,9 @@ public class create_event extends Fragment {
                 Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            buttonClicked = true;
+
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
             Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
@@ -190,7 +199,6 @@ public class create_event extends Fragment {
             });
 
             facilityProfile.addEvent(docID);
-            
             facilityManager.updateFacility(facilityProfile, deviceID);
 
         });
