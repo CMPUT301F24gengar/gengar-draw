@@ -26,9 +26,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+import Adapters.EventImageAdapter;
 import Adapters.FacilityImageAdapter;
 import Adapters.UserProfileAdapter;
 import Adapters.UserProfileImageAdapter;
+import Classes.Event;
+import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.UserProfile;
@@ -42,9 +45,13 @@ public class admin_images extends Fragment {
     private ArrayList<UserProfile> userProfiles;
     private FacilityManager facilityManager;
     private ArrayList<Facility> facilities;
-    private RecyclerView.LayoutManager layoutManager;
+    private EventManager eventManager;
+    private ArrayList <Event> events;
+    private RecyclerView.LayoutManager gridLayoutManager;
+    private RecyclerView.LayoutManager linearLayoutManager;
     private UserProfileImageAdapter userProfileImageAdapter;
     private FacilityImageAdapter facilityImageAdapter;
+    private EventImageAdapter eventImageAdapter;
     private TextView userProfileImagesButton;
     private TextView facilityImagesButton;
     private TextView eventImagesButton;
@@ -64,7 +71,10 @@ public class admin_images extends Fragment {
         userProfiles = new ArrayList<>();
         facilityManager = new FacilityManager();
         facilities = new ArrayList<>();
-        layoutManager = new GridLayoutManager(getActivity(),3);
+        eventManager = new EventManager();
+        events = new ArrayList<>();
+        gridLayoutManager = new GridLayoutManager(getActivity(),3);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         userProfileImageAdapter = new UserProfileImageAdapter(getContext(),userProfiles);
 
         userProfileImagesButton = view.findViewById(R.id.admin_user_profile_images_button);
@@ -82,6 +92,7 @@ public class admin_images extends Fragment {
                     @Override
                     public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
                         //adding userProfiles to adapter
+                        recyclerView.setLayoutManager(gridLayoutManager); //arranges recyclerView in grid form
                         recyclerView.setAdapter(userProfileImageAdapter);
                     }
                 });
@@ -99,9 +110,29 @@ public class admin_images extends Fragment {
                     public void onFacilitiesLoaded(ArrayList<Facility> facilities) {
                         //adding facilties to adapter
                         facilityImageAdapter = new FacilityImageAdapter(getActivity(), facilities);
+                        recyclerView.setLayoutManager(gridLayoutManager); //arranges recyclerView in grid form
                         recyclerView.setAdapter(facilityImageAdapter);
                     }
                 });
+            }
+        });
+
+        eventImagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setHighlightedButton(eventImagesButton);
+                events.clear();
+                fetchEvents(new OnEventsLoadedListener() {
+                    @Override
+                    public void onEventsLoaded(ArrayList<Event> events) {
+                        //adding events to adapter
+                        eventImageAdapter = new EventImageAdapter(getActivity(),events);
+                        recyclerView.setLayoutManager(linearLayoutManager); //arranges recyclerView in grid form
+                        recyclerView.setAdapter(eventImageAdapter);
+
+                    }
+                });
+
             }
         });
 
@@ -112,7 +143,7 @@ public class admin_images extends Fragment {
                 setHighlightedButton(userProfileImagesButton);
 
                 //adding userProfiles to adapter
-                recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
+                recyclerView.setLayoutManager(gridLayoutManager); //arranges recyclerView in grid form
                 recyclerView.setAdapter(userProfileImageAdapter);
 
             }
@@ -122,6 +153,7 @@ public class admin_images extends Fragment {
 
     }
 
+    // Fetching Users
     public interface OnProfilesLoadedListener {
         void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }
@@ -163,6 +195,8 @@ public class admin_images extends Fragment {
                 });
     }
 
+    //Fetching Facilties
+
     public interface OnFacilitiesLoadedListener {
         void onFacilitiesLoaded(ArrayList<Facility> facilities);
     }
@@ -187,7 +221,6 @@ public class admin_images extends Fragment {
 
                                         facilities.add(facility);
                                         // Check if all documents have been processed
-                                        Log.d("reached","reached size()");
                                         if (facilities.size() == task.getResult().size()) {
                                             listener.onFacilitiesLoaded(facilities); // Notify when done
                                         }
@@ -204,6 +237,47 @@ public class admin_images extends Fragment {
                     }
                 });
     }
+
+    //Fetching Events
+    public interface OnEventsLoadedListener {
+        void onEventsLoaded(ArrayList<Event> events);
+    }
+
+    public void fetchEvents(OnEventsLoadedListener listener) {
+        db.collection("events")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("event", document.getId() + " => " + document.getData());
+
+                                String currentEventID = document.getId();
+
+                                eventManager.getEvent(currentEventID, new EventManager.OnEventFetchListener() {
+                                    @Override
+                                    public void onEventFetched(Event event) {
+                                        events.add(event);
+                                        // Check if all documents have been processed
+                                        if (events.size() == task.getResult().size()) {
+                                            listener.onEventsLoaded(events); // Notify when done
+                                        }
+                                    }
+                                    @Override
+                                    public void onEventFetchError(Exception e) {
+                                        Log.d("events fetch ERROR", e.toString());
+                                    }
+                                });
+                            }
+                        } else {
+                            Log.d("event doc", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+
 
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));
