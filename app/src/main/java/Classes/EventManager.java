@@ -115,25 +115,23 @@ public class EventManager {
 
     public void uploadEventPicture(Uri picUri, String docID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("eventPictures/" + docID);
-        StorageReference imageFilePath = storageRef.child(Objects.requireNonNull(picUri.getLastPathSegment()));
 
-        imageFilePath.putFile(picUri)
+        storageRef.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    imageFilePath.getDownloadUrl().addOnSuccessListener(uri -> {
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         String downloadUrl = uri.toString();
-                        listener.onSuccess(uri);
                         updateEventPictureInFirestore(docID, downloadUrl, new OnUpdatePictureListener() {
                             @Override
                             public void onSuccess() {
-                                // Handle success if needed
+                                listener.onSuccess(uri);
                             }
 
                             @Override
                             public void onError(Exception e) {
-                                // Handle error if needed
+                                listener.onError(e);
                             }
                         });
-                    });
+                    }).addOnFailureListener(listener::onError);
                 })
                 .addOnFailureListener(listener::onError);
     }
