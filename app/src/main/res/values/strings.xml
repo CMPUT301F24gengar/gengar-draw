@@ -44,6 +44,9 @@
     <string name="update_event_details">UPDATE EVENT DETAILS</string>
     <string name="update_poster">UPDATE POSTER</string>
     <string name="search">SEARCH</string>
+    <string name="user_profile_images">USER PROFILE IMAGES</string>
+    <string name="facility_images">FACILITY IMAGES</string>
+    <string name="event_images">EVENT IMAGES</string>
     <string name="location_unknown">LOCATION UNKNOWN</string>
     <string name="qr_code">QR CODE</string>
     <string name="back_arrow"><![CDATA[<]]></string>
