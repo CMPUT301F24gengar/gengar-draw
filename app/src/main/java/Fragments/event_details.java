@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
@@ -22,21 +23,30 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import Adapters.UserProfileAdapter;
 import Classes.Event;
 import Classes.EventLists;
 import Classes.EventListsManager;
 import Classes.EventManager;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 
 public class event_details extends Fragment {
@@ -88,6 +98,10 @@ public class event_details extends Fragment {
     TextView listBack;
     LinearLayout listContainer;
     RecyclerView recyclerView;
+    UserProfileManager userProfileManager;
+    RecyclerView.LayoutManager layoutManager;
+    ArrayList<UserProfile> userProfiles;
+    UserProfileAdapter customAdapter;
 
     @Nullable
     @Override
@@ -136,6 +150,13 @@ public class event_details extends Fragment {
         listBack = view.findViewById(R.id.view_list_back);
         listContainer = view.findViewById(R.id.user_profile_list_container);
         recyclerView = view.findViewById(R.id.recycler_view);
+        userProfileManager = new UserProfileManager();
+        userProfiles = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        customAdapter = new UserProfileAdapter(getContext(), userProfiles);
+        recyclerView.setAdapter(customAdapter);
+
 
         viewEventQRCode.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.VISIBLE);
@@ -234,6 +255,26 @@ public class event_details extends Fragment {
         waitingListButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> waitingList = eventLists.getWaitingList();
+                    userProfiles.clear();
+                    fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    // Handle the error while fetching the event lists
+                }
+            });
         });
 
         // Initialize conditions and buttons
@@ -308,5 +349,27 @@ public class event_details extends Fragment {
             join_leaveButton.setText("JOIN");
             join_leaveButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
         }
+    }
+
+    public void fetchUserProfiles(List<String> userIDList, OnProfilesLoadedListener listener) {
+        for (String userID : userIDList) {
+            userProfileManager.getUserProfile(userID, new UserProfileManager.OnUserProfileFetchListener() {
+                @Override
+                public void onUserProfileFetched(UserProfile userProfile) {
+                    userProfiles.add(userProfile);
+                    if (userProfiles.size() == userIDList.size()) {
+                        listener.onProfilesLoaded(userProfiles); // Notify when done
+                    }
+                }
+
+                @Override
+                public void onUserProfileFetchError(Exception e) {
+                }
+            });
+        }
+    }
+
+    public interface OnProfilesLoadedListener {
+        void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }
 }
