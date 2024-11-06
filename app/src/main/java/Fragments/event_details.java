@@ -99,6 +99,8 @@ public class event_details extends Fragment {
     TextView cancelledEntrantsButton;
     TextView winnersListButton;
 
+    TextView statusText;
+
     TextView listBack;
     TextView listTitle;
     LinearLayout listContainer;
@@ -153,6 +155,8 @@ public class event_details extends Fragment {
         chosenEntrantsButton = view.findViewById(R.id.view_event_chosen_entrants);
         cancelledEntrantsButton = view.findViewById(R.id.view_event_cancelled_entrants);
         winnersListButton = view.findViewById(R.id.view_event_winners);
+
+        statusText = view.findViewById(R.id.status_message);
 
         listBack = view.findViewById(R.id.view_list_back);
         listTitle = view.findViewById(R.id.view_list_title);
@@ -284,6 +288,48 @@ public class event_details extends Fragment {
             }
         });
 
+        acceptButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.addUserToWinnersList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    accept_declineLayout.setVisibility(View.GONE);
+                    statusText.setTextColor(getResources().getColor(R.color.green));
+                    statusText.setText("!!! WINNER !!!");
+                    statusText.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        declineButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.removeUserFromChosenList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    accept_declineLayout.setVisibility(View.GONE);
+                    statusText.setTextColor(getResources().getColor(R.color.red));
+                    statusText.setText("!!! DECLINED !!!");
+                    statusText.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
         waitingListButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
@@ -388,7 +434,7 @@ public class event_details extends Fragment {
                     inCancelledList = eventLists.getCancelledList().contains(deviceID);
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
-                    if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
+                    if (Objects.equals(deviceID, organizerID)) { // ENTRANT
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
                         } else if (currentDate.before(regDeadlineDate)) {
@@ -400,6 +446,15 @@ public class event_details extends Fragment {
                                 setJoinLeaveButtonText(inWaitingList);
                             } else if (inChosenList) {
                                 // show accept/decline
+                                accept_declineLayout.setVisibility(View.VISIBLE);
+                            } else if (inCancelledList) {
+                                statusText.setTextColor(getResources().getColor(R.color.red));
+                                statusText.setText("!!! CANCELLED !!!");
+                                statusText.setVisibility(View.VISIBLE);
+                            } else if (inWinnersList) {
+                                statusText.setTextColor(getResources().getColor(R.color.green));
+                                statusText.setText("!!! WINNER !!!");
+                                statusText.setVisibility(View.VISIBLE);
                             }
                         }
                     } else { // ORGANIZER
