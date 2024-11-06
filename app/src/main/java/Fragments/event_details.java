@@ -100,6 +100,7 @@ public class event_details extends Fragment {
     TextView winnersListButton;
 
     TextView listBack;
+    TextView listTitle;
     LinearLayout listContainer;
     RecyclerView recyclerView;
     UserProfileManager userProfileManager;
@@ -154,6 +155,7 @@ public class event_details extends Fragment {
         winnersListButton = view.findViewById(R.id.view_event_winners);
 
         listBack = view.findViewById(R.id.view_list_back);
+        listTitle = view.findViewById(R.id.view_list_title);
         listContainer = view.findViewById(R.id.user_profile_list_container);
         recyclerView = view.findViewById(R.id.recycler_view);
         userProfileManager = new UserProfileManager();
@@ -291,10 +293,20 @@ public class event_details extends Fragment {
                 public void onEventListsFetched(EventLists eventLists) {
                     List<String> waitingList = eventLists.getWaitingList();
                     userProfiles.clear();
+
+                    if (waitingList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("WAITING LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
                     fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
                         @Override
                         public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
                             customAdapter.notifyDataSetChanged();
+                            listTitle.setText("WAITING LIST");
                             listContainer.setVisibility(View.VISIBLE);
                             buttonDebounce = false;
                         }
@@ -302,7 +314,59 @@ public class event_details extends Fragment {
                 }
                 @Override
                 public void onEventListsFetchError(Exception e) {
-                    // Handle the error while fetching the event lists
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        chosenEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> chosenList = eventLists.getChosenList();
+                    userProfiles.clear();
+
+                    if (chosenList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("CHOSEN ENTRANTS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(chosenList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("CHOSEN ENTRANTS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        chooseEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.chooseWinners(eventID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
                 }
             });
         });
@@ -324,7 +388,7 @@ public class event_details extends Fragment {
                     inCancelledList = eventLists.getCancelledList().contains(deviceID);
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
-                    if (Objects.equals(deviceID, organizerID)) { // ENTRANT
+                    if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
                         } else if (currentDate.before(regDeadlineDate)) {
@@ -334,6 +398,8 @@ public class event_details extends Fragment {
                             if (inWaitingList) {
                                 join_leaveButton.setVisibility(View.VISIBLE);
                                 setJoinLeaveButtonText(inWaitingList);
+                            } else if (inChosenList) {
+                                // show accept/decline
                             }
                         }
                     } else { // ORGANIZER
@@ -342,6 +408,7 @@ public class event_details extends Fragment {
                         }
                         if (currentDate.after(regDeadlineDate)) {
                             chooseEntrantsButton.setVisibility(View.VISIBLE);
+                            chosenEntrantsButton.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -360,9 +427,7 @@ public class event_details extends Fragment {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(QRcode, BarcodeFormat.QR_CODE, 300, 300);
             qrCodeImage.setImageBitmap(bitmap); // Set the generated QR code to ImageView
-            Log.e("event_details", "QR code generated successfully");
         } catch (WriterException e) {
-            Log.e("event_details", "Error generating QR code: " + e.getMessage(), e);
             Toast.makeText(getContext(), "Failed to generate QR code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }

@@ -153,6 +153,11 @@ public class EventListsManager {
                     int slotsLeft = maxWinners - chosenList.size();
 
                     if (slotsLeft >= waitingList.size()) {
+                        if (slotsLeft > 0 && waitingList.isEmpty()) {
+                            message.set("Waiting list is empty");
+                            chosen.set(false);
+                            return null;
+                        }
                         slotsLeft = waitingList.size();
                     }
 

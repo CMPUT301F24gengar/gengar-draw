@@ -583,6 +583,7 @@
             android:backgroundTint="@color/black2">
 
             <TextView
+                android:id="@+id/view_list_title"
                 style="@style/main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
