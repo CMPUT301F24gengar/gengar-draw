@@ -400,6 +400,76 @@ public class event_details extends Fragment {
             });
         });
 
+        cancelledEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> cancelledList = eventLists.getCancelledList();
+                    userProfiles.clear();
+
+                    if (cancelledList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("CANCELLED ENTRANTS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(cancelledList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("CANCELLED ENTRANTS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        winnersListButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> winnersList = eventLists.getWinnersList();
+                    userProfiles.clear();
+
+                    if (winnersList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("WINNERS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(winnersList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("WINNERS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
         chooseEntrantsButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
@@ -434,7 +504,7 @@ public class event_details extends Fragment {
                     inCancelledList = eventLists.getCancelledList().contains(deviceID);
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
-                    if (Objects.equals(deviceID, organizerID)) { // ENTRANT
+                    if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
                         } else if (currentDate.before(regDeadlineDate)) {
@@ -464,6 +534,8 @@ public class event_details extends Fragment {
                         if (currentDate.after(regDeadlineDate)) {
                             chooseEntrantsButton.setVisibility(View.VISIBLE);
                             chosenEntrantsButton.setVisibility(View.VISIBLE);
+                            cancelledEntrantsButton.setVisibility(View.VISIBLE);
+                            winnersListButton.setVisibility(View.VISIBLE);
                         }
                     }
 
