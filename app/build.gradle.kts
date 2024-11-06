@@ -27,9 +27,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+}
+
+configurations.all {
+    exclude(group = "com.google.protobuf", module = "protobuf-lite")
 }
 
 dependencies {
@@ -37,16 +41,28 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
 
-    implementation(libs.zxing.android.embedded)
-    implementation(libs.glide)
-    implementation(libs.core)
 
+    androidTestImplementation(libs.espresso.contrib)
+    androidTestImplementation("androidx.test:core:1.4.0")
+
+
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
+
+
+    implementation(libs.glide)
+    implementation(libs.zxing.android.embedded)
+
+
+    implementation(libs.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }
