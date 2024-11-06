@@ -1,5 +1,7 @@
 package Classes;
 
+import android.util.Log;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -16,8 +18,8 @@ public class EventListsManager {
 
     private EventLists createEventListsFromDocument(DocumentSnapshot document) {
         String eventID = document.getString("eventID");
-        Integer maxWinners = document.getLong("maxWinners").intValue();
-        Integer maxEntrants = document.getLong("maxEntrants").intValue();
+        Integer maxWinners = document.getLong("maxWinners") != null ? document.getLong("maxWinners").intValue() : null;
+        Integer maxEntrants = document.getLong("maxEntrants") != null ? document.getLong("maxEntrants").intValue() : null;
         boolean enableGeolocation = document.getBoolean("enableGeolocation");
         List<String> waitingList = document.contains("waitingList") ? (List<String>) document.get("waitingList") : new ArrayList<>();
         List<String> chosenList = document.contains("chosenList") ? (List<String>) document.get("chosenList") : new ArrayList<>();
@@ -84,15 +86,15 @@ public class EventListsManager {
                         added.set(true);
 
                         // If latitude and longitude are provided [enabled geolocation], add them to the location list
-                        if (latitude != null && longitude != null) {
-                            Map<String, Object> location = eventLists.getLocationList();
-                            Map<String, Double> userLocation = new HashMap<>();
-                            userLocation.put("latitude", latitude);
-                            userLocation.put("longitude", longitude);
-                            location.put(userID, userLocation);
-
-                            eventLists.setLocationList(location);
-                        }
+//                        if (latitude != null && longitude != null) {
+//                            Map<String, Object> location = eventLists.getLocationList();
+//                            Map<String, Double> userLocation = new HashMap<>();
+//                            userLocation.put("latitude", latitude);
+//                            userLocation.put("longitude", longitude);
+//                            location.put(userID, userLocation);
+//
+//                            eventLists.setLocationList(location);
+//                        }
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     } else {

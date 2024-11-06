@@ -42,9 +42,9 @@ public class EventManager {
         String eventDetails = document.getString("eventDetails");
         String eventPictureURL = document.getString("eventPictureURL");
         boolean enableGeolocation = Boolean.TRUE.equals(document.getBoolean("enableGeolocation"));
-        String listReference = document.getString("ListReference");
-        String locationReference = document.getString("LocationReference");
-        String QRCode = document.getString("QRCode");
+        String listReference = document.getString("listReference");
+        String locationReference = document.getString("locationReference");
+        String QRCode = document.getString("qrcode");
 
         return new Event(
                 organizerID,
