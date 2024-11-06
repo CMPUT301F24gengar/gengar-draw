@@ -23,10 +23,12 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     private Context context;
     private List<UserProfile> localUserProfiles;
+    private Boolean showDelete;
 
-    public UserProfileAdapter(Context context, ArrayList<UserProfile> userProfiles) {
+    public UserProfileAdapter(Context context, ArrayList<UserProfile> userProfiles, Boolean showDelete) {
         this.context=context;
         localUserProfiles = userProfiles;
+        this.showDelete = showDelete;
     }
 
     @NonNull
@@ -39,6 +41,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserProfile userProfile = localUserProfiles.get(position);
+        holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);

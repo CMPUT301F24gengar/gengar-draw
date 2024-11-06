@@ -154,7 +154,7 @@ public class event_details extends Fragment {
         userProfiles = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        customAdapter = new UserProfileAdapter(getContext(), userProfiles);
+        customAdapter = new UserProfileAdapter(getContext(), userProfiles, false);
         recyclerView.setAdapter(customAdapter);
 
 
