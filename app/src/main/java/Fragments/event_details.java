@@ -61,6 +61,10 @@ public class event_details extends Fragment {
     private Boolean inCancelledList;
     private Boolean inWinnersList;
 
+    private Date regOpenDate;
+    private Date regDeadlineDate;
+    private Date eventStartDate;
+
     private EventListsManager eventListsManager = new EventListsManager();
 
     private String eventID; // Variable to hold the event ID
@@ -262,6 +266,9 @@ public class event_details extends Fragment {
                         if (!inWaitingList) {
                             userProfile.getJoinedEvents().remove(eventID);
                             userProfileManager.updateUserProfile(userProfile, deviceID);
+                            if (currentDate.after(regDeadlineDate)) {
+                                join_leaveButton.setVisibility(View.GONE);
+                            }
                         }
                         setJoinLeaveButtonText(inWaitingList);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
@@ -305,25 +312,29 @@ public class event_details extends Fragment {
 
             String organizerID = event.getOrganizerID();
 
-            Date regOpenDate = event.getRegOpenDate();
-            Date regDeadlineDate = event.getRegDeadlineDate();
-            Date eventStartDate = event.getEventStartDate();
-
             @Override
             public void onEventListsFetched(EventLists eventLists) {
                 if (eventLists != null) {
+                    regOpenDate = event.getRegOpenDate();
+                    regDeadlineDate = event.getRegDeadlineDate();
+                    eventStartDate = event.getEventStartDate();
 
                     inWaitingList = eventLists.getWaitingList().contains(deviceID);
                     inChosenList = eventLists.getChosenList().contains(deviceID);
                     inCancelledList = eventLists.getCancelledList().contains(deviceID);
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
-                    if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
+                    if (Objects.equals(deviceID, organizerID)) { // ENTRANT
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
                         } else if (currentDate.before(regDeadlineDate)) {
                             join_leaveButton.setVisibility(View.VISIBLE);
                             setJoinLeaveButtonText(inWaitingList);
+                        } else if (currentDate.before(eventStartDate)) {
+                            if (inWaitingList) {
+                                join_leaveButton.setVisibility(View.VISIBLE);
+                                setJoinLeaveButtonText(inWaitingList);
+                            }
                         }
                     } else { // ORGANIZER
                         if (currentDate.after(regOpenDate)) {
