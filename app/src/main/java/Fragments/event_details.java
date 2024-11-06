@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
 import android.util.Log;
@@ -84,6 +85,10 @@ public class event_details extends Fragment {
     TextView cancelledEntrantsButton;
     TextView winnersListButton;
 
+    TextView listBack;
+    LinearLayout listContainer;
+    RecyclerView recyclerView;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -128,11 +133,18 @@ public class event_details extends Fragment {
         cancelledEntrantsButton = view.findViewById(R.id.view_event_cancelled_entrants);
         winnersListButton = view.findViewById(R.id.view_event_winners);
 
+        listBack = view.findViewById(R.id.view_list_back);
+        listContainer = view.findViewById(R.id.user_profile_list_container);
+        recyclerView = view.findViewById(R.id.recycler_view);
+
         viewEventQRCode.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.VISIBLE);
         });
         qrCodeBack.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.GONE);
+        });
+        listBack.setOnClickListener(v -> {
+            listContainer.setVisibility(View.GONE);
         });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -219,7 +231,12 @@ public class event_details extends Fragment {
             }
         });
 
+        waitingListButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+        });
 
+        // Initialize conditions and buttons
         eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
 
             String organizerID = event.getOrganizerID();
@@ -245,7 +262,12 @@ public class event_details extends Fragment {
                             setJoinLeaveButtonText(inWaitingList);
                         }
                     } else { // ORGANIZER
-                        chooseEntrantsButton.setVisibility(View.VISIBLE);
+                        if (currentDate.after(regOpenDate)) {
+                            waitingListButton.setVisibility(View.VISIBLE);
+                        }
+                        if (currentDate.after(regDeadlineDate)) {
+                            chooseEntrantsButton.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 }
