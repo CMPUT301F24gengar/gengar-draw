@@ -103,6 +103,8 @@ public class event_details extends Fragment {
     ArrayList<UserProfile> userProfiles;
     UserProfileAdapter customAdapter;
 
+    UserProfile userProfile;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -171,7 +173,18 @@ public class event_details extends Fragment {
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         currentDate = new Date();
 
-        loadEventDetails(eventID, view);
+        // get user profile from deviceID
+        userProfileManager.getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
+            @Override
+            public void onUserProfileFetched(UserProfile userProfileFetched) {
+                userProfile=userProfileFetched;
+                loadEventDetails(eventID, view);
+            }
+            @Override
+            public void onUserProfileFetchError(Exception e) {
+                //Handle the error
+            }
+        });
 
         return view;
     }
@@ -225,6 +238,11 @@ public class event_details extends Fragment {
                     @Override
                     public void onSuccess(String message, boolean boolValue) {
                         inWaitingList = boolValue;
+                        // if in waiting list, add eventID to users joined events
+                        if (inWaitingList) {
+                            userProfile.getJoinedEvents().add(eventID);
+                            userProfileManager.updateUserProfile(userProfile, deviceID);
+                        }
                         setJoinLeaveButtonText(inWaitingList);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         buttonDebounce = false;
@@ -240,6 +258,11 @@ public class event_details extends Fragment {
                     @Override
                     public void onSuccess(String message, boolean boolValue) {
                         inWaitingList = !boolValue;
+                        // if not in waiting list, remove eventID from users joined events
+                        if (!inWaitingList) {
+                            userProfile.getJoinedEvents().remove(eventID);
+                            userProfileManager.updateUserProfile(userProfile, deviceID);
+                        }
                         setJoinLeaveButtonText(inWaitingList);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         buttonDebounce = false;
