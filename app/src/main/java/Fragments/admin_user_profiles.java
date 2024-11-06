@@ -59,8 +59,8 @@ public class admin_user_profiles extends Fragment {
         userProfiles = new ArrayList<>();
         searchUserProfiles = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new UserProfileAdapter(getContext(),userProfiles);
-        searchCustomAdapter = new UserProfileAdapter(getContext(),searchUserProfiles);
+        customAdapter = new UserProfileAdapter(getContext(),userProfiles, true);
+        searchCustomAdapter = new UserProfileAdapter(getContext(),searchUserProfiles, true);
 
 
         fetchUserProfiles(new OnProfilesLoadedListener() {

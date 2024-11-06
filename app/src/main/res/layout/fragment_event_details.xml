@@ -78,8 +78,7 @@
                             android:layout_height="match_parent"
                             android:contentDescription="@string/todo"
                             android:padding="30dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/image" />
+                            android:scaleType="fitCenter" />
 
                         <ImageView
                             android:id="@+id/view_event_picture"
@@ -273,7 +272,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:text="MAX ENTRANTS :"
+                        android:text="@string/max_entrants"
                         android:textAlignment="textStart"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -323,7 +322,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
-                        android:text="VIEW QR CODE"
+                        android:text="@string/view_qr_code"
                         android:textAlignment="center"
                         android:textColor="@color/green"
                         android:textSize="16sp" />
@@ -356,7 +355,7 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="CHOOSE ENTRANTS"
+                        android:text="@string/choose_entrants"
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -416,7 +415,7 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="VIEW WAITING LIST"
+                        android:text="@string/view_waiting_list"
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -433,7 +432,7 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="VIEW MAP"
+                        android:text="@string/view_map"
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -450,7 +449,7 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="VIEW CHOSEN ENTRANTS"
+                        android:text="@string/view_chosen_entrants"
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -467,7 +466,7 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="VIEW CANCELLED ENTRANTS"
+                        android:text="@string/view_cancelled_entrants"
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -484,7 +483,22 @@
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/green"
                         android:gravity="center"
-                        android:text="VIEW WINNERS"
+                        android:text="@string/view_winners"
+                        android:textColor="@color/black1"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/status_message"
+                        style="@style/main"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:text=""
                         android:textColor="@color/black1"
                         android:textSize="20sp"
                         android:textStyle="bold"
@@ -501,7 +515,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="25dp"
-                android:text="EVENT DOES NOT EXIST"
+                android:text="@string/event_does_not_exist"
                 android:textAlignment="center"
                 android:textColor="@color/grey"
                 android:textSize="24sp"
@@ -563,6 +577,55 @@
                 android:layout_gravity="center"
                 android:contentDescription="TODO" />
         </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/user_profile_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black1"
+        android:visibility="gone"
+        android:gravity="top|center"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_corner"
+            android:backgroundTint="@color/black2">
+
+            <TextView
+                android:id="@+id/view_list_title"
+                style="@style/main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/view_waiting_list"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/view_list_back"
+                style="@style/main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:layout_marginStart="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/back_arrow"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

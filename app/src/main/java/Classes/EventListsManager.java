@@ -153,6 +153,11 @@ public class EventListsManager {
                     int slotsLeft = maxWinners - chosenList.size();
 
                     if (slotsLeft >= waitingList.size()) {
+                        if (slotsLeft > 0 && waitingList.isEmpty()) {
+                            message.set("Waiting list is empty");
+                            chosen.set(false);
+                            return null;
+                        }
                         slotsLeft = waitingList.size();
                     }
 
@@ -212,6 +217,25 @@ public class EventListsManager {
 
                     message.set("Accepted");
                     added.set(true);
+
+                    transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnFailureListener(listener::onError);
+    }
+
+    public void removeUserFromChosenList(String eventID, String userID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean added = new AtomicBoolean(false);
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+                    EventLists eventLists = createEventListsFromDocument(snapshot);
+
+                    eventLists.removeFromChosenList(userID);
+
+                    message.set("Declined");
+                    added.set(false);
 
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;

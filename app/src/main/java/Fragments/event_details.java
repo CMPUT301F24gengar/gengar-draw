@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
 import android.util.Log;
@@ -21,21 +23,30 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import Adapters.UserProfileAdapter;
 import Classes.Event;
 import Classes.EventLists;
 import Classes.EventListsManager;
 import Classes.EventManager;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 
 public class event_details extends Fragment {
@@ -49,6 +60,10 @@ public class event_details extends Fragment {
     private Boolean inChosenList;
     private Boolean inCancelledList;
     private Boolean inWinnersList;
+
+    private Date regOpenDate;
+    private Date regDeadlineDate;
+    private Date eventStartDate;
 
     private EventListsManager eventListsManager = new EventListsManager();
 
@@ -83,6 +98,19 @@ public class event_details extends Fragment {
     TextView chosenEntrantsButton;
     TextView cancelledEntrantsButton;
     TextView winnersListButton;
+
+    TextView statusText;
+
+    TextView listBack;
+    TextView listTitle;
+    LinearLayout listContainer;
+    RecyclerView recyclerView;
+    UserProfileManager userProfileManager;
+    RecyclerView.LayoutManager layoutManager;
+    ArrayList<UserProfile> userProfiles;
+    UserProfileAdapter customAdapter;
+
+    UserProfile userProfile;
 
     @Nullable
     @Override
@@ -128,17 +156,45 @@ public class event_details extends Fragment {
         cancelledEntrantsButton = view.findViewById(R.id.view_event_cancelled_entrants);
         winnersListButton = view.findViewById(R.id.view_event_winners);
 
+        statusText = view.findViewById(R.id.status_message);
+
+        listBack = view.findViewById(R.id.view_list_back);
+        listTitle = view.findViewById(R.id.view_list_title);
+        listContainer = view.findViewById(R.id.user_profile_list_container);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        userProfileManager = new UserProfileManager();
+        userProfiles = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        customAdapter = new UserProfileAdapter(getContext(), userProfiles, false);
+        recyclerView.setAdapter(customAdapter);
+
+
         viewEventQRCode.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.VISIBLE);
         });
         qrCodeBack.setOnClickListener(v -> {
             qrCodeContainer.setVisibility(View.GONE);
         });
+        listBack.setOnClickListener(v -> {
+            listContainer.setVisibility(View.GONE);
+        });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
         currentDate = new Date();
 
-        loadEventDetails(eventID, view);
+        // get user profile from deviceID
+        userProfileManager.getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
+            @Override
+            public void onUserProfileFetched(UserProfile userProfileFetched) {
+                userProfile=userProfileFetched;
+                loadEventDetails(eventID, view);
+            }
+            @Override
+            public void onUserProfileFetchError(Exception e) {
+                //Handle the error
+            }
+        });
 
         return view;
     }
@@ -192,6 +248,11 @@ public class event_details extends Fragment {
                     @Override
                     public void onSuccess(String message, boolean boolValue) {
                         inWaitingList = boolValue;
+                        // if in waiting list, add eventID to users joined events
+                        if (inWaitingList) {
+                            userProfile.getJoinedEvents().add(eventID);
+                            userProfileManager.updateUserProfile(userProfile, deviceID);
+                        }
                         setJoinLeaveButtonText(inWaitingList);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         buttonDebounce = false;
@@ -207,6 +268,14 @@ public class event_details extends Fragment {
                     @Override
                     public void onSuccess(String message, boolean boolValue) {
                         inWaitingList = !boolValue;
+                        // if not in waiting list, remove eventID from users joined events
+                        if (!inWaitingList) {
+                            userProfile.getJoinedEvents().remove(eventID);
+                            userProfileManager.updateUserProfile(userProfile, deviceID);
+                            if (currentDate.after(regDeadlineDate)) {
+                                join_leaveButton.setVisibility(View.GONE);
+                            }
+                        }
                         setJoinLeaveButtonText(inWaitingList);
                         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                         buttonDebounce = false;
@@ -219,18 +288,216 @@ public class event_details extends Fragment {
             }
         });
 
+        acceptButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
 
+            eventListsManager.addUserToWinnersList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    accept_declineLayout.setVisibility(View.GONE);
+                    statusText.setTextColor(getResources().getColor(R.color.green));
+                    statusText.setText("!!! WINNER !!!");
+                    statusText.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        declineButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.removeUserFromChosenList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    accept_declineLayout.setVisibility(View.GONE);
+                    statusText.setTextColor(getResources().getColor(R.color.red));
+                    statusText.setText("!!! DECLINED !!!");
+                    statusText.setVisibility(View.VISIBLE);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        waitingListButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> waitingList = eventLists.getWaitingList();
+                    userProfiles.clear();
+
+                    if (waitingList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("WAITING LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("WAITING LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        chosenEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> chosenList = eventLists.getChosenList();
+                    userProfiles.clear();
+
+                    if (chosenList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("CHOSEN ENTRANTS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(chosenList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("CHOSEN ENTRANTS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        cancelledEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> cancelledList = eventLists.getCancelledList();
+                    userProfiles.clear();
+
+                    if (cancelledList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("CANCELLED ENTRANTS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(cancelledList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("CANCELLED ENTRANTS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        winnersListButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> winnersList = eventLists.getWinnersList();
+                    userProfiles.clear();
+
+                    if (winnersList.isEmpty()) {
+                        customAdapter.notifyDataSetChanged();
+                        listTitle.setText("WINNERS LIST");
+                        listContainer.setVisibility(View.VISIBLE);
+                        buttonDebounce = false;
+                        return;
+                    }
+
+                    fetchUserProfiles(winnersList, new OnProfilesLoadedListener(){
+                        @Override
+                        public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
+                            customAdapter.notifyDataSetChanged();
+                            listTitle.setText("WINNERS LIST");
+                            listContainer.setVisibility(View.VISIBLE);
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        chooseEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.chooseWinners(eventID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+
+        // Initialize conditions and buttons
         eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
 
             String organizerID = event.getOrganizerID();
 
-            Date regOpenDate = event.getRegOpenDate();
-            Date regDeadlineDate = event.getRegDeadlineDate();
-            Date eventStartDate = event.getEventStartDate();
-
             @Override
             public void onEventListsFetched(EventLists eventLists) {
                 if (eventLists != null) {
+                    regOpenDate = event.getRegOpenDate();
+                    regDeadlineDate = event.getRegDeadlineDate();
+                    eventStartDate = event.getEventStartDate();
 
                     inWaitingList = eventLists.getWaitingList().contains(deviceID);
                     inChosenList = eventLists.getChosenList().contains(deviceID);
@@ -243,9 +510,33 @@ public class event_details extends Fragment {
                         } else if (currentDate.before(regDeadlineDate)) {
                             join_leaveButton.setVisibility(View.VISIBLE);
                             setJoinLeaveButtonText(inWaitingList);
+                        } else if (currentDate.before(eventStartDate)) {
+                            if (inWaitingList) {
+                                join_leaveButton.setVisibility(View.VISIBLE);
+                                setJoinLeaveButtonText(inWaitingList);
+                            } else if (inChosenList) {
+                                // show accept/decline
+                                accept_declineLayout.setVisibility(View.VISIBLE);
+                            } else if (inCancelledList) {
+                                statusText.setTextColor(getResources().getColor(R.color.red));
+                                statusText.setText("!!! CANCELLED !!!");
+                                statusText.setVisibility(View.VISIBLE);
+                            } else if (inWinnersList) {
+                                statusText.setTextColor(getResources().getColor(R.color.green));
+                                statusText.setText("!!! WINNER !!!");
+                                statusText.setVisibility(View.VISIBLE);
+                            }
                         }
                     } else { // ORGANIZER
-                        chooseEntrantsButton.setVisibility(View.VISIBLE);
+                        if (currentDate.after(regOpenDate)) {
+                            waitingListButton.setVisibility(View.VISIBLE);
+                        }
+                        if (currentDate.after(regDeadlineDate)) {
+                            chooseEntrantsButton.setVisibility(View.VISIBLE);
+                            chosenEntrantsButton.setVisibility(View.VISIBLE);
+                            cancelledEntrantsButton.setVisibility(View.VISIBLE);
+                            winnersListButton.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 }
@@ -263,9 +554,7 @@ public class event_details extends Fragment {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap bitmap = barcodeEncoder.encodeBitmap(QRcode, BarcodeFormat.QR_CODE, 300, 300);
             qrCodeImage.setImageBitmap(bitmap); // Set the generated QR code to ImageView
-            Log.e("event_details", "QR code generated successfully");
         } catch (WriterException e) {
-            Log.e("event_details", "Error generating QR code: " + e.getMessage(), e);
             Toast.makeText(getContext(), "Failed to generate QR code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -286,5 +575,27 @@ public class event_details extends Fragment {
             join_leaveButton.setText("JOIN");
             join_leaveButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.green)));
         }
+    }
+
+    public void fetchUserProfiles(List<String> userIDList, OnProfilesLoadedListener listener) {
+        for (String userID : userIDList) {
+            userProfileManager.getUserProfile(userID, new UserProfileManager.OnUserProfileFetchListener() {
+                @Override
+                public void onUserProfileFetched(UserProfile userProfile) {
+                    userProfiles.add(userProfile);
+                    if (userProfiles.size() == userIDList.size()) {
+                        listener.onProfilesLoaded(userProfiles); // Notify when done
+                    }
+                }
+
+                @Override
+                public void onUserProfileFetchError(Exception e) {
+                }
+            });
+        }
+    }
+
+    public interface OnProfilesLoadedListener {
+        void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }
 }
