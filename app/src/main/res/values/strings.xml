@@ -41,4 +41,24 @@
     <string name="permission_denied">PERMISSION DENIED</string>
     <string name="you_are_not_an_organizer_would_you_like_to_create_a_facility">YOU ARE NOT AN ORGANIZER. WOULD YOU LIKE TO CREATE A FACILITY?</string>
     <string name="proceed">PROCEED</string>
+    <string name="update_event_details">UPDATE EVENT DETAILS</string>
+    <string name="update_poster">UPDATE POSTER</string>
+    <string name="search">SEARCH</string>
+    <string name="user_profile_images">USER PROFILE IMAGES</string>
+    <string name="facility_images">FACILITY IMAGES</string>
+    <string name="event_images">EVENT IMAGES</string>
+    <string name="location_unknown">LOCATION UNKNOWN</string>
+    <string name="qr_code">QR CODE</string>
+    <string name="back_arrow"><![CDATA[<]]></string>
+    <string name="join">JOIN</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
+    <string name="view_qr_code">VIEW QR CODE</string>
+    <string name="choose_entrants">CHOOSE ENTRANTS</string>
+    <string name="view_waiting_list">VIEW WAITING LIST</string>
+    <string name="view_map">VIEW MAP</string>
+    <string name="view_chosen_entrants">VIEW CHOSEN ENTRANTS</string>
+    <string name="view_cancelled_entrants">VIEW CANCELLED ENTRANTS</string>
+    <string name="view_winners">VIEW WINNERS</string>
+    <string name="event_does_not_exist">EVENT DOES NOT EXIST</string>
 </resources>

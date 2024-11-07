@@ -9,6 +9,7 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FacilityManager {
     private FirebaseFirestore db;
@@ -42,13 +43,15 @@ public class FacilityManager {
     // Create Facility object from Firestore DocumentSnapshot
     private Facility createFacilityFromDocument(DocumentSnapshot document) {
         String name = document.getString("name");
+        double latitude = document.getDouble("latitude");
+        double longitude = document.getDouble("longitude");
         String location = document.getString("location");
         String description = document.getString("description");
         String pictureURL = document.getString("pictureURL");
         List<String> events = document.contains("events") ? (List<String>) document.get("events") : new ArrayList<>();
         String deviceID = document.getString("deviceID");
 
-        return new Facility(name, location, description, pictureURL, events, deviceID);
+        return new Facility(name, latitude, longitude, location, description, pictureURL, events, deviceID);
     }
 
     // Add new facility to Firestore
@@ -91,9 +94,23 @@ public class FacilityManager {
     // Upload a facility picture
     public void uploadFacilityPicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
+
         storageRef.putFile(picUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    storageRef.getDownloadUrl().addOnSuccessListener(listener::onSuccess);
+                    storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        String downloadUrl = uri.toString();
+                        updateFacilityPictureInFirestore(deviceID, downloadUrl, new OnUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                listener.onSuccess(uri);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                listener.onError(e);
+                            }
+                        });
+                    }).addOnFailureListener(listener::onError);
                 })
                 .addOnFailureListener(listener::onError);
     }
@@ -109,6 +126,7 @@ public class FacilityManager {
     // Delete a facility picture
     public void deleteFacilityPicture(String deviceID, OnDeleteListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
+
         storageRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     db.collection("facilities").document(deviceID)
@@ -118,6 +136,7 @@ public class FacilityManager {
                 })
                 .addOnFailureListener(listener::onError);
     }
+
     // Listener interfaces
     public interface OnFacilityCheckListener {
         void onFacilityExists(Facility facility);

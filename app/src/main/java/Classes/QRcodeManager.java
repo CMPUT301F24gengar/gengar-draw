@@ -1,5 +1,10 @@
 package Classes;
 
+import android.util.Log;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +45,35 @@ public class QRcodeManager {
                 })
                 .addOnFailureListener(callback::onQRcodeFetchError);
     }
+
+
+    public void searchQRcode(String value, OnQRcodeSearchListener listener) {
+        // Log the search action
+        Log.d("QRcodeManager", "Searching for QR code: " + value);
+
+        qrCodesRef.whereEqualTo("qrcode", value) // Use "qrcode" field
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        listener.onQRcodeFound(createQRcodeFromDocument(document));
+                    } else {
+                        Log.d("QRcodeManager", "No document found for QR code: " + value);
+                        listener.onQRcodeNotFound(); // No document found
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("QRcodeManager", "Error searching QR code: ", e);
+                    listener.onError(e);
+                });
+    }
+
+    public interface OnQRcodeSearchListener {
+        void onQRcodeFound(QRcode qrcode);
+        void onQRcodeNotFound();
+        void onError(Exception e);
+    }
+
 
     public interface onQRcodeFetchListener {
         void onQRcodeFetched(QRcode qrcode);

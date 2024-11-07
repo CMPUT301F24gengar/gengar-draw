@@ -26,11 +26,14 @@ import com.example.gengardraw.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import Classes.Event;
+import Classes.EventLists;
 import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
@@ -54,6 +57,8 @@ public class create_event extends Fragment {
 
     private Uri imageURI;
     private Facility facilityProfile;
+
+    private boolean buttonClicked = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -116,6 +121,10 @@ public class create_event extends Fragment {
         });
 
         createBtn.setOnClickListener(v -> {
+            if (buttonClicked) {
+                return;
+            }
+
             String title = titleEditText.getText().toString();
             Date registrationOpens = getDateFromEditText(registrationOpensEditText);
             Date registrationDeadline = getDateFromEditText(registrationDeadlineEditText);
@@ -165,14 +174,19 @@ public class create_event extends Fragment {
                 Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            buttonClicked = true;
+
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
             Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
             Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
             QRcode qrcode = new QRcode();
 
+            EventLists eventLists = new EventLists(null, maxWinnersInt, maxEntrantsInt, enableGeolocation, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new HashMap<>());
+
             String docID;
-            docID = eventManager.addEvent(event, qrcode, imageURI, new EventManager.OnUploadPictureListener() {
+            docID = eventManager.addEvent(event, qrcode, eventLists, imageURI, new EventManager.OnUploadPictureListener() {
                 @Override
                 public void onSuccess(Uri downloadUrl) {
                     Toast.makeText(getContext(), "Event created successfully", Toast.LENGTH_SHORT).show();
