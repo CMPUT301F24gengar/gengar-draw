@@ -7,6 +7,11 @@ android {
     namespace = "com.example.gengardraw"
     compileSdk = 34
 
+
+    tasks.withType<Test>{
+        useJUnitPlatform()
+    }
+
     defaultConfig {
         applicationId = "com.example.gengardraw"
         minSdk = 24
@@ -66,11 +71,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.0.1")
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.0.1")
-    androidTestImplementation(libs.espresso.core)
-}
-
-tasks.withType<Test>{
-    useJUnitPlatform()
+    testImplementation ("org.junit.jupiter:junit-jupiter-params:5.0.1")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
 }
