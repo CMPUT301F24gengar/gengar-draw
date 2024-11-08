@@ -104,13 +104,53 @@ public class Facility {
     public String getDeviceID(){return this.deviceID;}
 
     //setters
+
+    /**
+     * sets facility name
+     * @param name String name
+     */
     public void setName(String name){this.name = name;}
+
+    /**
+     * sets facility's location latitude
+     * @param latitude double
+     */
     public void setLatitude(double latitude){this.latitude = latitude;}
+
+    /**
+     * sets facility's location longitude
+     * @param longitude double
+     */
     public void setLongitude(double longitude){this.longitude = longitude;}
+
+    /**
+     * sets facility's location
+     * @param location string representation of location
+     */
     public void setLocation(String location){this.location = location;}
+
+    /**
+     * sets facility's description
+     * @param description String description
+     */
     public void setDescription(String description){this.description = description;}
+
+    /**
+     * sets facility image's URL
+     * @param pictureURL    String URL representation of image
+     */
     public void setPictureURL(String pictureURL){this.pictureURL = pictureURL;}
+
+    /**
+     * sets entire list of events held at this facility
+     * @param events list of string ids representing events
+     */
     public void setEvents(List<String> events){this.events = events;}
+
+    /**
+     * sets the device id attributed to this facility
+     * @param deviceID  unique string id
+     */
     public void setDeviceID(String deviceID){this.deviceID = deviceID;}
 
     /**
