@@ -26,12 +26,21 @@ public class FacilityManager {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
 
+    /**
+     * Facility Manager constructor
+     */
     public FacilityManager() {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
     }
 
-    // Check if a facility exists
+    /**
+     * Checks if a given facility exists in the database
+     * @param deviceID  unique id pertaining to user's device
+     * @param listener  references OnFacilityCheckListener interface
+     * @throws Exception listener unable to complete task
+     * @see OnFacilityCheckListener
+     */
     public void checkFacilityExists(String deviceID, OnFacilityCheckListener listener) {
         db.collection("facilities")
                 .document(deviceID)
@@ -51,7 +60,12 @@ public class FacilityManager {
                 });
     }
 
-    // Create Facility object from Firestore DocumentSnapshot
+    /**
+     * Creates a Facility object from Firestore DocumentSnapshot
+     * @param document  reference to a facility in the database
+     * @return  Facility
+     * @see Facility
+     */
     private Facility createFacilityFromDocument(DocumentSnapshot document) {
         String name = document.getString("name");
         double latitude = document.getDouble("latitude");
@@ -65,25 +79,42 @@ public class FacilityManager {
         return new Facility(name, latitude, longitude, location, description, pictureURL, events, deviceID);
     }
 
-    // Add new facility to Firestore
+    /**
+     * Adds a new facility to the Firestore
+     * @param facility  Facility object to be added
+     * @param deviceID  unique id pertaining to user's device
+     */
     public void addFacility(Facility facility, String deviceID) {
         db.collection("facilities").document(deviceID)
                 .set(facility);
     }
 
-    // Update facility details in Firestore
+    /**
+     * Updates a given facility's details in the Firestore
+     * @param facility  Facility object to be updated
+     * @param deviceID unique id pertaining to user's device
+     */
     public void updateFacility(Facility facility, String deviceID) {
         db.collection("facilities").document(deviceID)
                 .set(facility);
     }
 
-    // Delete a facility from Firestore
+    /**
+     * Deletes a given facility from the Firestore
+     * @param deviceID unique id pertaining to user's device
+     */
     public void deleteFacility(String deviceID) {
         db.collection("facilities").document(deviceID)
                 .delete();
     }
 
-    // Retrieve a facility from Firestore
+    /**
+     * Retrieves a specific facility from the Firestore
+     * @param deviceID unique id pertaining to user's device
+     * @param listener references OnFacilityFetchListener interface
+     * @throws Exception listener fails to complete task
+     * @see OnFacilityFetchListener
+     */
     public void getFacility(String deviceID, OnFacilityFetchListener listener) {
         db.collection("facilities").document(deviceID)
                 .get()
@@ -102,7 +133,14 @@ public class FacilityManager {
                 });
     }
 
-    // Upload a facility picture
+    /**
+     * Uploads a facility picture to the Firestore
+     * @param picUri    Uri instance of picture to be uploaded
+     * @param deviceID  unique id pertaining to user's device
+     * @param listener  references OnUploadPictureListener interface
+     * @throws Exception listener fails to complete task
+     * @see OnUploadPictureListener
+     */
     public void uploadFacilityPicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
 
@@ -126,7 +164,14 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
-    // Update facility picture URL in Firestore
+    /**
+     * Updates a facility picture URL in the Firestore
+     * @param deviceID  unique id pertaining to user's device
+     * @param picURL    String URL representation of image to be updated
+     * @param listener  references OnUpdateListener interface
+     * @throws Exception listener fails to complete task
+     * @see OnUpdateListener
+     */
     public void updateFacilityPictureInFirestore(String deviceID, String picURL, OnUpdateListener listener) {
         db.collection("facilities").document(deviceID)
                 .update("pictureURL", picURL)
@@ -134,7 +179,13 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
-    // Delete a facility picture
+    /**
+     * Deletes a facility picture
+     * @param deviceID  unique id pertaining to user's device
+     * @param listener  references OnDeleteListener interface
+     * @throws Exception listener fails to complete task
+     * @see OnDeleteListener
+     */
     public void deleteFacilityPicture(String deviceID, OnDeleteListener listener) {
         StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
 
