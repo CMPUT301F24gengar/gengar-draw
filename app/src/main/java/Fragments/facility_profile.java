@@ -59,6 +59,15 @@ https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragmen
 https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin
 */
 
+/**
+ * <h1>Facility Activity</h1>
+ * <p>
+ *     Handles interactions with the facility profile page fragment
+ *     <ul>data: <li>device id</li> <li>fragment views</li> <li>facility image URI</li> <li>local Facility object</li> <li>latitude and longitude (device location)</li></ul>
+ *     <ul>methods: <li>onCreateView</li> <li>setDetails</li> <li>onActivityResult</li> <li>closeFragment</li> <li>openUserProfileFragment</li> <li>getLastLocation</li> <li>onRequestPermissionsResult</li> <li>getLocationDetails</li> <li>getLocationDetails</li></ul>
+ * </p>
+ * @author Meghan, Rheanne
+ */
 public class facility_profile extends Fragment {
 
     String deviceID;
