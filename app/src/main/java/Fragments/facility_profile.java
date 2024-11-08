@@ -96,7 +96,7 @@ public class facility_profile extends Fragment {
     private LocationCallback locationCallback;
 
     /**
-     *
+     * Construct the facility_profile fragment view
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
      * @param container If non-null, this is the parent view that the fragment's
@@ -371,7 +371,7 @@ public class facility_profile extends Fragment {
     }
 
     /**
-     *
+     * Gets location permission result, and gets location if permission allows
      * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
      * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
