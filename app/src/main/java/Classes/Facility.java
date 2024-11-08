@@ -52,15 +52,57 @@ public class Facility {
         this.events = events;
         this.deviceID = deviceID;
     }
+
     //getters
+
+    /**
+     * gets facility name
+     * @return String facility name
+     */
     public String getName(){return this.name;}
+
+    /**
+     * gets facility location latitude
+     * @return double latitude
+     */
     public double getLatitude(){return this.latitude;}
+
+    /**
+     * gets facility location longitude
+     * @return double longitude
+     */
     public double getLongitude(){return this.longitude;}
+
+    /**
+     * gets facility location
+     * @return String representation of location
+     */
     public String getLocation(){return this.location;}
+
+    /**
+     * gets facility description
+     * @return String description
+     */
     public String getDescription(){return this.description;}
+
+    /**
+     * gets facility image URL
+     * @return String URL representation of image
+     */
     public String getPictureURL(){return this.pictureURL;}
+
+    /**
+     * gets list of events at this facility
+     * @return List of String ids representing events
+     */
     public List<String> getEvents(){return this.events;}
+
+    /**
+     * gets device id attributed to this facility
+     * @return unique string device id
+     */
     public String getDeviceID(){return this.deviceID;}
+
     //setters
     public void setName(String name){this.name = name;}
     public void setLatitude(double latitude){this.latitude = latitude;}
