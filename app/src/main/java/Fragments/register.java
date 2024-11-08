@@ -25,9 +25,20 @@ import com.example.gengardraw.R;
 
 import java.util.ArrayList;
 
+import Classes.Event;
+import Classes.EventManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * <h1>Register Fragment</h1>
+ * <p>
+ *     Registers a new user and handles interactions with the register page fragment
+ * </p>
+ * @author Rehan, Dion
+ * @see UserProfile
+ * @see UserProfileManager
+ */
 public class register extends Fragment {
 
     String deviceID;
@@ -37,12 +48,28 @@ public class register extends Fragment {
     private String profile_image_uri = null; //by default, uri is null until you upload a profile picture
     private Uri ImageURI=null;
 
+    /**
+     * Interface for handling the registration success
+     */
     public interface OnRegisterSuccessListener {
         void loadMainContentFragment(UserProfile userProfile);
     }
 
     private OnRegisterSuccessListener mListener;
 
+    /**
+     * Construct the register fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
@@ -109,6 +136,11 @@ public class register extends Fragment {
         return view;
     }
 
+    /**
+     * Called when a fragment is first attached to its context.
+     * @param context
+     * @throws ClassCastException
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -119,7 +151,17 @@ public class register extends Fragment {
         }
     }
 
-    // setting register_user_picture to image
+    /**
+     * Called when a user chooses an image from the gallery.
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
         super.onActivityResult(requestCode,resultCode,data);

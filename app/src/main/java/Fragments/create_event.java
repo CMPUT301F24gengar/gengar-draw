@@ -41,18 +41,15 @@ import Classes.QRcode;
 
 
 /**
- * <h1>Create Event Activity</h1>
+ * <h1>Create Event Fragment</h1>
  * <p>
  *     Handles interactions with the create event page fragment
  *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Event object</li></ul>
  *     <ul>methods: <li>onCreateView</li> <li>getDateFromEditText</li> <li>showDateTimePicker</li> <li>showToast</li>  <li>closeFragment</li> <li>onActivityResult</li> <li>openFacilityFragment</li></ul>
  * </p>
- * @author TO-DO
- * @see Fragment
- * @see Facility
- * @see FacilityManager
- * @see <a href="https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/"</a>
- * @see <a href="https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin"</a>
+ * @author Rehan
+ * @see Event
+ * @see EventManager
  */
 public class create_event extends Fragment {
 

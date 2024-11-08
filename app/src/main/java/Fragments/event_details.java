@@ -52,13 +52,13 @@ import Classes.UserProfileManager;
 
 
 /**
- * <h1>Event Details Activity</h1>
+ * <h1>Event Details Fragment</h1>
  * <p>
  *     Handles interactions with the event details page fragment
  *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event QR code</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>event description</li> <li>local Event object</li></ul>
  *     <ul>methods: <li>onCreateView</li> <li>loadEventDetails</li> <li>setupButtons</li> <li>generateQRCode</li>  <li>formatDate</li> <li>setJoinLeaveButtonText</li> <li>fetchUserProfiles</li> <li>interface OnProfilesLoadedListener</li></ul>
  * </p>
- * @author TO-DO
+ * @author Rafi, Rehan
  * @see Event
  * @see EventManager
  */
