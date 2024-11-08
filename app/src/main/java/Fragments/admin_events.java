@@ -106,6 +106,10 @@ public class admin_events extends Fragment{
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                listener.onEventsLoaded(events);
+                                return;
+                            }
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("event", document.getId() + " => " + document.getData());
 

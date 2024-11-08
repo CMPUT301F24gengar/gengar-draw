@@ -117,6 +117,10 @@ public class admin_facility_profiles extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                listener.onProfilesLoaded(facilities);
+                                return;
+                            }
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("facility", document.getId() + " => " + document.getData());
 

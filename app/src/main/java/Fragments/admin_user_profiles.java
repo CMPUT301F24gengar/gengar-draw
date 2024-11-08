@@ -119,6 +119,10 @@ public class admin_user_profiles extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                listener.onProfilesLoaded(userProfiles);
+                                return;
+                            }
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("userprofile", document.getId() + " => " + document.getData());
 
