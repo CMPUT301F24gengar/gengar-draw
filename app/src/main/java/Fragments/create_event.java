@@ -44,7 +44,7 @@ import Classes.QRcode;
  * <h1>Create Event Activity</h1>
  * <p>
  *     Handles interactions with the create event page fragment
- *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Facility object</li></ul>
+ *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Event object</li></ul>
  *     <ul>methods: <li>onCreateView</li> <li>getDateFromEditText</li> <li>showDateTimePicker</li> <li>showToast</li>  <li>closeFragment</li> <li>onActivityResult</li> <li>openFacilityFragment</li></ul>
  * </p>
  * @author TO-DO
@@ -315,7 +315,7 @@ public class create_event extends Fragment {
     }
 
     /**
-     * Opens create event screen
+     * Opens facility screen
      * @throws Exception activity not instance of MainActivity
      * @see MainActivity
      */
