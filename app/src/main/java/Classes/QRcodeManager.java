@@ -46,7 +46,12 @@ public class QRcodeManager {
                 .addOnFailureListener(callback::onQRcodeFetchError);
     }
 
-
+    /**
+     * retrieves the String QRcode given the eventID of the specific event
+     * @param value String
+     * @param listener OnQRcodeSearchListener
+     * @see OnQRcodeSearchListener
+     */
     public void searchQRcode(String value, OnQRcodeSearchListener listener) {
         // Log the search action
         Log.d("QRcodeManager", "Searching for QR code: " + value);
