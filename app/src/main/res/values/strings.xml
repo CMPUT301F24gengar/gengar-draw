@@ -50,4 +50,15 @@
     <string name="location_unknown">LOCATION UNKNOWN</string>
     <string name="qr_code">QR CODE</string>
     <string name="back_arrow"><![CDATA[<]]></string>
+    <string name="join">JOIN</string>
+    <string name="decline">DECLINE</string>
+    <string name="accept">ACCEPT</string>
+    <string name="view_qr_code">VIEW QR CODE</string>
+    <string name="choose_entrants">CHOOSE ENTRANTS</string>
+    <string name="view_waiting_list">VIEW WAITING LIST</string>
+    <string name="view_map">VIEW MAP</string>
+    <string name="view_chosen_entrants">VIEW CHOSEN ENTRANTS</string>
+    <string name="view_cancelled_entrants">VIEW CANCELLED ENTRANTS</string>
+    <string name="view_winners">VIEW WINNERS</string>
+    <string name="event_does_not_exist">EVENT DOES NOT EXIST</string>
 </resources>
