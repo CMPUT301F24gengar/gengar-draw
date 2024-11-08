@@ -23,12 +23,37 @@ import Classes.EventManager;
 import Classes.QRcode;
 import Classes.QRcodeManager;
 
+/**
+ * QR Scanner Fragment
+ *
+ *     Handles interactions with the QR scanner fragment including scanning QR codes and opening
+ *     a fragment with the event details.
+ *
+ * @author Rafi, Rehan
+ * @see QRcode
+ * @see QRcodeManager
+ * @see Event
+ * @see EventManager
+ */
 public class qr_scanner extends Fragment {
 
     private String eventID;
     private EventManager eventManager;
     private QRcode qrcode;;
 
+    /**
+     * Construct the qr_scanner fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to. The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_qr_scanner, container, false);
@@ -36,7 +61,9 @@ public class qr_scanner extends Fragment {
         return view;
     }
 
-    // Opens up the QR code scanner
+    /**
+     * Initializes the QR code scanner
+     */
     private void initQRCodeScanner() {
         IntentIntegrator integrator = IntentIntegrator.forSupportFragment(this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
@@ -47,7 +74,15 @@ public class qr_scanner extends Fragment {
         integrator.initiateScan();
     }
 
-    // Gets the result of the QR code scan
+    /**
+     * Handles the result of the QR code scan
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -61,6 +96,10 @@ public class qr_scanner extends Fragment {
     }
 
 
+    /**
+     * Handles the scanned QR code data and navigates to the event details fragment
+     * @param QRcode The scanned QR code data
+     */
     private void handleScannedData(String QRcode) {
         Log.d("QRScanner", "scanned data: " + QRcode);
 

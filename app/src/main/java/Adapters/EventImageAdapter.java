@@ -20,16 +20,34 @@ import java.util.List;
 import Classes.Event;
 import Classes.UserProfile;
 
+/**
+ * This is the EventImageAdapter which is a custom adapter to display all the images of the events.
+ */
+
 public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.MyViewHolder> {
 
     private Context context;
     private List<Event> localEvents;
 
+    /**
+     * Constructor for EventImageAdapter done with context and an arraylist of events.
+     * @param context the context in which the adapter is working.
+     * @param events the list to be displayed in the adapter.
+     */
     public EventImageAdapter(Context context, ArrayList<Event> events) {
         this.context=context;
         localEvents = events;
     }
 
+    /**
+     * Called when the RecyclerView needs a new viewHolder.
+     * Inflates the layout from event_image_item.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to
+     *               an adapter position.
+     * @param viewType The view type of the new View.
+     *
+     * @return the new viewholder
+     */
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,6 +55,14 @@ public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.My
         return new MyViewHolder(row);
     }
 
+    /**
+     * Binds the data from the event at a specified position to the view holder.
+     * If there is a picture present, it loads the picture into the eventPicture.
+     * Otherwise, it puts in a default image.
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Event event = localEvents.get(position);
@@ -48,6 +74,9 @@ public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.My
         }
     }
 
+    /**
+     * Used to get references for views of a single item.
+     */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView eventPicture;
         ImageView Delete;
@@ -59,6 +88,9 @@ public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.My
         }
     }
 
+    /**
+     * @return Gets the total count of localEvents.
+     */
     @Override
     public int getItemCount() {
         return localEvents.size();
