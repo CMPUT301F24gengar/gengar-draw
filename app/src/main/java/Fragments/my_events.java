@@ -25,7 +25,13 @@ import Classes.Facility;
 import Classes.FacilityManager;
 
 /**
- * "My Events" fragment handler
+ * <h1>My Events Activity</h1>
+ * <p>
+ *     handles interactions with the 'my events' fragment
+ *     <ul>data: <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
+ *     <ul>methods: <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
+ * </p>
+ * @author Meghan
  */
 public class my_events extends Fragment {
     //activity views
@@ -115,6 +121,7 @@ public class my_events extends Fragment {
             // Handle error
         }
     }
+
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));
         highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black2)));
@@ -122,6 +129,7 @@ public class my_events extends Fragment {
         highlightedButton.setTextColor(getResources().getColor(R.color.black1));
         highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
     }
+
     // replace current fragment with facility fragment
     private void openFacilityFragment() {
         if (getActivity() instanceof MainActivity) {
