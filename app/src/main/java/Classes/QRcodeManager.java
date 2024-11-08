@@ -9,22 +9,45 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * <h1>QRcodeManager</h1>
+ * <p>
+ *     The <code>QRcodeManager</code> class manages QR code operations within Firebase Firestore,
+ *     including adding, retrieving, and searching for QR codes by event ID.
+ * </p>
+ * @author Rehan
+ * @see QRcode
+ */
 public class QRcodeManager {
     private final FirebaseFirestore db;
     private final CollectionReference qrCodesRef;
 
+    /**
+     * Initializes a new instance of <code>QRcodeManager</code> and sets up the Firestore collection reference.
+     */
     public QRcodeManager() {
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
         qrCodesRef = db.collection("qrcodes");
     }
 
+
+    /**
+     * Creates a <code>QRcode</code> object from a Firestore document snapshot.
+     * @param document Firestore document snapshot containing QR code data.
+     * @return a new <code>QRcode</code> object with data from the document.
+     */
     public QRcode createQRcodeFromDocument(DocumentSnapshot document) {
         String eventID = document.getString("eventID");
         String qrcode = document.getString("QRCode");
         return new QRcode(qrcode, eventID);
     }
 
+    /**
+     * Adds a new QR code to the Firestore collection.
+     * @param qrcode the <code>QRcode</code> object to add.
+     * @return the generated unique ID for the added QR code.
+     */
     public String addQRcode(QRcode qrcode) {
         String QRCodeID = qrCodesRef.document().getId();
         qrcode.setQRcode(QRCodeID);
@@ -33,6 +56,11 @@ public class QRcodeManager {
         return QRCodeID;
     }
 
+    /**
+     * Fetches a QR code by its ID and executes a callback upon completion.
+     * @param qrcodeID the unique ID of the QR code to fetch.
+     * @param callback the callback listener for handling the result.
+     */
     public void getQRcode(String qrcodeID, onQRcodeFetchListener callback) {
         db.collection("qrcodes").document(qrcodeID)
                 .get()
@@ -73,13 +101,18 @@ public class QRcodeManager {
                 });
     }
 
+    /**
+     * Interface for handling QR code search results.
+     */
     public interface OnQRcodeSearchListener {
         void onQRcodeFound(QRcode qrcode);
         void onQRcodeNotFound();
         void onError(Exception e);
     }
 
-
+    /**
+     * Interface for handling QR code fetch results.
+     */
     public interface onQRcodeFetchListener {
         void onQRcodeFetched(QRcode qrcode);
         void onQRcodeFetchError(Exception e);
