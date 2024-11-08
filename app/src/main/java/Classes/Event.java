@@ -3,12 +3,12 @@ package Classes;
 import java.util.Date;
 
 /**
- * <h1>Event</h1>
- * <p>
+ * Event
+ *
  *     The <code>Event</code> class represents an event organized within the application.
  *     It stores various attributes related to the event, such as dates, maximum participants,
  *     geolocation settings, and references to associated resources.
- * </p>
+ *
  * @author Rheanna, Rehan
  * @see EventManager
  */

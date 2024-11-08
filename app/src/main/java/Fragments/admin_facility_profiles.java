@@ -107,7 +107,6 @@ public class admin_facility_profiles extends Fragment {
      * fetchFacilities
      * @param listener
      * method to get all the facilities in firebase currently and add it to the facility array list.
-     * @throws Exception if there is an error in facility fetching from firebase, an exception is thrown.
      */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.

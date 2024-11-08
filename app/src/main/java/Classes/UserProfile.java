@@ -3,12 +3,12 @@ package Classes;
 import java.util.List;
 
 /**
- * <h1>UserProfile</h1>
- * <p>
+ * UserProfile
+ *
  *     UserProfile class locally stores information about users
- *     <ul>data: <li>deviceID</li> <li>name</li> <li>email</li> <li>phoneNumber</li> <li>pictureURL</li> <li>facilityURL</li> <li>allowNotifications</li> <li>notificationsArray</li> <li>joinedEvents</li> <li>isOrganizer</li> <li>isAdmin</li></ul>
- *     <ul>methods include: <li>constructors</li> <li>getters</li> <li>setters</li> <li>getInitials</li></ul>
- * </p>
+ *     data:<ul> <li>deviceID</li> <li>name</li> <li>email</li> <li>phoneNumber</li> <li>pictureURL</li> <li>facilityURL</li> <li>allowNotifications</li> <li>notificationsArray</li> <li>joinedEvents</li> <li>isOrganizer</li> <li>isAdmin</li></ul>
+ *     methods include:<ul> <li>constructors</li> <li>getters</li> <li>setters</li> <li>getInitials</li></ul>
+ *
  * @author Rafi, Rehan
  * @see UserProfileManager
  */

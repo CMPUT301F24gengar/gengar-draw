@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * <h1>Facility Manager </h1>
- * <p>
+ * Facility Manager
+ *
  *     Facility Manager class handles interactions between the local instance(s) of a given facility with the firestore database
- *     <ul>data: <li>Firebase Firestore Instance</li> <li>Firebase Storage Reference</li></ul>
- *     <ul>methods: <li>Constructor</li> <li>checkFacilityExists</li> <li>createFacilityFromDocument</li> <li>addFacility</li> <li>updateFacility</li> <li>deleteFacility</li> <li>getFacility</li> <li>uploadFacilityPicture</li> <li>updateFacilityPictureInFirestore</li> <li>deleteFacilityPicture</li></ul>
- *     <ul>interfaces: <li>OnFacilityCheckListener</li> <li>OnFacilityFetchListener</li> <li>OnUploadPictureListener</li> <li>OnUpdateListener</li> <li>OnDeleteListener</li></ul>
- * </p>
+ *     data:<ul> <li>Firebase Firestore Instance</li> <li>Firebase Storage Reference</li></ul>
+ *     methods:<ul> <li>Constructor</li> <li>checkFacilityExists</li> <li>createFacilityFromDocument</li> <li>addFacility</li> <li>updateFacility</li> <li>deleteFacility</li> <li>getFacility</li> <li>uploadFacilityPicture</li> <li>updateFacilityPictureInFirestore</li> <li>deleteFacilityPicture</li></ul>
+ *     interfaces:<ul> <li>OnFacilityCheckListener</li> <li>OnFacilityFetchListener</li> <li>OnUploadPictureListener</li> <li>OnUpdateListener</li> <li>OnDeleteListener</li></ul>
+ *
  * @author Meghan, Rheanna
  * @see Facility
  */
@@ -38,7 +38,6 @@ public class FacilityManager {
      * Checks if a given facility exists in the database
      * @param deviceID  unique id pertaining to user's device
      * @param listener  references OnFacilityCheckListener interface
-     * @throws Exception listener unable to complete task
      * @see OnFacilityCheckListener
      */
     public void checkFacilityExists(String deviceID, OnFacilityCheckListener listener) {
@@ -112,7 +111,6 @@ public class FacilityManager {
      * Retrieves a specific facility from the Firestore
      * @param deviceID unique id pertaining to user's device
      * @param listener references OnFacilityFetchListener interface
-     * @throws Exception listener fails to complete task
      * @see OnFacilityFetchListener
      */
     public void getFacility(String deviceID, OnFacilityFetchListener listener) {
@@ -138,7 +136,6 @@ public class FacilityManager {
      * @param picUri    Uri instance of picture to be uploaded
      * @param deviceID  unique id pertaining to user's device
      * @param listener  references OnUploadPictureListener interface
-     * @throws Exception listener fails to complete task
      * @see OnUploadPictureListener
      */
     public void uploadFacilityPicture(Uri picUri, String deviceID, OnUploadPictureListener listener) {
@@ -169,7 +166,6 @@ public class FacilityManager {
      * @param deviceID  unique id pertaining to user's device
      * @param picURL    String URL representation of image to be updated
      * @param listener  references OnUpdateListener interface
-     * @throws Exception listener fails to complete task
      * @see OnUpdateListener
      */
     public void updateFacilityPictureInFirestore(String deviceID, String picURL, OnUpdateListener listener) {
@@ -183,7 +179,6 @@ public class FacilityManager {
      * Deletes a facility picture
      * @param deviceID  unique id pertaining to user's device
      * @param listener  references OnDeleteListener interface
-     * @throws Exception listener fails to complete task
      * @see OnDeleteListener
      */
     public void deleteFacilityPicture(String deviceID, OnDeleteListener listener) {

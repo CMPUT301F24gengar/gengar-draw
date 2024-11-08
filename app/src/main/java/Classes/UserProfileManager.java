@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * <h1>UserProfileManager</h1>
- * <p>
+ * UserProfileManager
+ *
  *     The <code>UserProfileManager</code> class provides methods for managing user profiles, including adding, updating,
  *     deleting, and fetching user profiles in Firebase Firestore. It also provides methods for uploading, updating, and deleting
  *     user profile pictures in Firebase Storage.
- * </p>
+ * 
  * @author Rafi, Rehan, Prachetas
  * @see UserProfile
  */

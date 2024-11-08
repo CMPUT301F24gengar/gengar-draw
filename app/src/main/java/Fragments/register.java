@@ -31,10 +31,10 @@ import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 /**
- * <h1>Register Fragment</h1>
- * <p>
+ * Register Fragment
+ *
  *     Registers a new user and handles interactions with the register page fragment
- * </p>
+ *
  * @author Rehan, Dion
  * @see UserProfile
  * @see UserProfileManager

@@ -12,11 +12,11 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * <h1>EventManager</h1>
- * <p>
+ * EventManager
+ *
  *     The <code>EventManager</code> class manages operations related to events within the application.
  *     It includes methods for creating, retrieving, updating, and managing event data stored in Firebase Firestore and Firebase Storage.
- * </p>
+ *
  * @author Rehan
  * @see Event
  */

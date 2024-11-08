@@ -52,12 +52,12 @@ import Classes.UserProfileManager;
 
 
 /**
- * <h1>Event Details Fragment</h1>
- * <p>
+ * Event Details Fragment
+ *
  *     Handles interactions with the event details page fragment
- *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event QR code</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>event description</li> <li>local Event object</li></ul>
- *     <ul>methods: <li>onCreateView</li> <li>loadEventDetails</li> <li>setupButtons</li> <li>generateQRCode</li>  <li>formatDate</li> <li>setJoinLeaveButtonText</li> <li>fetchUserProfiles</li> <li>interface OnProfilesLoadedListener</li></ul>
- * </p>
+ *     data:<ul> <li>fragment views</li> <li>event image URI</li> <li>event QR code</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>event description</li> <li>local Event object</li></ul>
+ *     methods:<ul> <li>onCreateView</li> <li>loadEventDetails</li> <li>setupButtons</li> <li>generateQRCode</li>  <li>formatDate</li> <li>setJoinLeaveButtonText</li> <li>fetchUserProfiles</li> <li>interface OnProfilesLoadedListener</li></ul>
+ *
  * @author Rafi, Rehan
  * @see Event
  * @see EventManager
@@ -136,7 +136,6 @@ public class event_details extends Fragment {
      * from a previous saved state as given here.
      *
      * @return Constructed View
-     * @throws Exception error checking facility
      * @see Fragment
      */
     @Nullable
@@ -633,7 +632,6 @@ public class event_details extends Fragment {
      * fetches the user profile
      * @param userIDList list of user IDs
      * @param listener listener for when user profiles are loaded
-     * @throws Exception Exception on fetching user profile
      */
     public void fetchUserProfiles(List<String> userIDList, OnProfilesLoadedListener listener) {
         for (String userID : userIDList) {

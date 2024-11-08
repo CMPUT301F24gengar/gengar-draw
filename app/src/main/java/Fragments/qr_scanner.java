@@ -24,11 +24,11 @@ import Classes.QRcode;
 import Classes.QRcodeManager;
 
 /**
- * <h1>QR Scanner Fragment</h1>
- * <p>
+ * QR Scanner Fragment
+ *
  *     Handles interactions with the QR scanner fragment including scanning QR codes and opening
  *     a fragment with the event details.
- * </p>
+ *
  * @author Rafi, Rehan
  * @see QRcode
  * @see QRcodeManager

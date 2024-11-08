@@ -10,11 +10,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * <h1>QRcodeManager</h1>
- * <p>
+ * QRcodeManager
+ *
  *     The <code>QRcodeManager</code> class manages QR code operations within Firebase Firestore,
  *     including adding, retrieving, and searching for QR codes by event ID.
- * </p>
+ *
  * @author Rehan
  * @see QRcode
  */

@@ -54,6 +54,7 @@ public class user_profile extends Fragment {
     private TextView addProfilePicture;
     private TextView cancelButton;
     private Uri ImageURI=null;
+    private String pictureURL;
     private FrameLayout saveButton;
     UserProfile userProfile = new UserProfile();
 
@@ -88,7 +89,7 @@ public class user_profile extends Fragment {
             public void onUserProfileFetched(UserProfile userProfileFetched) {
                 setDetails(userProfileFetched);
                 userProfile=userProfileFetched;
-
+                pictureURL = userProfileFetched.getPictureURL();
             }
             @Override
             public void onUserProfileFetchError(Exception e) {
@@ -100,6 +101,7 @@ public class user_profile extends Fragment {
             @Override
             public void onClick(View view) {
                 ImageURI=null;
+                pictureURL = null;
                 profileImage.setImageDrawable(getResources().getDrawable(R.drawable.user));
                 profileImage.setImageTintList(getResources().getColorStateList(R.color.grey));
 
@@ -130,7 +132,7 @@ public class user_profile extends Fragment {
                 userProfile.setPhoneNumber(phoneNumberEditText.getText().toString());
                 userProfileManager.updateUserProfile(userProfile,deviceID);
                 //deleting profile pic if remove is pressed
-                if(ImageURI==null){
+                if(ImageURI==null && pictureURL == null){
                     userProfileManager.deleteProfilePicture(deviceID, new UserProfileManager.OnDeleteListener() {
                         @Override
                         public void onSuccess() {

@@ -1,11 +1,11 @@
 package Classes;
 
 /**
- * <h1>QRcode</h1>
- * <p>
+ * QRcode
+ *
  *     The <code>QRcode</code> class represents a QR code associated with an event.
  *     It stores a QR code string and an event ID that links the QR code to a specific event.
- * </p>
+ *
  * @author Rehan
  * @see QRcodeManager
  */

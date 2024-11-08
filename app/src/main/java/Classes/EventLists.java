@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <h1>EventLists</h1>
- * <p>
+ * EventLists
+ *
  *     The <code>EventLists</code> class is responsible for managing lists related to event participants,
  *     including waiting lists, chosen lists, cancelled lists, and winners lists. This class also tracks
  *     maximum limits for entrants and winners, as well as optional geolocation information for participants.
- * </p>
+ * 
  * @author Rehan
  * @see EventListsManager
  */

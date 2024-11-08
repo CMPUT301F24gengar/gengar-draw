@@ -25,12 +25,12 @@ import Classes.Facility;
 import Classes.FacilityManager;
 
 /**
- * <h1>My Events Activity</h1>
- * <p>
+ * My Events Activity
+ *
  *     handles interactions with the 'my events' fragment
- *     <ul>data: <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
- *     <ul>methods: <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
- * </p>
+ *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
+ *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
+ *
  * @author Meghan
  * @see Fragment
  */
@@ -63,7 +63,6 @@ public class my_events extends Fragment {
      * from a previous saved state as given here.
      *
      * @return constructed View
-     * @throws Exception Error checking facility exists
      * @see Fragment
      */
     @Override

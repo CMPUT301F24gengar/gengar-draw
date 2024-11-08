@@ -41,12 +41,12 @@ import Classes.QRcode;
 
 
 /**
- * <h1>Create Event Fragment</h1>
- * <p>
+ * Create Event Fragment
+ *
  *     Handles interactions with the create event page fragment
- *     <ul>data: <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Event object</li></ul>
- *     <ul>methods: <li>onCreateView</li> <li>getDateFromEditText</li> <li>showDateTimePicker</li> <li>showToast</li>  <li>closeFragment</li> <li>onActivityResult</li> <li>openFacilityFragment</li></ul>
- * </p>
+ *     data:<ul> <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Event object</li></ul>
+ *     methods:<ul> <li>onCreateView</li> <li>getDateFromEditText</li> <li>showDateTimePicker</li> <li>showToast</li>  <li>closeFragment</li> <li>onActivityResult</li> <li>openFacilityFragment</li></ul>
+ *
  * @author Rehan
  * @see Event
  * @see EventManager
@@ -83,7 +83,7 @@ public class create_event extends Fragment {
      * from a previous saved state as given here.
      *
      * @return Constructed View
-     * @throws Exception error checking facility
+     *
      * @see Fragment
      */
     @Override

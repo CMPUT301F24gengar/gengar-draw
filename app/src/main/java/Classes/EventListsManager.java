@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * <h1>EventListsManager</h1>
- * <p>
+ * EventListsManager
+ *
  *     The <code>EventListsManager</code> class manages event lists by interacting with Firebase Firestore. Supports adding, updating,
  *     and removing entries in various event-related lists.
- * </p>
+ *
  * @author Rehan
  * @see EventLists
  */
