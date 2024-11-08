@@ -34,10 +34,10 @@ public class Facility {
     /**
      * Complete Facility Constructor
      * @param name  String name of facility
-     * @param latitude
-     * @param longitude
+     * @param latitude Double latitude of facility location
+     * @param longitude Double longitude of facility location
      * @param location  String representation of facility location
-     * @param description   String
+     * @param description   String description of facility
      * @param pictureURL    String URL representation holds facility image information
      * @param events    List of events belonging to facility, events represented by their String id
      * @param deviceID  Unique id of user's device
@@ -113,13 +113,13 @@ public class Facility {
 
     /**
      * sets facility's location latitude
-     * @param latitude double
+     * @param latitude double latitude
      */
     public void setLatitude(double latitude){this.latitude = latitude;}
 
     /**
      * sets facility's location longitude
-     * @param longitude double
+     * @param longitude double longitude
      */
     public void setLongitude(double longitude){this.longitude = longitude;}
 

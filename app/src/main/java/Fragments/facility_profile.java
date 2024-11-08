@@ -54,11 +54,6 @@ import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 
-/* SOURCES
-https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/
-https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin
-*/
-
 /**
  * <h1>Facility Activity</h1>
  * <p>
@@ -70,6 +65,8 @@ https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-meth
  * @see Fragment
  * @see Facility
  * @see FacilityManager
+ * @see <a href="https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/"</a>
+ * @see <a href="https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin"</a>
  */
 public class facility_profile extends Fragment {
 
@@ -343,8 +340,8 @@ public class facility_profile extends Fragment {
     }
 
     /**
-     * retrieves user's device location
-     * @throws null location
+     * retrieves user's device latitude and longitude and converts it to location
+     * @throws Exception null location
      */
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
