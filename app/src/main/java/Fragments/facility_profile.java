@@ -67,6 +67,9 @@ https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-meth
  *     <ul>methods: <li>onCreateView</li> <li>setDetails</li> <li>onActivityResult</li> <li>closeFragment</li> <li>openUserProfileFragment</li> <li>getLastLocation</li> <li>onRequestPermissionsResult</li> <li>getLocationDetails</li> <li>getLocationDetails</li></ul>
  * </p>
  * @author Meghan, Rheanne
+ * @see Fragment
+ * @see Facility
+ * @see FacilityManager
  */
 public class facility_profile extends Fragment {
 
@@ -92,6 +95,20 @@ public class facility_profile extends Fragment {
     private TextView addressTextView;
     private LocationCallback locationCallback;
 
+    /**
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     * @throws Exception error checking facility
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -259,6 +276,9 @@ public class facility_profile extends Fragment {
         return view;
     }
 
+    /**
+     * sets the activity views to reflect the local facility
+     */
     public void setDetails() {
         nameEditText.setText(facilityProfile.getName());
         locationEditText.setText(facilityProfile.getLocation());
@@ -269,6 +289,18 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * sets image if activity result indicates success
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     * @throws Exception null data
+     * @see Fragment
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
         super.onActivityResult(requestCode,resultCode,data);
@@ -282,7 +314,10 @@ public class facility_profile extends Fragment {
         }
     }
 
-    // Go back to the home screen
+    /**
+     * Returns user back to the home screen
+     * @throws Exception activity not instance of MainActivity
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -292,6 +327,11 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * Takes user to User Profile Page
+     * @throws Exception activity not instance of MainActivity
+     * @see user_profile
+     */
     private void openUserProfileFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -301,6 +341,10 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * retrieves user's device location
+     * @throws null location
+     */
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation()
@@ -325,6 +369,16 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     *
+     * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     * @throws Exception permission denied
+     * @see Fragment
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -338,6 +392,15 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * Intreprets latitude and longitude into a String representation of location
+     * @param latitude  double, device's physical location latitude
+     * @param longitude double, device's physical location longitude
+     * @return String representation of device location
+     * @throws  Exception null/empty address
+     * @throws Exception IOException
+     * @see Geocoder
+     */
     private String getLocationDetails(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
         try {
