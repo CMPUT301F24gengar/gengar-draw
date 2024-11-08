@@ -1,6 +1,8 @@
 package com.example.gengardraw;
 
 import android.os.Bundle;
+import android.os.SystemClock;
+
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
@@ -91,9 +93,12 @@ public class UserProfileFragmentTest {
      */
     @Test
     public void testUpdateUserProfile() {
+        // Wait for the fragment to load
+        SystemClock.sleep(1500);
+
         // Simulate entering data into the EditText fields
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_name))
-                .perform(ViewActions.clearText(), ViewActions.typeText("John Smith"), ViewActions.closeSoftKeyboard());
+                .perform(ViewActions.clearText(), ViewActions.typeText("John Smith Williams"), ViewActions.closeSoftKeyboard());
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_email))
                 .perform(ViewActions.clearText(), ViewActions.typeText("john.smith@example.com"), ViewActions.closeSoftKeyboard());
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_phone))
