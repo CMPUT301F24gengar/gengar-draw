@@ -37,6 +37,13 @@ import Classes.FacilityManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * @author Dion
+ * admin_images
+ * This fragment displays the list of facility profiles that an admin can browse through.
+ * the images are divided by userprofile images, facility images and event images.
+ */
+
 public class admin_images extends Fragment {
 
     private FirebaseFirestore db;
@@ -153,11 +160,19 @@ public class admin_images extends Fragment {
 
     }
 
+    /**
+     * interface for listener to check if all the user profiles have been loaded.
+     */
     // Fetching Users
     public interface OnProfilesLoadedListener {
         void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }
 
+    /**
+     * This method fetches all the user profiles from firebase currently stored
+     * and adds it to a list of user profiles.
+     * @param listener to check if all the profiles have been loaded.
+     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
     public void fetchUserProfiles(OnProfilesLoadedListener listener) {
@@ -195,12 +210,19 @@ public class admin_images extends Fragment {
                 });
     }
 
+    /**
+     * interface for listener to check if all the facilities have been loaded.
+     */
     //Fetching Facilties
-
     public interface OnFacilitiesLoadedListener {
         void onFacilitiesLoaded(ArrayList<Facility> facilities);
     }
 
+    /**
+     * This method fetches all the facilities from firebase currently stored
+     * and adds it to a list of facilities.
+     * @param listener to check if all the facilities have been loaded
+     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
     public void fetchFacilities(OnFacilitiesLoadedListener listener) {
@@ -238,11 +260,19 @@ public class admin_images extends Fragment {
                 });
     }
 
+    /**
+     * interface for listener to check if all the events have been loaded.
+     */
     //Fetching Events
     public interface OnEventsLoadedListener {
         void onEventsLoaded(ArrayList<Event> events);
     }
 
+    /**
+     * This method fetches all the events from firebase currently stored
+     * and adds it to a list of events.
+     * @param listener to check if all the events have been loaded
+     */
     public void fetchEvents(OnEventsLoadedListener listener) {
         db.collection("events")
                 .get()
@@ -277,7 +307,15 @@ public class admin_images extends Fragment {
                 });
     }
 
-
+    /**
+     * method to set a button that is clicked to be highlighted
+     * @param button the textview that when clicked becomes highlighted
+     * sets the text color of current highlighted button to grey
+     * sets the background of current highlighted button to black
+     * sets the new button that is clicked as the highlighted button
+     * sets the text color of the new highlighted button to black
+     * sets the background of the new highlighted button to blue.
+     */
 
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));

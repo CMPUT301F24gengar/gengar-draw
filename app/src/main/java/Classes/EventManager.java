@@ -11,6 +11,15 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * EventManager
+ *
+ *     The <code>EventManager</code> class manages operations related to events within the application.
+ *     It includes methods for creating, retrieving, updating, and managing event data stored in Firebase Firestore and Firebase Storage.
+ *
+ * @author Rehan
+ * @see Event
+ */
 public class EventManager {
     private final FirebaseFirestore db;
     private final CollectionReference eventsRef;
@@ -19,6 +28,9 @@ public class EventManager {
     private QRcodeManager qrcodeManager;
     private EventListsManager eventListsManager;
 
+    /**
+     * Initializes EventManager with Firestore and Firebase Storage references.
+     */
     public EventManager() {
         // Initialize Firestore instance
         db = FirebaseFirestore.getInstance();
@@ -29,6 +41,12 @@ public class EventManager {
         eventListsManager = new EventListsManager();
     }
 
+    /**
+     * Creates an Event object from a Firestore document.
+     *
+     * @param document The Firestore document representing an event
+     * @return An Event object populated with the data from the document
+     */
     public Event createEventFromDocument(DocumentSnapshot document) {
         String organizerID = document.getString("organizerID");
         String eventTitle = document.getString("eventTitle");
@@ -63,6 +81,16 @@ public class EventManager {
         );
     }
 
+    /**
+     * Adds a new event to Firestore, uploads its picture if provided, and updates the QR code and event list.
+     *
+     * @param event            The event to be added
+     * @param qrcode           The QR code associated with the event
+     * @param eventLists       The event lists object for managing event lists
+     * @param imageURI         URI of the event picture to upload
+     * @param uploadListener   Listener for handling picture upload success or error
+     * @return The document ID of the newly added event
+     */
     public String addEvent(Event event, QRcode qrcode, EventLists eventLists, Uri imageURI, OnUploadPictureListener uploadListener) {
         String docID = eventsRef.document().getId();
         eventLists.setEventID(docID);
@@ -100,6 +128,12 @@ public class EventManager {
         return docID;
     }
 
+    /**
+     * Retrieves an event by ID and executes a callback with the fetched event.
+     *
+     * @param eventID  The ID of the event to fetch
+     * @param callback Callback for handling the event fetch result or error
+     */
     public void getEvent(String eventID, OnEventFetchListener callback) {
         db.collection("events").document(eventID)
                 .get()
@@ -113,6 +147,13 @@ public class EventManager {
                 .addOnFailureListener(callback::onEventFetchError);
     }
 
+    /**
+     * Uploads an event picture to Firebase Storage and updates Firestore with the image URL.
+     *
+     * @param picUri    The URI of the picture to upload
+     * @param docID     The document ID of the event to update
+     * @param listener  Callback for upload success or error
+     */
     public void uploadEventPicture(Uri picUri, String docID, OnUploadPictureListener listener) {
         StorageReference storageRef = storage.getReference().child("eventPictures/" + docID);
 
@@ -136,6 +177,13 @@ public class EventManager {
                 .addOnFailureListener(listener::onError);
     }
 
+    /**
+     * Updates the event picture URL in Firestore for a given event.
+     *
+     * @param eventID   The ID of the event to update
+     * @param picURL    The URL of the new picture to set in Firestore
+     * @param listener  Callback for update success or error
+     */
     public void updateEventPictureInFirestore(String eventID, String picURL, OnUpdatePictureListener listener) {
         db.collection("events").document(eventID)
                 .update("eventPictureURL", picURL)
@@ -143,16 +191,25 @@ public class EventManager {
                 .addOnFailureListener(listener::onError);
     }
 
+    /**
+     * Callback interface for picture upload events.
+     */
     public interface OnUploadPictureListener {
         void onSuccess(Uri downloadUrl);
         void onError(Exception e);
     }
 
+    /**
+     * Callback interface for picture update events.
+     */
     public interface OnUpdatePictureListener {
         void onSuccess();
         void onError(Exception e);
     }
 
+    /**
+     * Callback interface for event fetch results.
+     */
     public interface OnEventFetchListener {
         void onEventFetched(Event event);
         void onEventFetchError(Exception e);

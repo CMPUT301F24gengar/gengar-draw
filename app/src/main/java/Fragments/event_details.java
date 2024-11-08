@@ -45,10 +45,23 @@ import Classes.Event;
 import Classes.EventLists;
 import Classes.EventListsManager;
 import Classes.EventManager;
+import Classes.Facility;
+import Classes.FacilityManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 
+/**
+ * Event Details Fragment
+ *
+ *     Handles interactions with the event details page fragment
+ *     data:<ul> <li>fragment views</li> <li>event image URI</li> <li>event QR code</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>event description</li> <li>local Event object</li></ul>
+ *     methods:<ul> <li>onCreateView</li> <li>loadEventDetails</li> <li>setupButtons</li> <li>generateQRCode</li>  <li>formatDate</li> <li>setJoinLeaveButtonText</li> <li>fetchUserProfiles</li> <li>interface OnProfilesLoadedListener</li></ul>
+ *
+ * @author Rafi, Rehan
+ * @see Event
+ * @see EventManager
+ */
 public class event_details extends Fragment {
 
     private Boolean buttonDebounce = false;
@@ -112,6 +125,19 @@ public class event_details extends Fragment {
 
     UserProfile userProfile;
 
+    /**
+     * Construct the event_details fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to. The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     * @see Fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -199,6 +225,12 @@ public class event_details extends Fragment {
         return view;
     }
 
+    /**
+     * sets the title, various dates, maximum winners and entrants, picture url and QR code for the event
+     * @param eventID String event ID
+     * @param view View for the event
+     * @throws Exception Exception if error while fetching event
+     */
     private void loadEventDetails(String eventID, View view) {
         // Use eventManager to fetch event details by eventID
         eventManager.getEvent(eventID, new EventManager.OnEventFetchListener() {
@@ -238,6 +270,11 @@ public class event_details extends Fragment {
         });
     }
 
+    /**
+     * sets up the various buttons for the event
+     * @param event Event object that buttons apply to
+     * @throws Exception Exception if error while clicking button
+     */
     private void setupButtons(Event event, String eventID) {
         join_leaveButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
@@ -549,6 +586,11 @@ public class event_details extends Fragment {
 
     }
 
+    /**
+     * generates the QR code for the event
+     * @param QRcode String QR Code
+     * @throws Exception WriterException when QR code generation fails
+     */
     private void generateQRCode(String QRcode){
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -559,6 +601,11 @@ public class event_details extends Fragment {
         }
     }
 
+    /**
+     * formats the dates for the event
+     * @param date Dates for the event
+     * @return String Dates for the event
+     */
     private String formatDate(Date date) {
         if (date != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("d MMM yyyy", Locale.getDefault());
@@ -567,6 +614,10 @@ public class event_details extends Fragment {
         return ""; // Return empty string for null dates
     }
 
+    /**
+     * sets the Join or Leave text for the event button
+     * @param inWaitingList Boolean for if they are in the waiting list for event
+     */
     public void setJoinLeaveButtonText(Boolean inWaitingList) {
         if (inWaitingList) {
             join_leaveButton.setText("LEAVE");
@@ -577,6 +628,11 @@ public class event_details extends Fragment {
         }
     }
 
+    /**
+     * fetches the user profile
+     * @param userIDList list of user IDs
+     * @param listener listener for when user profiles are loaded
+     */
     public void fetchUserProfiles(List<String> userIDList, OnProfilesLoadedListener listener) {
         for (String userID : userIDList) {
             userProfileManager.getUserProfile(userID, new UserProfileManager.OnUserProfileFetchListener() {
@@ -595,6 +651,9 @@ public class event_details extends Fragment {
         }
     }
 
+    /**
+     * interface for the listener that checks if all the user profiles have been loaded.
+     */
     public interface OnProfilesLoadedListener {
         void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }

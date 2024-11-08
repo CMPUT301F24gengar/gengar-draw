@@ -39,6 +39,18 @@ import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.QRcode;
 
+
+/**
+ * Create Event Fragment
+ *
+ *     Handles interactions with the create event page fragment
+ *     data:<ul> <li>fragment views</li> <li>event image URI</li> <li>event title</li> <li>event registration open and deadline and start dates</li> <li>event max winners and entrants</li> <li>geolocation checkbox</li> <li>local Event object</li></ul>
+ *     methods:<ul> <li>onCreateView</li> <li>getDateFromEditText</li> <li>showDateTimePicker</li> <li>showToast</li>  <li>closeFragment</li> <li>onActivityResult</li> <li>openFacilityFragment</li></ul>
+ *
+ * @author Rehan
+ * @see Event
+ * @see EventManager
+ */
 public class create_event extends Fragment {
 
     private FrameLayout blackFrame;
@@ -60,6 +72,20 @@ public class create_event extends Fragment {
 
     private boolean buttonClicked = false;
 
+    /**
+     * Construct the create_event fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to. The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     *
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_event, container, false);
@@ -207,6 +233,12 @@ public class create_event extends Fragment {
         return view;
     }
 
+    /**
+     * gets the date for the event
+     * @param editText EditText for date
+     * @return Date for the event
+     * @throws Exception ParseException
+     */
     private Date getDateFromEditText(EditText editText) {
         String dateText = editText.getText().toString();
         try {
@@ -216,6 +248,10 @@ public class create_event extends Fragment {
         }
     }
 
+    /**
+     * sets the date and time for the various event dates
+     * @param editText The editText event date that will be broken into its components.
+     */
     private void showDateTimePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
@@ -231,10 +267,19 @@ public class create_event extends Fragment {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
+    /**
+     * show a pop up toast message
+     * @param message The String message that will be displayed as a toast message.
+     */
     private void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Returns user back to the home screen
+     * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -244,6 +289,17 @@ public class create_event extends Fragment {
         }
     }
 
+    /**
+     * sets image if activity result indicates success
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     * @see Fragment
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -255,6 +311,11 @@ public class create_event extends Fragment {
         }
     }
 
+    /**
+     * Opens facility screen
+     * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
+     */
     private void openFacilityFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
