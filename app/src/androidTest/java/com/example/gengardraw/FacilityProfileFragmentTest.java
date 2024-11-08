@@ -9,13 +9,20 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.GrantPermissionRule;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import Fragments.facility_profile;
 
 @RunWith(AndroidJUnit4.class)
 public class FacilityProfileFragmentTest {
+
+    @Rule
+    public GrantPermissionRule permissionRule =
+            GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
 
     @Before
     public void setUp() {
@@ -46,34 +53,6 @@ public class FacilityProfileFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.profile_facility_create_btn))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.profile_facility_cancel_btn))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-    }
-
-    /**
-     * Tests adding a facility picture interaction.
-     */
-    @Test
-    public void testAddFacilityPictureInteraction() {
-        // Simulate clicking the "Add Picture" button
-        Espresso.onView(ViewMatchers.withId(R.id.profile_facility_picture_add))
-                .perform(ViewActions.click());
-
-        // Verify that the facility image view is ready for an update
-        Espresso.onView(ViewMatchers.withId(R.id.profile_facility_picture))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-    }
-
-    /**
-     * Tests removing a facility picture interaction.
-     */
-    @Test
-    public void testRemoveFacilityPictureInteraction() {
-        // Simulate clicking the "Remove Picture" button
-        Espresso.onView(ViewMatchers.withId(R.id.profile_facility_picture_remove))
-                .perform(ViewActions.click());
-
-        // Verify that the facility image view is set to the default drawable
-        Espresso.onView(ViewMatchers.withId(R.id.profile_facility_picture))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 

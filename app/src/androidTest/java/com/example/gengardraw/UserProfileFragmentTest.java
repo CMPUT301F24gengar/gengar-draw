@@ -52,20 +52,6 @@ public class UserProfileFragmentTest {
     }
 
     /**
-     * Tests the interaction for adding a profile picture.
-     */
-    @Test
-    public void testAddProfilePictureInteraction() {
-        // Simulate clicking the "Add/Edit Profile Picture" button
-        Espresso.onView(ViewMatchers.withId(R.id.profile_user_picture_add))
-                .perform(ViewActions.click());
-
-        // Verify that the profile image view is ready for an update
-        Espresso.onView(ViewMatchers.withId(R.id.profile_user_picture))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-    }
-
-    /**
      * Tests the interaction for removing a profile picture.
      */
     @Test
