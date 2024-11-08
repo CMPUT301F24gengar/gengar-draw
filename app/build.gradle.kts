@@ -66,9 +66,11 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("com.google.android.gms:play-services-location:21.3.0")
-
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.0.1")
+    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.0.1")
     androidTestImplementation(libs.espresso.core)
+}
+
+tasks.withType<Test>{
+    useJUnitPlatform()
 }
