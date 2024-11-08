@@ -18,26 +18,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Classes.UserProfile;
-
+/**
+ * This is the UserProfileAdapter which is a custom adapter to display all the user profiles.
+ */
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.MyViewHolder> {
 
     private Context context;
     private List<UserProfile> localUserProfiles;
     private Boolean showDelete;
 
+    /**
+     * Constructor for UserProfileAdapter done with context and an arraylist of userProfiles.
+     * @param context the context in which the adapter is working.
+     * @param userProfiles the list to be displayed in the adapter.
+     * @param showDelete the delete button
+     */
     public UserProfileAdapter(Context context, ArrayList<UserProfile> userProfiles, Boolean showDelete) {
         this.context=context;
         localUserProfiles = userProfiles;
         this.showDelete = showDelete;
     }
-
+    /**
+     * Called when the RecyclerView needs a new viewHolder.
+     * Inflates the layout from user_profile_item.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to
+     *               an adapter position.
+     * @param viewType The view type of the new View.
+     *
+     * @return the new viewHolder
+     */
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(context).inflate(R.layout.user_profile_item, parent, false);
         return new MyViewHolder(row);
     }
-
+    /**
+     * Binds the data from the user at a specified position to the view holder.
+     * Sets the name to the user's name at the specified position
+     * If there is a picture present, it loads the picture into the profilePicture.
+     * Otherwise, it puts in a default image.
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserProfile userProfile = localUserProfiles.get(position);
@@ -51,7 +75,9 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
         }
     }
-
+    /**
+     * Used to get references for views of a single item.
+     */
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         ImageView profilePicture;
@@ -64,7 +90,9 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             Delete = itemView.findViewById(R.id.delete);
         }
     }
-
+    /**
+     * @return Gets the total count of localUserProfiles.
+     */
     @Override
     public int getItemCount() {
         return localUserProfiles.size();

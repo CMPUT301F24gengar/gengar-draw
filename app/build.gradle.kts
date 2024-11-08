@@ -27,8 +27,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+configurations.all {
+    exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.test" && requested.name == "core") {
+            useVersion("1.5.0")
+        }
     }
 }
 
@@ -37,16 +46,31 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
 
-    implementation(libs.zxing.android.embedded)
-    implementation(libs.glide)
-    implementation(libs.core)
+    debugImplementation("androidx.fragment:fragment-testing:1.5.5")
 
+
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+
+
+    implementation(libs.glide)
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("com.google.android.gms:play-services-location:21.3.0")
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.0.1")
+    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.0.1")
     androidTestImplementation(libs.espresso.core)
+}
+
+tasks.withType<Test>{
+    useJUnitPlatform()
 }

@@ -13,6 +13,8 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 playServices = "17.0.0"
 zxingAndroidEmbedded = "4.1.0"
+espressoContrib = "3.6.1"
+fragmentTesting = "1.8.5"
 
 [libraries]
 core = { module = "com.google.zxing:core", version.ref = "core" }
@@ -31,6 +33,8 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 play-services = { module = "com.google.android.gms:play-services", version.ref = "playServices" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
+fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragmentTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

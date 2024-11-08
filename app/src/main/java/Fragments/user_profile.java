@@ -33,6 +33,13 @@ import com.google.firebase.storage.StorageReference;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * @author Dion
+ * user_profile
+ * this fragment displays the user profile details to the user.
+ * The user can update details such as name, email id, phone number.
+ * The user can also update the profile picture or remove the profile picture.
+ */
 
 public class user_profile extends Fragment {
 
@@ -47,6 +54,7 @@ public class user_profile extends Fragment {
     private TextView addProfilePicture;
     private TextView cancelButton;
     private Uri ImageURI=null;
+    private String pictureURL;
     private FrameLayout saveButton;
     UserProfile userProfile = new UserProfile();
 
@@ -81,7 +89,7 @@ public class user_profile extends Fragment {
             public void onUserProfileFetched(UserProfile userProfileFetched) {
                 setDetails(userProfileFetched);
                 userProfile=userProfileFetched;
-
+                pictureURL = userProfileFetched.getPictureURL();
             }
             @Override
             public void onUserProfileFetchError(Exception e) {
@@ -93,6 +101,7 @@ public class user_profile extends Fragment {
             @Override
             public void onClick(View view) {
                 ImageURI=null;
+                pictureURL = null;
                 profileImage.setImageDrawable(getResources().getDrawable(R.drawable.user));
                 profileImage.setImageTintList(getResources().getColorStateList(R.color.grey));
 
@@ -123,7 +132,7 @@ public class user_profile extends Fragment {
                 userProfile.setPhoneNumber(phoneNumberEditText.getText().toString());
                 userProfileManager.updateUserProfile(userProfile,deviceID);
                 //deleting profile pic if remove is pressed
-                if(ImageURI==null){
+                if(ImageURI==null && pictureURL == null){
                     userProfileManager.deleteProfilePicture(deviceID, new UserProfileManager.OnDeleteListener() {
                         @Override
                         public void onSuccess() {
@@ -167,6 +176,11 @@ public class user_profile extends Fragment {
         return view;
     }
 
+    /**
+     * Set details such as name, email ID and phone number to that of the user's.
+     * If the profile picture is set up, then the user's profile picture will also be loaded.
+     * @param userProfile is used to get the details of the user.
+     */
     public void setDetails(UserProfile userProfile) {
         nameEditText.setText(userProfile.getName());
         emailEditText.setText(userProfile.getEmail());
@@ -179,6 +193,17 @@ public class user_profile extends Fragment {
 
     }
 
+    /**
+     * Updates the profile picture as chosen by the user.
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     // setting user_picture to image
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
@@ -193,6 +218,9 @@ public class user_profile extends Fragment {
         }
     }
 
+    /**
+     * returns the user to the homepage.
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -202,6 +230,10 @@ public class user_profile extends Fragment {
         }
     }
 
+    /**
+     * Takes user to facility page
+     * @throws Exception activity not instance of MainActivity
+     */
     // replace current fragment with facility fragment
     private void openFacilityFragment() {
         if (getActivity() instanceof MainActivity) {

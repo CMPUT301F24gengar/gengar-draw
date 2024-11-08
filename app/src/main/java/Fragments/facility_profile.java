@@ -54,11 +54,20 @@ import Classes.UserProfile;
 import Classes.UserProfileManager;
 
 
-/* SOURCES
-https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/
-https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin
-*/
-
+/**
+ * Facility Activity
+ *
+ *     Handles interactions with the facility profile page fragment
+ *     data:<ul> <li>device id</li> <li>fragment views</li> <li>facility image URI</li> <li>local Facility object</li> <li>latitude and longitude (device location)</li></ul>
+ *     methods:<ul> <li>onCreateView</li> <li>setDetails</li> <li>onActivityResult</li> <li>closeFragment</li> <li>openUserProfileFragment</li> <li>getLastLocation</li> <li>onRequestPermissionsResult</li> <li>getLocationDetails</li> <li>getLocationDetails</li></ul>
+ *
+ * @author Meghan, Rheanna
+ * @see Fragment
+ * @see Facility
+ * @see FacilityManager
+ * @see <a href="https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/">https://www.geeksforgeeks.org/how-to-get-current-location-inside-android-fragment/</a>
+ * @see <a href="https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin">https://stackoverflow.com/questions/72038038/how-to-call-getcurrentlocation-method-of-fusedlocationproviderclient-in-kotlin</a>
+ */
 public class facility_profile extends Fragment {
 
     String deviceID;
@@ -72,6 +81,7 @@ public class facility_profile extends Fragment {
     private TextView addFacilityPicture;
     private TextView cancelButton;
     private Uri ImageURI=null;
+    private String pictureURL;
     private FrameLayout saveButton;
     private TextView createUpdateBtn;
     Facility facilityProfile;
@@ -83,6 +93,20 @@ public class facility_profile extends Fragment {
     private TextView addressTextView;
     private LocationCallback locationCallback;
 
+    /**
+     * Construct the facility_profile fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     *
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -99,7 +123,6 @@ public class facility_profile extends Fragment {
         nameEditText = view.findViewById(R.id.profile_facility_name);
         locationEditText = view.findViewById(R.id.profile_facility_location);
         descriptionEditText = view.findViewById(R.id.profile_facility_description);
-        removeFacilityPicture = view.findViewById(R.id.profile_facility_picture_remove);
         addFacilityPicture = view.findViewById(R.id.profile_facility_picture_add);
         saveButton = view.findViewById(R.id.profile_facility_create_frame);
         cancelButton = view.findViewById(R.id.profile_facility_cancel_btn);
@@ -121,6 +144,7 @@ public class facility_profile extends Fragment {
             @Override
             public void onFacilityExists(Facility facility) {
                 facilityProfile = facility;
+                pictureURL = facility.getPictureURL();
                 createUpdateBtn.setText("UPDATE");
 
                 setDetails();
@@ -144,15 +168,6 @@ public class facility_profile extends Fragment {
             @Override
             public void onError(Exception e) {
                 Log.e("facility_profile", "Error checking facility", e);
-            }
-        });
-
-        removeFacilityPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageURI=null;
-                facilityImage.setImageDrawable(getResources().getDrawable(R.drawable.facility));
-                facilityImage.setImageTintList(getResources().getColorStateList(R.color.grey));
             }
         });
 
@@ -184,7 +199,7 @@ public class facility_profile extends Fragment {
             } else if (description.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter a description", Toast.LENGTH_SHORT).show();
                 return;
-            } else if (ImageURI == null) {
+            } else if (ImageURI == null && pictureURL == null) {
                 Toast.makeText(getContext(), "Please select a picture", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -194,19 +209,20 @@ public class facility_profile extends Fragment {
                 facilityProfile.setName(name);
                 facilityProfile.setLocation(location);
                 facilityProfile.setDescription(description);
-                facilityManager.updateFacility(facilityProfile,deviceID);
+                facilityManager.updateFacility(facilityProfile, deviceID);
                 Toast.makeText(getContext(), "Facility updated successfully", Toast.LENGTH_SHORT).show();
             } else {
                 facilityProfile = new Facility(name, latitude, longitude, location, description, null, new ArrayList<>(), deviceID);
                 // update the users facilityURL
                 UserProfileManager userProfileManager = new UserProfileManager();
-                userProfileManager.getUserProfile(deviceID , new UserProfileManager.OnUserProfileFetchListener() {
+                userProfileManager.getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
                     @Override
                     public void onUserProfileFetched(UserProfile userProfile) {
                         userProfile.setFacilityURL(deviceID);
                         userProfile.setOrganizer(true);
                         userProfileManager.updateUserProfile(userProfile, deviceID);
                     }
+
                     @Override
                     public void onUserProfileFetchError(Exception e) {
                         Log.e("facility_profile", "Error fetching user profile", e);
@@ -218,19 +234,7 @@ public class facility_profile extends Fragment {
                 createUpdateBtn.setText("UPDATE");
             }
 
-            if(ImageURI==null){
-                facilityManager.deleteFacilityPicture(deviceID, new FacilityManager.OnDeleteListener() {
-                    @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });
-            } else {
+            if (ImageURI != null) {
                 facilityManager.uploadFacilityPicture(ImageURI, deviceID, new FacilityManager.OnUploadPictureListener() {
                     @Override
                     public void onSuccess(Uri downloadUrl) {
@@ -250,6 +254,9 @@ public class facility_profile extends Fragment {
         return view;
     }
 
+    /**
+     * sets the activity views to reflect the local facility
+     */
     public void setDetails() {
         nameEditText.setText(facilityProfile.getName());
         locationEditText.setText(facilityProfile.getLocation());
@@ -260,6 +267,18 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * sets image if activity result indicates success
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     * @see Fragment
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
         super.onActivityResult(requestCode,resultCode,data);
@@ -267,13 +286,18 @@ public class facility_profile extends Fragment {
             if (resultCode== Activity.RESULT_OK){
                 assert data != null;
                 ImageURI = data.getData();
+                pictureURL = null;
                 facilityImage.setImageURI(ImageURI);
                 facilityImage.setImageTintList(null);
             }
         }
     }
 
-    // Go back to the home screen
+    /**
+     * Returns user back to the home screen
+     * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -283,6 +307,11 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * Takes user to User Profile Page
+     * @throws Exception activity not instance of MainActivity
+     * @see user_profile
+     */
     private void openUserProfileFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -292,6 +321,10 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * retrieves user's device latitude and longitude and converts it to location
+     * @throws Exception null location
+     */
     private void getLastLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation()
@@ -316,6 +349,16 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * Gets location permission result, and gets location if permission allows
+     * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     * @see Fragment
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -329,6 +372,15 @@ public class facility_profile extends Fragment {
         }
     }
 
+    /**
+     * Intreprets latitude and longitude into a String representation of location
+     * @param latitude  double, device's physical location latitude
+     * @param longitude double, device's physical location longitude
+     * @return String representation of device location
+     * @throws  Exception null/empty address
+     * @throws Exception IOException
+     * @see Geocoder
+     */
     private String getLocationDetails(double latitude, double longitude) {
         Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
         try {
