@@ -199,28 +199,42 @@ public class FacilityManager {
                 .addOnFailureListener(listener::onError);
     }
 
-    // Listener interfaces
+    /**
+     * Interface for handling the result of facility existence check.
+     */
     public interface OnFacilityCheckListener {
         void onFacilityExists(Facility facility);
         void onFacilityNotExists();
         void onError(Exception e);
     }
 
+    /**
+     * Interface for handling the result of fetching the facility.
+     */
     public interface OnFacilityFetchListener {
         void onFacilityFetched(Facility facility);
         void onFacilityFetchError(Exception e);
     }
 
+    /**
+     * Interface for handling the result of uploading the facility picture.
+     */
     public interface OnUploadPictureListener {
         void onSuccess(Uri downloadUrl);
         void onError(Exception e);
     }
 
+    /**
+     * Interface for handling the result of updating the facility picture.
+     */
     public interface OnUpdateListener {
         void onSuccess();
         void onError(Exception e);
     }
 
+    /**
+     * Interface for handling the result of deleting the facility picture.
+     */
     public interface OnDeleteListener {
         void onSuccess();
         void onError(Exception e);
