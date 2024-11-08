@@ -34,6 +34,11 @@ android {
 
 configurations.all {
     exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.test" && requested.name == "core") {
+            useVersion("1.5.0")
+        }
+    }
 }
 
 dependencies {
@@ -41,28 +46,28 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
 
-
-    androidTestImplementation(libs.espresso.contrib)
-    androidTestImplementation("androidx.test:core:1.4.0")
+    debugImplementation("androidx.fragment:fragment-testing:1.5.5")
 
 
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
 
 
     implementation(libs.glide)
     implementation(libs.zxing.android.embedded)
-
-
     implementation(libs.core)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-
-
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
 }
