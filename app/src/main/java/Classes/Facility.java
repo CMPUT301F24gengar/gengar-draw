@@ -7,7 +7,7 @@ import java.util.List;
  * <p>
  *     Facility class locally stores information relevant to specific facilities
  *     <ul>data: <li>name</li> <li>location</li> <li>description</li> <li>local instance of facility photo</li> <li>list of event ids</li></ul>
- *     <ul>methods include: <li>constructor</li> <li>getters</li> <li>setters</li></ul>
+ *     <ul>methods include: <li>constructors</li> <li>getters</li> <li>setters</li></ul>
  * </p>
  * @author Meghan, Rheanna
  * @see FacilityManager
@@ -25,7 +25,23 @@ public class Facility {
 
     private String deviceID;
     //constructors
+
+    /**
+     * Empty Facility Constructor
+     */
     public Facility(){}
+
+    /**
+     * Complete Facility Constructor
+     * @param name  String name of facility
+     * @param latitude
+     * @param longitude
+     * @param location  String representation of facility location
+     * @param description   String
+     * @param pictureURL    String URL representation holds facility image information
+     * @param events    List of events belonging to facility, events represented by their String id
+     * @param deviceID  Unique id of user's device
+     */
     public Facility(String name, double latitude, double longitude, String location, String description, String pictureURL, List<String> events, String deviceID){
         this.name = name;
         this.latitude = latitude;
