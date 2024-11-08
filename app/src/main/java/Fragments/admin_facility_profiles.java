@@ -28,6 +28,11 @@ import Adapters.UserProfileAdapter;
 import Classes.Facility;
 import Classes.FacilityManager;
 
+/**
+ * @author Dion
+ * admin_facility_profiles
+ * This fragment displays the list of facility profiles that an admin can browse through.
+ */
 
 public class admin_facility_profiles extends Fragment {
 
@@ -60,8 +65,6 @@ public class admin_facility_profiles extends Fragment {
         customAdapter = new FacilityAdapter(getContext(),facilities);
         searchCustomAdapter = new FacilityAdapter(getContext(),searchFacilities);
 
-
-
         fetchFacilities(new OnProfilesLoadedListener() {
             @Override
             public void onProfilesLoaded(ArrayList<Facility> facilities) {
@@ -93,10 +96,19 @@ public class admin_facility_profiles extends Fragment {
 
     }
 
+    /**
+     * interface for the listener that checks if all the facilities have been loaded.
+     */
     public interface OnProfilesLoadedListener {
         void onProfilesLoaded(ArrayList<Facility> facilities);
     }
 
+    /**
+     * fetchFacilities
+     * @param listener
+     * method to get all the facilities in firebase currently and add it to the facility array list.
+     * @throws Exception if there is an error in facility fetching from firebase, an exception is thrown.
+     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
     public void fetchFacilities(OnProfilesLoadedListener listener) {

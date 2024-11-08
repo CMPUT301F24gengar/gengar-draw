@@ -31,6 +31,13 @@ import Adapters.UserProfileAdapter;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * @author Dion
+ * admin_user_profiles
+ * This fragment displays a list of user profiles currently stored in firebase
+ * along with their profile picture for the admin to browse through.
+ */
+
 public class admin_user_profiles extends Fragment {
 
     private FirebaseFirestore db;
@@ -91,10 +98,18 @@ public class admin_user_profiles extends Fragment {
         return view;
     }
 
+    /**
+     * interface for listener to check if all the user profiles have been loaded.
+     */
     public interface OnProfilesLoadedListener {
         void onProfilesLoaded(ArrayList<UserProfile> userProfiles);
     }
 
+    /**
+     * This method fetches all the user profiles from firebase currently stored
+     * and adds it to a list of user profiles.
+     * @param listener to check if all the profiles have been loaded.
+     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
     public void fetchUserProfiles(OnProfilesLoadedListener listener) {

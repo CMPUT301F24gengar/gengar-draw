@@ -33,6 +33,13 @@ import com.google.firebase.storage.StorageReference;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * @author Dion
+ * user_profile
+ * this fragment displays the user profile details to the user.
+ * The user can update details such as name, email id, phone number.
+ * The user can also update the profile picture or remove the profile picture.
+ */
 
 public class user_profile extends Fragment {
 
@@ -167,6 +174,11 @@ public class user_profile extends Fragment {
         return view;
     }
 
+    /**
+     * Set details such as name, email ID and phone number to that of the user's.
+     * If the profile picture is set up, then the user's profile picture will also be loaded.
+     * @param userProfile is used to get the details of the user.
+     */
     public void setDetails(UserProfile userProfile) {
         nameEditText.setText(userProfile.getName());
         emailEditText.setText(userProfile.getEmail());
@@ -179,6 +191,17 @@ public class user_profile extends Fragment {
 
     }
 
+    /**
+     * Updates the profile picture as chosen by the user.
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     // setting user_picture to image
     @Override
     public void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
@@ -193,6 +216,9 @@ public class user_profile extends Fragment {
         }
     }
 
+    /**
+     * returns the user to the homepage.
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
