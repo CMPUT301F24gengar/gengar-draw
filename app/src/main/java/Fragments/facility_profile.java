@@ -61,7 +61,7 @@ import Classes.UserProfileManager;
  *     <ul>data: <li>device id</li> <li>fragment views</li> <li>facility image URI</li> <li>local Facility object</li> <li>latitude and longitude (device location)</li></ul>
  *     <ul>methods: <li>onCreateView</li> <li>setDetails</li> <li>onActivityResult</li> <li>closeFragment</li> <li>openUserProfileFragment</li> <li>getLastLocation</li> <li>onRequestPermissionsResult</li> <li>getLocationDetails</li> <li>getLocationDetails</li></ul>
  * </p>
- * @author Meghan, Rheanne
+ * @author Meghan, Rheanna
  * @see Fragment
  * @see Facility
  * @see FacilityManager
