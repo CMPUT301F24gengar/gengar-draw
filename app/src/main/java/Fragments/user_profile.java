@@ -228,6 +228,10 @@ public class user_profile extends Fragment {
         }
     }
 
+    /**
+     * Takes user to facility page
+     * @throws Exception activity not instance of MainActivity
+     */
     // replace current fragment with facility fragment
     private void openFacilityFragment() {
         if (getActivity() instanceof MainActivity) {
