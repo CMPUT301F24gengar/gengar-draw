@@ -32,6 +32,7 @@ import Classes.FacilityManager;
  *     <ul>methods: <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
  * </p>
  * @author Meghan
+ * @see Fragment
  */
 public class my_events extends Fragment {
     //activity views
@@ -44,10 +45,27 @@ public class my_events extends Fragment {
     private String deviceID;
     TextView highlightedButton;
 
+    /**
+     * Required empty public constructor
+     */
     public my_events() {
         // Required empty public constructor
     }
 
+    /**
+     * Construct the my_events fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return constructed View
+     * @throws Exception Error checking facility exists
+     * @see Fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -113,6 +131,11 @@ public class my_events extends Fragment {
         return view;
     }
 
+    /**
+     * returns user to the homepage
+     * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
+     */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -122,6 +145,10 @@ public class my_events extends Fragment {
         }
     }
 
+    /**
+     * switches which button is highlighted
+     * @param button    TextView representing a button
+     */
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));
         highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.black2)));
@@ -130,7 +157,11 @@ public class my_events extends Fragment {
         highlightedButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
     }
 
-    // replace current fragment with facility fragment
+    /**
+     * replaces the current fragment with the facility fragment
+     * @throws Exception activity not instance of MainActivity
+     * @see facility_profile
+     */
     private void openFacilityFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();

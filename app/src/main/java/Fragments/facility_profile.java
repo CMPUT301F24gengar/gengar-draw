@@ -317,6 +317,7 @@ public class facility_profile extends Fragment {
     /**
      * Returns user back to the home screen
      * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
      */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
