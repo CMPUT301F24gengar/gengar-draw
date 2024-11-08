@@ -71,6 +71,10 @@ public class Facility {
     public void setEvents(List<String> events){this.events = events;}
     public void setDeviceID(String deviceID){this.deviceID = deviceID;}
 
+    /**
+     * Adds an event to this facility's list of events
+     * @param eventID   String id representing Event
+     */
     public void addEvent(String eventID){
         this.events.add(eventID);
     }
