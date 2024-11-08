@@ -2,6 +2,16 @@ package Classes;
 
 import java.util.List;
 
+/**
+ * <h1>Facility</h1>
+ * <p>
+ *     Facility class locally stores information relevant to specific facilities
+ *     <ul>data: <li>name</li> <li>location</li> <li>description</li> <li>local instance of facility photo</li> <li>list of event ids</li></ul>
+ *     <ul>methods include: <li>constructor</li> <li>getters</li> <li>setters</li></ul>
+ * </p>
+ * @author Meghan, Rheanna
+ * @see FacilityManager
+ */
 public class Facility {
     //data
     private String name;

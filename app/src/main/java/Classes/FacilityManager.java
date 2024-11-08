@@ -11,6 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * <h1>Facility Manager </h1>
+ * <p>
+ *     Facility Manager class handles interactions between the local instance(s) of a given facility with the firestore database
+ *     <ul>data: <li>Firebase Firestore Instance</li> <li>Firebase Storage Reference</li></ul>
+ *     <ul>methods: <li>Constructor</li> <li>checkFacilityExists</li> <li>createFacilityFromDocument</li> <li>addFacility</li> <li>updateFacility</li> <li>deleteFacility</li> <li>getFacility</li> <li>uploadFacilityPicture</li> <li>updateFacilityPictureInFirestore</li> <li>deleteFacilityPicture</li></ul>
+ *     <ul>interfaces: <li>OnFacilityCheckListener</li> <li>OnFacilityFetchListener</li> <li>OnUploadPictureListener</li> <li>OnUpdateListener</li> <li>OnDeleteListener</li></ul>
+ * </p>
+ * @author Meghan, Rheanna
+ * @see Facility
+ */
 public class FacilityManager {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
