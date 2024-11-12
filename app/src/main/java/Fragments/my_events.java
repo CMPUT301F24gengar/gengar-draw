@@ -125,7 +125,6 @@ public class my_events extends Fragment {
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        Log.d("onCreateView ", "Events size: " + events.size());
         return view;
     }
 
@@ -150,7 +149,6 @@ public class my_events extends Fragment {
                 // Empty out the events ArrayList to hold the Event objects
                 events.clear();
                 customAdapter.notifyDataSetChanged();
-                Log.d("fetchEvents", "events.clear size: " + events.size());
 
                 setHighlightedButton(hostedEventsBtn);
                 eventListView.setVisibility(View.VISIBLE);
@@ -164,18 +162,11 @@ public class my_events extends Fragment {
                 // Empty out the events ArrayList to hold the Event objects
                 events.clear();
                 customAdapter.notifyDataSetChanged();
-                Log.d("fetchEvents", "events.clear size: " + events.size());
 
                 //switch views
                 setHighlightedButton(joinedEventsBtn);
                 missingFacilityFrame.setVisibility(View.GONE);
-                //eventListView.setVisibility(View.INVISIBLE);  // TEMPORARY: TO SEE "HOSTED LIST"!!!
-                eventListView.setVisibility(View.VISIBLE); // TEMPORARY: TO SEE "HOSTED LIST"!!!
-
-                Log.d("JOIN FacilityExists", "eventListView VISIBLE");
-                Log.d("JOIN VisibilityCheck", "RecyclerView visibility: " + (eventListView.getVisibility() == View.VISIBLE ? "VISIBLE" : "GONE"));
-                Log.d("JOIN RecyclerView", "Adapter set to RecyclerView: " + (recyclerView.getAdapter() != null));
-                Log.d("JOIN RecyclerView", "LayoutManager set: " + (recyclerView.getLayoutManager() != null));
+                eventListView.setVisibility(View.VISIBLE);
             }
         });
         createFacilityBtn.setOnClickListener(new View.OnClickListener() {
@@ -242,10 +233,6 @@ public void checkForFacility() {
                 @Override
                 public void onSuccess(ArrayList<Event> curr_events) {
                     Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
-                    Log.d("HOST FacilityExists", "eventListView VISIBLE");
-                    Log.d("HOST VisibilityCheck", "RecyclerView visibility: " + (eventListView.getVisibility() == View.VISIBLE ? "VISIBLE" : "GONE"));
-                    Log.d("HOST RecyclerView", "Adapter set to RecyclerView: " + (recyclerView.getAdapter() != null));
-                    Log.d("HOST RecyclerView", "LayoutManager set: " + (recyclerView.getLayoutManager() != null));
                 }
 
                 @Override
@@ -274,29 +261,19 @@ public void checkForFacility() {
 // Creates listener since firebase's get() is asynchronous in nature,
 // so it notifies when all events have been loaded.
 public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
+    int totalEvents = eventIDs.size();  // total number of events to fetch
 
-    // Empty out the events ArrayList to hold the Event objects
-//    events.clear();
-//    customAdapter.notifyDataSetChanged();
-////        customAdapter.updateAdapter(events);
-//    Log.d("fetchEvents", "events.clear size: " + events.size());
+    AtomicInteger completedTasks = new AtomicInteger(0);  // needed for incrementAndGet()
 
-    // Track how many events have been fetched
-    int totalEvents = eventIDs.size();
-    Log.d("fetchEvents", "totalEvents: " + totalEvents);
-    // Thread-safe  way to increment an integer
-    AtomicInteger completedTasks = new AtomicInteger(0);
-
-    // Loop through each eventID in the eventIDs list
+    // Loop through each event
     for (String eventID : eventIDs) {
 
-        // Fetch the specific event document by its ID
+        // Fetch specific event document by its ID
         db.collection("events").document(eventID)
                 .get()
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful()) {
-                        // If document exists, fetch event using event manager
                         DocumentSnapshot document = task.getResult();
 
                         if (document != null && document.exists()) {
@@ -306,13 +283,13 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                                 @Override
                                 public void onEventFetched(Event curr_event) {
                                     Log.d("onEventFetched", "Event title : " + curr_event.getEventTitle());
-                                    events.add(curr_event);   // Add the retrieved Event object to the List
+                                    events.add(curr_event);  // Add retrieved Event object to the List
 
                                     // Notify adapter that event was added
                                     customAdapter.notifyItemInserted(events.size() - 1);
 
-                                    if (completedTasks.incrementAndGet() == totalEvents) { // All events have been fetched
-                                        callback.onSuccess(events); // Pass list to the callback
+                                    if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
+                                        callback.onSuccess(events);  // Pass retrieved events list
                                     }
                                 }
 
@@ -321,7 +298,7 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                                     Log.e("fetchEvents", "Failed to fetch Event for ID: " + currentDocumentID + e);
 
                                     if (completedTasks.incrementAndGet() == totalEvents) {
-                                        callback.onSuccess(events); // Pass whatever was retrieved so far
+                                        callback.onSuccess(events);  // Pass events which were retrieved
                                     }
                                 }
                             });
@@ -329,7 +306,7 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                             Log.e("fetchEvents", "Document does not exist for eventID: " + eventID);
 
                             if (completedTasks.incrementAndGet() == totalEvents) {
-                                callback.onSuccess(events); // Pass whatever was retrieved so far
+                                callback.onSuccess(events);  // Pass events which were retrieved
                             }
                         }
                     } else {
@@ -337,7 +314,7 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                         Log.e("fetchEvents", "Failed to fetch document for eventID: " + eventID, task.getException());
 
                         if (completedTasks.incrementAndGet() == totalEvents) {
-                            callback.onSuccess(events); // Pass whatever was retrieved so far
+                            callback.onSuccess(events); // Pass events which were retrieved
                         }
                     }
                 });
