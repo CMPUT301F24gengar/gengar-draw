@@ -300,9 +300,9 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                         DocumentSnapshot document = task.getResult();
 
                         if (document != null && document.exists()) {
-                            String currentDeviceID = document.getId();
+                            String currentDocumentID = document.getId();
 
-                            eventManager.getEvent(currentDeviceID, new EventManager.OnEventFetchListener() {
+                            eventManager.getEvent(currentDocumentID, new EventManager.OnEventFetchListener() {
                                 @Override
                                 public void onEventFetched(Event curr_event) {
                                     Log.d("onEventFetched", "Event title : " + curr_event.getEventTitle());
@@ -318,7 +318,7 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
 
                                 @Override
                                 public void onEventFetchError(Exception e) {
-                                    Log.e("fetchEvents", "Failed to fetch Event for ID: " + currentDeviceID + e);
+                                    Log.e("fetchEvents", "Failed to fetch Event for ID: " + currentDocumentID + e);
 
                                     if (completedTasks.incrementAndGet() == totalEvents) {
                                         callback.onSuccess(events); // Pass whatever was retrieved so far
