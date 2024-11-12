@@ -63,8 +63,9 @@ import Adapters.UserProfileAdapter;
  *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
  *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
  *
- * @author Meghan
+ * @author Meghan, Rheanna
  * @see Fragment
+ * @see <a href="https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/">https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/</a>
  */
 public class my_events extends Fragment {
     //activity views
