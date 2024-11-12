@@ -235,6 +235,7 @@ public void checkForFacility() {
     facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
         @Override
         public void onFacilityExists(Facility facility) {
+            missingFacilityFrame.setVisibility(View.GONE);
             eventIDs = facility.getEvents();
 
             fetchEvents(eventIDs, new FetchEventsCallback() {
