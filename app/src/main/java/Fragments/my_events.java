@@ -147,6 +147,11 @@ public class my_events extends Fragment {
         hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Empty out the events ArrayList to hold the Event objects
+                events.clear();
+                customAdapter.notifyDataSetChanged();
+                Log.d("fetchEvents", "events.clear size: " + events.size());
+
                 setHighlightedButton(hostedEventsBtn);
                 eventListView.setVisibility(View.VISIBLE);
                 missingFacilityFrame.setVisibility(View.INVISIBLE);
@@ -156,6 +161,11 @@ public class my_events extends Fragment {
         joinedEventsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Empty out the events ArrayList to hold the Event objects
+                events.clear();
+                customAdapter.notifyDataSetChanged();
+                Log.d("fetchEvents", "events.clear size: " + events.size());
+
                 //switch views
                 setHighlightedButton(joinedEventsBtn);
                 missingFacilityFrame.setVisibility(View.GONE);
@@ -265,10 +275,10 @@ public void checkForFacility() {
 public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
 
     // Empty out the events ArrayList to hold the Event objects
-    events.clear();
-    customAdapter.notifyDataSetChanged();
-//        customAdapter.updateAdapter(events);
-    Log.d("fetchEvents", "events.clear size: " + events.size());
+//    events.clear();
+//    customAdapter.notifyDataSetChanged();
+////        customAdapter.updateAdapter(events);
+//    Log.d("fetchEvents", "events.clear size: " + events.size());
 
     // Track how many events have been fetched
     int totalEvents = eventIDs.size();
