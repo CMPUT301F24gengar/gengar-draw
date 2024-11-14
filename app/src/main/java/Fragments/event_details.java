@@ -1,11 +1,15 @@
 package Fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,7 +26,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -66,6 +73,11 @@ public class event_details extends Fragment {
 
     private Boolean buttonDebounce = false;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
+    private double latitude;
+    private double longitude;
+
     private String deviceID;
     private Date currentDate;
 
@@ -87,6 +99,11 @@ public class event_details extends Fragment {
     LinearLayout qrCodeContainer;
     ImageView qrCodeImage;
     TextView qrCodeBack;
+
+    FrameLayout blackFrame;
+    LinearLayout geoLocationWarning;
+    FrameLayout geoLocationWarningProceed;
+    FrameLayout geoLocationWarningCancel;
 
     TextView viewEventTitle;
     TextView viewEventStartDay;
@@ -158,6 +175,11 @@ public class event_details extends Fragment {
         qrCodeImage = view.findViewById(R.id.qr_code_image);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
 
+        blackFrame = view.findViewById(R.id.black_frame);
+        geoLocationWarning = view.findViewById(R.id.geolocation_warning_layout);
+        geoLocationWarningProceed = view.findViewById(R.id.geolocation_proceed_btn);
+        geoLocationWarningCancel = view.findViewById(R.id.geolocation_cancel_btn);
+
         viewEventTitle = view.findViewById(R.id.view_event_title);
         viewEventStartDay = view.findViewById(R.id.view_event_day);
         viewEventStartMonth = view.findViewById(R.id.view_event_month);
@@ -207,6 +229,7 @@ public class event_details extends Fragment {
         });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         currentDate = new Date();
 
         // get user profile from deviceID
@@ -276,30 +299,61 @@ public class event_details extends Fragment {
      * @throws Exception Exception if error while clicking button
      */
     private void setupButtons(Event event, String eventID) {
+
+        // check location permissions
+        if (event.getEnableGeolocation()) {
+            geoLocationWarning.setVisibility(View.VISIBLE);
+            geoLocationWarningProceed.setOnClickListener(v -> {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                } else {
+                    getLastLocation();
+                    Toast.makeText(getContext(), "Location permissions granted "+latitude+1+" "+longitude, Toast.LENGTH_SHORT).show();
+                }
+                blackFrame.setVisibility(View.GONE);
+            });
+            geoLocationWarningCancel.setOnClickListener(v -> {
+                closeFragment();
+            });
+
+        } else {
+            blackFrame.setVisibility(View.GONE);
+        }
+
         join_leaveButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
 
             if (!inWaitingList) {
-                eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
-                    @Override
-                    public void onSuccess(String message, boolean boolValue) {
-                        inWaitingList = boolValue;
-                        // if in waiting list, add eventID to users joined events
-                        if (inWaitingList) {
-                            userProfile.getJoinedEvents().add(eventID);
-                            userProfileManager.updateUserProfile(userProfile, deviceID);
-                        }
-                        setJoinLeaveButtonText(inWaitingList);
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                        buttonDebounce = false;
-                    }
-                    @Override
-                    public void onError(Exception e) {
-                        buttonDebounce = false;
+
+                if (event.getEnableGeolocation()) {
+                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        getLastLocation();
                     }
                 }
-                ,null, null);
+
+                eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                            @Override
+                            public void onSuccess(String message, boolean boolValue) {
+                                inWaitingList = boolValue;
+                                // if in waiting list, add eventID to users joined events
+                                if (inWaitingList) {
+                                    userProfile.getJoinedEvents().add(eventID);
+                                    userProfileManager.updateUserProfile(userProfile, deviceID);
+                                }
+                                setJoinLeaveButtonText(inWaitingList);
+                                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                                buttonDebounce = false;
+                            }
+                            @Override
+                            public void onError(Exception e) {
+                                buttonDebounce = false;
+                            }
+                        }
+                        ,latitude, longitude);
             } else {
                 eventListsManager.removeUserFromWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
@@ -648,6 +702,43 @@ public class event_details extends Fragment {
                 public void onUserProfileFetchError(Exception e) {
                 }
             });
+        }
+    }
+
+    /**
+     * retrieves user's device latitude and longitude and converts it to location
+     * @throws Exception null location
+     */
+    private void getLastLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                Location location2 = task.getResult();
+                                latitude = location2.getLatitude();
+                                longitude = location2.getLongitude();
+                            } else {
+                                // Handle the case where Location is null
+                            }
+                        }
+                    });
+        } else {
+            // Handle the case where permission is not granted
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * returns the user to the homepage.
+     */
+    private void closeFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showHomeFragment();
+        } else {
+            // Handle error
         }
     }
 
