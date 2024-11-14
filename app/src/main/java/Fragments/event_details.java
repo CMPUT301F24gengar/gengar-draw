@@ -73,7 +73,7 @@ public class event_details extends Fragment {
 
     private Boolean buttonDebounce = false;
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     private FusedLocationProviderClient fusedLocationClient;
     private double latitude;
     private double longitude;
@@ -308,7 +308,7 @@ public class event_details extends Fragment {
                     requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                 } else {
                     getLastLocation();
-                    Toast.makeText(getContext(), "Location permissions granted "+latitude+1+" "+longitude, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), latitude+" - "+longitude, Toast.LENGTH_SHORT).show();
                 }
                 blackFrame.setVisibility(View.GONE);
             });
@@ -345,7 +345,6 @@ public class event_details extends Fragment {
                                     userProfileManager.updateUserProfile(userProfile, deviceID);
                                 }
                                 setJoinLeaveButtonText(inWaitingList);
-                                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                                 buttonDebounce = false;
                             }
                             @Override
@@ -727,6 +726,29 @@ public class event_details extends Fragment {
         } else {
             // Handle the case where permission is not granted
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    /**
+     * Gets location permission result, and gets location if permission allows
+     * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     * @see Fragment
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
+                Log.d("facilityProfile", "onRequestPermissionsResult ");
+                getLastLocation();
+            } else {
+                // Permission denied, handle accordingly
+            }
         }
     }
 
