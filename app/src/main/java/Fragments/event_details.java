@@ -300,26 +300,6 @@ public class event_details extends Fragment {
      */
     private void setupButtons(Event event, String eventID) {
 
-        // check location permissions
-        if (event.getEnableGeolocation()) {
-            geoLocationWarning.setVisibility(View.VISIBLE);
-            geoLocationWarningProceed.setOnClickListener(v -> {
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                } else {
-                    getLastLocation();
-                    Toast.makeText(getContext(), latitude+" - "+longitude, Toast.LENGTH_SHORT).show();
-                }
-                blackFrame.setVisibility(View.GONE);
-            });
-            geoLocationWarningCancel.setOnClickListener(v -> {
-                closeFragment();
-            });
-
-        } else {
-            blackFrame.setVisibility(View.GONE);
-        }
-
         join_leaveButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
@@ -595,6 +575,26 @@ public class event_details extends Fragment {
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
                     if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
+
+                        // check location permissions
+                        if (event.getEnableGeolocation()) {
+                            geoLocationWarning.setVisibility(View.VISIBLE);
+                            geoLocationWarningProceed.setOnClickListener(v -> {
+                                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                                } else {
+                                    getLastLocation();
+                                }
+                                blackFrame.setVisibility(View.GONE);
+                            });
+                            geoLocationWarningCancel.setOnClickListener(v -> {
+                                closeFragment();
+                            });
+
+                        } else {
+                            blackFrame.setVisibility(View.GONE);
+                        }
+
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
                         } else if (currentDate.before(regDeadlineDate)) {

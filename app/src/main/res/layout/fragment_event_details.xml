@@ -717,6 +717,7 @@
         android:visibility="gone"
         android:background="@color/black1"
         android:orientation="vertical">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
