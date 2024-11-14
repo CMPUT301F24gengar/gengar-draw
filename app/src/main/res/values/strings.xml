@@ -63,4 +63,5 @@
     <string name="event_does_not_exist">EVENT DOES NOT EXIST</string>
     <string name="this_event_requires_geolocation_in_order_to_join_the_waiting_list">THIS EVENT REQUIRES GEOLOCATION IN ORDER TO JOIN THE WAITING LIST</string>
     <string name="warning">WARNING</string>
+    <string name="map">MAP</string>
 </resources>
