@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import Adapters.UserProfileAdapter;
@@ -136,6 +137,7 @@ public class event_details extends Fragment {
     TextView winnersListButton;
 
     LinearLayout mapLayout;
+    TextView mapBackButton;
 
     TextView statusText;
 
@@ -215,6 +217,7 @@ public class event_details extends Fragment {
         winnersListButton = view.findViewById(R.id.view_event_winners);
 
         mapLayout = view.findViewById(R.id.map_layout);
+        mapBackButton = view.findViewById(R.id.map_back);
 
         statusText = view.findViewById(R.id.status_message);
 
@@ -458,12 +461,40 @@ public class event_details extends Fragment {
                     public void onMapReady(@NonNull GoogleMap googleMap) {
                         mMap = googleMap;
 
-                        LatLng sydney = new LatLng(-34, 151);
-                        LatLng edmonton = new LatLng(53, 113);
-                        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-                        mMap.addMarker(new MarkerOptions().position(edmonton).title("New marker in Edmonton."));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(edmonton));
+                        eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                            @Override
+                            public void onEventListsFetched(EventLists eventLists) {
+                                Map<String,Object> locationList = eventLists.getLocationList();
+                                if(locationList.isEmpty()){
+                                    Toast.makeText(getContext(),"No users have joined this event.",Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    for (Map.Entry<String, Object> userEntry : locationList.entrySet()){
+                                        Map <String, Double> latLngMap = (Map<String, Double>) userEntry.getValue();
+                                        Double latitude = latLngMap.get("latitude");
+                                        Double longitude = latLngMap.get("longitude");
+                                        Log.d("latlng","lat"+latitude);
+                                        Log.d("latlng","lon"+longitude);
 
+                                        LatLng latLng = new LatLng(latitude,longitude);
+                                        mMap.addMarker(new MarkerOptions().position(latLng));
+                                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onEventListsFetchError(Exception e) {
+                                Log.d("EventListFetchErrorMap",e.toString());
+                            }
+                        });
+
+                    }
+                });
+
+                mapBackButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mapLayout.setVisibility(View.GONE);
                     }
                 });
 
