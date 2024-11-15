@@ -750,10 +750,16 @@
 
         </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/map_display"
+<!--        <FrameLayout-->
+<!--            android:id="@+id/map_display"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
+
+        <fragment
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:id="@+id/google_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     </LinearLayout>
 

@@ -30,6 +30,12 @@ import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -129,6 +135,8 @@ public class event_details extends Fragment {
     TextView cancelledEntrantsButton;
     TextView winnersListButton;
 
+    LinearLayout mapLayout;
+
     TextView statusText;
 
     TextView listBack;
@@ -141,6 +149,8 @@ public class event_details extends Fragment {
     UserProfileAdapter customAdapter;
 
     UserProfile userProfile;
+
+    private GoogleMap mMap;
 
     /**
      * Construct the event_details fragment view
@@ -203,6 +213,8 @@ public class event_details extends Fragment {
         chosenEntrantsButton = view.findViewById(R.id.view_event_chosen_entrants);
         cancelledEntrantsButton = view.findViewById(R.id.view_event_cancelled_entrants);
         winnersListButton = view.findViewById(R.id.view_event_winners);
+
+        mapLayout = view.findViewById(R.id.map_layout);
 
         statusText = view.findViewById(R.id.status_message);
 
@@ -435,6 +447,29 @@ public class event_details extends Fragment {
             });
         });
 
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapLayout.setVisibility(View.VISIBLE);
+                SupportMapFragment supportMapFragment=(SupportMapFragment)
+                        getChildFragmentManager().findFragmentById(R.id.google_map);
+                supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(@NonNull GoogleMap googleMap) {
+                        mMap = googleMap;
+
+                        LatLng sydney = new LatLng(-34, 151);
+                        LatLng edmonton = new LatLng(53, 113);
+                        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                        mMap.addMarker(new MarkerOptions().position(edmonton).title("New marker in Edmonton."));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(edmonton));
+
+                    }
+                });
+
+            }
+        });
+
         chosenEntrantsButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
@@ -620,6 +655,10 @@ public class event_details extends Fragment {
                     } else { // ORGANIZER
                         if (currentDate.after(regOpenDate)) {
                             waitingListButton.setVisibility(View.VISIBLE);
+                            if (event.getEnableGeolocation()) {
+                                mapButton.setVisibility(View.VISIBLE);
+                            }
+                            blackFrame.setVisibility(View.GONE);
                         }
                         if (currentDate.after(regDeadlineDate)) {
                             chooseEntrantsButton.setVisibility(View.VISIBLE);
