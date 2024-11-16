@@ -247,6 +247,8 @@ public class event_details extends Fragment {
         });
         listBack.setOnClickListener(v -> {
             listContainer.setVisibility(View.GONE);
+            cancelEntrantsButton.setVisibility(View.GONE);
+            notifyEntrantsButton.setVisibility(View.GONE);
         });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -439,8 +441,6 @@ public class event_details extends Fragment {
                         return;
                     }
 
-                    cancelEntrantsButton.setVisibility(View.VISIBLE);
-
                     fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
                         @Override
                         public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
@@ -473,6 +473,8 @@ public class event_details extends Fragment {
                             @Override
                             public void onEventListsFetched(EventLists eventLists) {
                                 Map<String,Object> locationList = eventLists.getLocationList();
+                                // remove all markers from map
+                                mMap.clear();
                                 if(locationList.isEmpty()){
                                     Toast.makeText(getContext(),"No users have joined this event.",Toast.LENGTH_SHORT).show();
                                 }
@@ -527,6 +529,8 @@ public class event_details extends Fragment {
                         return;
                     }
 
+                    cancelEntrantsButton.setVisibility(View.VISIBLE);
+
                     fetchUserProfiles(chosenList, new OnProfilesLoadedListener(){
                         @Override
                         public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
@@ -539,6 +543,25 @@ public class event_details extends Fragment {
                 }
                 @Override
                 public void onEventListsFetchError(Exception e) {
+                    buttonDebounce = false;
+                }
+            });
+        });
+        cancelEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            eventListsManager.addUsersToCancelledList(eventID, new EventListsManager.OnEventListsUpdateListener() {
+                @Override
+                public void onSuccess(String message, boolean boolValue) {
+                    userProfiles.clear();
+                    customAdapter.notifyDataSetChanged();
+                    cancelEntrantsButton.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    buttonDebounce = false;
+                }
+                @Override
+                public void onError(Exception e) {
                     buttonDebounce = false;
                 }
             });
@@ -574,26 +597,6 @@ public class event_details extends Fragment {
                 }
                 @Override
                 public void onEventListsFetchError(Exception e) {
-                    buttonDebounce = false;
-                }
-            });
-        });
-
-        cancelEntrantsButton.setOnClickListener(v -> {
-            if (buttonDebounce) return;
-            buttonDebounce = true;
-
-            eventListsManager.addUsersToCancelledList(eventID, new EventListsManager.OnEventListsUpdateListener() {
-                @Override
-                public void onSuccess(String message, boolean boolValue) {
-                    userProfiles.clear();
-                    customAdapter.notifyDataSetChanged();
-                    cancelEntrantsButton.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                    buttonDebounce = false;
-                }
-                @Override
-                public void onError(Exception e) {
                     buttonDebounce = false;
                 }
             });
