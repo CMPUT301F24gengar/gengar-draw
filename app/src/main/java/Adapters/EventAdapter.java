@@ -27,11 +27,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     private Context context;
     private List<Event> localEvents;
     private Boolean showDelete;
+    private OnEventClickListener listener;
 
-    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete) {
+    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
         this.showDelete = showDelete;
+        this.listener = listener;
     }
 
     @NonNull
@@ -56,6 +58,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             holder.eventPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
             holder.eventPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
         }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEventClick(localEvents.get(position).getEventID());
+                Log.d("EventAdapter", "setOnClickListener position: " + position + " event title: " + event.getEventTitle());
+            }
+        });
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -80,5 +88,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     @Override
     public int getItemCount() {
         return localEvents.size();
+    }
+
+    public interface OnEventClickListener {
+        void onEventClick(String eventID);
     }
 }
