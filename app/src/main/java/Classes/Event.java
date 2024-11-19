@@ -26,6 +26,7 @@ public class Event {
     private String ListReference; // Stores the docID of the EventLists
     private String LocationReference; // Stores the docID of the Locations;
     private String QRCode;
+    private String eventID;
 
     /**
      * Empty Event Constructor
@@ -169,6 +170,12 @@ public class Event {
     }
 
     /**
+     * Gets the event ID
+     * @return String representing the event's unique ID
+     */
+    public String getEventID() { return eventID; }
+
+    /**
      * Sets the organizer ID
      * @param organizerID String representing the organizer's unique ID
      */
@@ -255,4 +262,12 @@ public class Event {
      * @param QRCode String representing the event's QR code
      */
     public void setQRCode(String QRCode) { this.QRCode = QRCode; }
+
+    /**
+     * Sets the event ID
+     * @param eventID String representing the event's unique ID
+     */
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
 }
