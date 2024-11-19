@@ -300,8 +300,8 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
 
                             eventManager.getEvent(currentDocumentID, new EventManager.OnEventFetchListener() {
                                 @Override
-                                public void onEventFetched(Event curr_event) {
-                                    Log.d("onEventFetched", "Event title : " + curr_event.getEventTitle());
+                                public void onEventFetched(Event current_event) {
+                                    Log.d("onEventFetched", "Event title : " + current_event.getEventTitle());
                                     Event curr_event = document.toObject(Event.class);
                                     curr_event.setEventID(document.getId()); // This Event object has eventID field added
                                     events.add(curr_event);  // Add retrieved Event object to the List
