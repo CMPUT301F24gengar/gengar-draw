@@ -46,6 +46,7 @@ public class admin_events extends Fragment{
     private ImageView searchButton;
     private EditText searchBarText;
     private String searchQuery;
+    private EventAdapter.OnEventClickListener eventsListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,15 +62,15 @@ public class admin_events extends Fragment{
         events = new ArrayList<>();
         searchEvents = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(),events, true);
-        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true);
+        customAdapter = new EventAdapter(getContext(),events, true, eventsListener);
+        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true, eventsListener);
 
 
         fetchEvents(new OnEventsLoadedListener() {
             @Override
             public void onEventsLoaded(ArrayList<Event> events) {
                 //adding userProfiles to adapter
-                recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
+                recyclerView.setLayoutManager(layoutManager);  // arranges recyclerView in linear form
                 recyclerView.setAdapter(customAdapter);
             }
         });
