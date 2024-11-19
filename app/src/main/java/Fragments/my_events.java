@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.MainActivity;
@@ -67,7 +69,7 @@ import Adapters.UserProfileAdapter;
  * @see Fragment
  * @see <a href="https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/">https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/</a>
  */
-public class my_events extends Fragment {
+public class my_events extends Fragment implements EventAdapter.OnEventClickListener {
     //activity views
     private TextView hostedEventsBtn;
     private TextView joinedEventsBtn;
@@ -119,7 +121,7 @@ public class my_events extends Fragment {
         events = new ArrayList<>();
 
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(), events, false);
+        customAdapter = new EventAdapter(getContext(), events, false, this);
 
         recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
         recyclerView.setAdapter(customAdapter);
@@ -176,6 +178,22 @@ public class my_events extends Fragment {
                 openFacilityFragment();
             }
         });
+    }
+
+    @Override
+    public void onEventClick(String EventID) {
+        String selectedEventID = EventID;
+
+        Bundle bundle = new Bundle();
+        bundle.putString("eventID", selectedEventID);
+
+        update_event updateEvent = new update_event(); // call update_event to display event details
+        updateEvent.setArguments(bundle); // pass eventID to update_event
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_content, updateEvent);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /**
@@ -284,6 +302,8 @@ public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callbac
                                 @Override
                                 public void onEventFetched(Event curr_event) {
                                     Log.d("onEventFetched", "Event title : " + curr_event.getEventTitle());
+                                    Event curr_event = document.toObject(Event.class);
+                                    curr_event.setEventID(document.getId()); // This Event object has eventID field added
                                     events.add(curr_event);  // Add retrieved Event object to the List
 
                                     // Notify adapter that event was added
