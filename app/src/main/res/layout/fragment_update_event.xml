@@ -317,6 +317,17 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/view_event_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey"
+                        android:textSize="16sp" />
+
                     <EditText
                         android:id="@+id/update_event_details"
                         style="@style/main"
