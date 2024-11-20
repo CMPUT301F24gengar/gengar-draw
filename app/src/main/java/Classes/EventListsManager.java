@@ -293,7 +293,6 @@ public class EventListsManager {
                     List<String> cancelledList = eventLists.getCancelledList();
 
                     cancelledList.addAll(chosenList);
-                    chosenList.clear();
 
 //                    Remove user from locationList if present
                     Map<String, Object> locationList = eventLists.getLocationList();
@@ -303,6 +302,7 @@ public class EventListsManager {
                         }
                     }
                     eventLists.setLocationList(locationList);
+                    chosenList.clear();
 
                     message.set("Cancelled");
                     cancelled.set(true);
