@@ -675,6 +675,7 @@ public class event_details extends Fragment {
 
                         // check location permissions
                         if (event.getEnableGeolocation()) {
+                            Log.d("geor", "geo on");
                             geoLocationWarning.setVisibility(View.VISIBLE);
                             geoLocationWarningProceed.setOnClickListener(v -> {
                                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
