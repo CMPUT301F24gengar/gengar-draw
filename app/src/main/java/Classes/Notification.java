@@ -1,26 +1,29 @@
 package Classes;
 
-import java.util.Date;
 
 public class Notification {
     private String eventTitle;
-    private Date eventStartDate;
+    private String eventStartDateDay;
+    private String eventStartDateMonth;
+    private String eventStartDateTime;
     private String eventID;
     private String message;
 
     public Notification() {
-        //Empty constructor
+        // Empty constructor
     }
 
-    public Notification(String eventTitle, Date eventStartDate, String eventID, String message){
+    public Notification(String eventTitle, String eventStartDateDay, String eventStartDateMonth,
+                        String eventStartDateTime, String eventID, String message) {
         this.eventTitle = eventTitle;
-        this.eventStartDate = eventStartDate;
+        this.eventStartDateDay = eventStartDateDay;
+        this.eventStartDateMonth = eventStartDateMonth;
+        this.eventStartDateTime = eventStartDateTime;
         this.eventID = eventID;
         this.message = message;
     }
 
-    //Setters and Getters
-
+    // Getters and setters
     public String getEventTitle() {
         return eventTitle;
     }
@@ -29,12 +32,28 @@ public class Notification {
         this.eventTitle = eventTitle;
     }
 
-    public Date getEventStartDate() {
-        return eventStartDate;
+    public String getEventStartDateDay() {
+        return eventStartDateDay;
     }
 
-    public void setEventStartDate(Date eventStartDate) {
-        this.eventStartDate = eventStartDate;
+    public void setEventStartDateDay(String eventStartDateDay) {
+        this.eventStartDateDay = eventStartDateDay;
+    }
+
+    public String getEventStartDateMonth() {
+        return eventStartDateMonth;
+    }
+
+    public void setEventStartDateMonth(String eventStartDateMonth) {
+        this.eventStartDateMonth = eventStartDateMonth;
+    }
+
+    public String getEventStartDateTime() {
+        return eventStartDateTime;
+    }
+
+    public void setEventStartDateTime(String eventStartDateTime) {
+        this.eventStartDateTime = eventStartDateTime;
     }
 
     public String getEventID() {
@@ -53,3 +72,4 @@ public class Notification {
         this.message = message;
     }
 }
+
