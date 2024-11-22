@@ -32,16 +32,16 @@ import java.util.Date;
 import java.util.Locale;
 
 import Classes.Event;
+import Classes.EventManager;
 
 /**
- * Update Event Activity
+ * Update Event Fragment
+ *     Handles updates to the update event page fragment
+ *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
+ *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>formatDate</li></ul>
  *
- *     handles interactions with the 'my events' fragment
- *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
- *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
- * TODO: documentation for this file
  * @author Rheanna
- * @see Fragment
+ * @see Event
  */
 public class update_event extends Fragment {
     private FirebaseFirestore db;
@@ -69,6 +69,13 @@ public class update_event extends Fragment {
         return fragment;
     }
 
+    /**
+     * Construct the update_event fragment
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @see Fragment
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +85,20 @@ public class update_event extends Fragment {
         }
     }
 
+    /**
+     * Construct the update_event fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     *
+     * @see Fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -132,6 +153,11 @@ public class update_event extends Fragment {
         return view;
     }
 
+    /**
+     * gets the event record from the firestore database
+     * @param eventID String event ID
+     * @throws Exception Exception if error while getting event
+     */
     private void getEventFromDatabase(String eventID) {
         db = FirebaseFirestore.getInstance();
 
@@ -154,25 +180,33 @@ public class update_event extends Fragment {
                 });
     }
 
+    /**
+     * sets the title, registration opens and deadline dates, maximum winners, details for the event
+     * @param event Event object
+     */
     private void updateEventDisplayed(Event event) {
-        // Populate your views with event data
         eventTitle.setText(event.getEventTitle());
         eventRegistrationOpens.setText(formatDate(event.getEventStartDate()));
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         eventDetails.setText(event.getEventDetails());
 
-        // Load the image using Glide
+        // Load image
         Glide.with(getView().getContext())
                 .load(event.getEventPictureURL())
                 .into((ImageView) getView().findViewById(R.id.view_event_picture));
     }
 
+    /**
+     * formats the dates for the event
+     * @param date Dates for the event
+     * @return String Dates for the event
+     */
     private String formatDate(Date date) {
         if (date != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("d MMM yyyy", Locale.getDefault());
             return formatter.format(date).toUpperCase();  // Convert to uppercase to match the format
         }
-        return ""; // Return empty string for null dates
+        return "";  // Return empty string for null dates
     }
 }
