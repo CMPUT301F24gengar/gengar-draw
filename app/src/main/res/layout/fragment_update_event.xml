@@ -304,7 +304,17 @@
                         android:textColor="@color/grey"
                         android:textSize="16sp"
                         android:visibility="gone" />
-
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="EVENT DESCRIPTION:"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
                     <EditText
                         android:id="@+id/update_event_details"
                         style="@style/main"
