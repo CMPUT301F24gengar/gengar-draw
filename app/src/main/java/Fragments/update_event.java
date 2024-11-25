@@ -114,7 +114,6 @@ public class update_event extends Fragment {
         eventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
-        eventDetails = view.findViewById(R.id.view_event_details);
 
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
@@ -129,14 +128,11 @@ public class update_event extends Fragment {
             @Override
             public void onClick(View view) {
                 String details = detailsEditText.getText().toString().trim();
-                String oldDetails = eventDetails.getText().toString().trim();
-                if (details.isEmpty()) {
-                    details = oldDetails;
                     if (details.isEmpty()) {
                         Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                }
+
 
                 db.collection("events").document(eventID)
                         .update("eventDetails", details)
@@ -189,7 +185,7 @@ public class update_event extends Fragment {
         eventRegistrationOpens.setText(formatDate(event.getEventStartDate()));
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
-        eventDetails.setText(event.getEventDetails());
+        detailsEditText.setText(event.getEventDetails());
 
         // Load image
         Glide.with(getView().getContext())
