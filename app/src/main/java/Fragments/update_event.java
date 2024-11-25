@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -146,6 +147,13 @@ public class update_event extends Fragment {
                 //return;
             }
         });
+        //Go back to my_events view
+        updateEventCancelBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                closeFragment();
+            }
+        });
         return view;
     }
 
@@ -204,5 +212,19 @@ public class update_event extends Fragment {
             return formatter.format(date).toUpperCase();  // Convert to uppercase to match the format
         }
         return "";  // Return empty string for null dates
+    }
+
+    /**
+     * returns user to the homepage
+     * @throws Exception activity not instance of MainActivity
+     * @see MainActivity
+     */
+    private void closeFragment() {
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.showHomeFragment();
+        } else {
+            // Handle error
+        }
     }
 }
