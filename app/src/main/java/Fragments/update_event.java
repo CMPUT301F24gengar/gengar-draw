@@ -215,14 +215,14 @@ public class update_event extends Fragment {
     }
 
     /**
-     * returns user to the homepage
+     * returns user to the my_events
      * @throws Exception activity not instance of MainActivity
-     * @see MainActivity
+     * @see my_events
      */
     private void closeFragment() {
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
-            activity.showHomeFragment();
+            activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new my_events()).commit();
         } else {
             // Handle error
         }
