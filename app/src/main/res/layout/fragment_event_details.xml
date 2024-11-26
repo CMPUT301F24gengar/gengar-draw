@@ -677,7 +677,7 @@
         android:id="@+id/black_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         android:background="@color/black1">
         <LinearLayout
             android:id="@+id/geolocation_warning_layout"
@@ -687,7 +687,6 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:orientation="vertical"
-            android:visibility="gone"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="@color/black2">
             <TextView

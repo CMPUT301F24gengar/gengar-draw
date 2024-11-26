@@ -316,12 +316,48 @@ public class event_details extends Fragment {
         });
     }
 
+    private void joinEvent( String eventID ){
+        eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
+                    @Override
+                    public void onSuccess(String message, boolean boolValue) {
+                        inWaitingList = boolValue;
+                        // if in waiting list, add eventID to users joined events
+                        if (inWaitingList) {
+                            userProfile.getJoinedEvents().add(eventID);
+                            userProfileManager.updateUserProfile(userProfile, deviceID);
+                        }
+                        setJoinLeaveButtonText(inWaitingList);
+                        buttonDebounce = false;
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        buttonDebounce = false;
+                    }
+                }
+                ,latitude, longitude);
+    }
+
     /**
      * sets up the various buttons for the event
      * @param event Event object that buttons apply to
      * @throws Exception Exception if error while clicking button
      */
     private void setupButtons(Event event, String eventID) {
+
+        geoLocationWarningProceed.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
+                buttonDebounce = false;
+            } else {
+                joinEvent(eventID);
+            }
+            blackFrame.setVisibility(View.GONE);
+        });
+        geoLocationWarningCancel.setOnClickListener(v -> {
+            buttonDebounce = false;
+            blackFrame.setVisibility(View.GONE);
+        });
 
         join_leaveButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
@@ -330,32 +366,19 @@ public class event_details extends Fragment {
             if (!inWaitingList) {
 
                 if (event.getEnableGeolocation()) {
-                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else {
-                        getLastLocation();
-                    }
+//                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                        Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
+//                        return;
+//                    } else {
+//                        getLastLocation();
+//                    }
+                    blackFrame.setVisibility(View.VISIBLE);
+                    getLastLocation();
+
+                } else {
+                    joinEvent(eventID);
                 }
 
-                eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
-                            @Override
-                            public void onSuccess(String message, boolean boolValue) {
-                                inWaitingList = boolValue;
-                                // if in waiting list, add eventID to users joined events
-                                if (inWaitingList) {
-                                    userProfile.getJoinedEvents().add(eventID);
-                                    userProfileManager.updateUserProfile(userProfile, deviceID);
-                                }
-                                setJoinLeaveButtonText(inWaitingList);
-                                buttonDebounce = false;
-                            }
-                            @Override
-                            public void onError(Exception e) {
-                                buttonDebounce = false;
-                            }
-                        }
-                        ,latitude, longitude);
             } else {
                 eventListsManager.removeUserFromWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
@@ -674,24 +697,11 @@ public class event_details extends Fragment {
                     if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
 
                         // check location permissions
-                        if (event.getEnableGeolocation()) {
-                            Log.d("geor", "geo on");
-                            geoLocationWarning.setVisibility(View.VISIBLE);
-                            geoLocationWarningProceed.setOnClickListener(v -> {
-                                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                                } else {
-                                    getLastLocation();
-                                }
-                                blackFrame.setVisibility(View.GONE);
-                            });
-                            geoLocationWarningCancel.setOnClickListener(v -> {
-                                closeFragment();
-                            });
-
-                        } else {
-                            blackFrame.setVisibility(View.GONE);
-                        }
+//                        if (event.getEnableGeolocation()) {
+//                            blackFrame.setVisibility(View.VISIBLE);
+//                        } else {
+//                            blackFrame.setVisibility(View.GONE);
+//                        }
 
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
