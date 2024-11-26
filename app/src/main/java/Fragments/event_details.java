@@ -316,6 +316,10 @@ public class event_details extends Fragment {
         });
     }
 
+    /**
+     * adds the user to the waiting list
+     * @param eventID
+     */
     private void joinEvent( String eventID ){
         eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
@@ -366,12 +370,6 @@ public class event_details extends Fragment {
             if (!inWaitingList) {
 
                 if (event.getEnableGeolocation()) {
-//                    if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                        Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
-//                        return;
-//                    } else {
-//                        getLastLocation();
-//                    }
                     blackFrame.setVisibility(View.VISIBLE);
                     getLastLocation();
 
@@ -695,13 +693,6 @@ public class event_details extends Fragment {
                     inWinnersList = eventLists.getWinnersList().contains(deviceID);
 
                     if (!Objects.equals(deviceID, organizerID)) { // ENTRANT
-
-                        // check location permissions
-//                        if (event.getEnableGeolocation()) {
-//                            blackFrame.setVisibility(View.VISIBLE);
-//                        } else {
-//                            blackFrame.setVisibility(View.GONE);
-//                        }
 
                         if (currentDate.before(regOpenDate)) {
                             // do nothing
