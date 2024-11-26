@@ -26,9 +26,29 @@
             android:textSize="24sp" />
     </FrameLayout>
 
-    <ListView
-        android:id="@+id/my_events_list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/notification_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
+            android:padding="10dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/black2"
+            android:src="@drawable/bell"
+            android:contentDescription="@string/todo"
+            android:gravity="center"
+            app:tint="@color/grey" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notifications_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
 
 </LinearLayout>
