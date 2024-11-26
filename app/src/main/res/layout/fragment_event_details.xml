@@ -687,7 +687,6 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:orientation="vertical"
-            android:visibility="gone"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="@color/black2">
             <TextView

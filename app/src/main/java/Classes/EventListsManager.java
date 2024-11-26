@@ -124,7 +124,7 @@ public class EventListsManager {
                     List<String> waitingList = eventLists.getWaitingList();
 
                     if (eventLists.getEnableGeolocation() && (latitude == null || longitude == null)) {
-                        message.set("Geolocation is enabled but no location provided");
+                        message.set("No location provided");
                         added.set(false);
                         return null;
                     }
