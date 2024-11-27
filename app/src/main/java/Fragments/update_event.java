@@ -148,14 +148,16 @@ public class update_event extends Fragment {
 
 
                 db.collection("events").document(eventID)
-                        .update("eventDetails", details)
+                        .update(
+                                "eventDetails", details,
+                                "enableGeolocation", editGeolocationToggle
+                        )
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(getContext(), "Event updated successfully", Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e -> {
                             Log.e("Firestore", "error updating event details: ", e);
                         });
-
                 //return;
             }
         });
