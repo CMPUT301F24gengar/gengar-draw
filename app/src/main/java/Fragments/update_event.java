@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,6 +58,7 @@ public class update_event extends Fragment {
     private TextView eventDetails;
     private TextView updateEventSaveBtn;
     private TextView updateEventCancelBtn;
+    private CheckBox geolocationToggle;
 
     public update_event() {
         // Required empty public constructor
@@ -110,6 +112,7 @@ public class update_event extends Fragment {
         updateEventSaveBtn = view.findViewById(R.id.update_event_save_btn);
         updateEventCancelBtn = view.findViewById(R.id.update_event_cancel_btn);
         detailsEditText = view.findViewById(R.id.update_event_details);
+        geolocationToggle = view.findViewById(R.id.update_event_checkbox);
 
         eventTitle = view.findViewById(R.id.view_event_title);
         eventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
