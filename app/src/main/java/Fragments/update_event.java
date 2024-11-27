@@ -175,12 +175,22 @@ public class update_event extends Fragment {
                                 "enableGeolocation", editGeolocationToggle
                         )
                         .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(getContext(), "Event updated successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Event details updated successfully", Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e -> {
                             Log.e("Firestore", "error updating event details: ", e);
                         });
-                    event_manager.uploadEventPicture(imageURI, eventID,);
+                    event_manager.uploadEventPicture(imageURI, eventID, new EventManager.OnUploadPictureListener() {
+                        @Override
+                        public void onSuccess(Uri downloadUrl) {
+                            Toast.makeText(getContext(), "Event image updated successfully", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.e("Firestore", "error uploading udpated event image",e);
+                        }
+                    });
                 closeFragment();
             }
         });
