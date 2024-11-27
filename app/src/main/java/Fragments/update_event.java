@@ -39,12 +39,13 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
+import Classes.Facility;
 
 /**
  * Update Event Fragment
  *     Handles updates to the update event page fragment
  *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
- *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>formatDate</li></ul>
+ *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>getFacilityFromDatabase</li> <li>updateFacilityDisplayed</li> <li>formatDate</li></ul>
  *
  * @author Rheanna
  * @see Event
@@ -52,6 +53,7 @@ import Classes.EventManager;
 public class update_event extends Fragment {
     private FirebaseFirestore db;
     private String eventID;
+    private String facilityID;
     private EditText detailsEditText;
     private Uri imageURI;
     private Event event;
@@ -60,8 +62,12 @@ public class update_event extends Fragment {
     private TextView eventRegistrationDeadline;
     private TextView eventMaxWinners;
     private TextView eventDetails;
+    private ImageView eventPicture;
     private TextView updateEventSaveBtn;
     private TextView updateEventCancelBtn;
+    private Facility facility;
+    private TextView facilityName;
+    private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
     private ImageView eventPicture;
@@ -90,7 +96,8 @@ public class update_event extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            Log.d("update_event", "onCreate eventID: " + eventID);
+            facilityID = getArguments().getString("facilityID");
+            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID );
         }
     }
 
@@ -125,14 +132,18 @@ public class update_event extends Fragment {
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
 
+        facilityName = view.findViewById(R.id.view_event_facility_name);
+
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            Log.d("update_event", "onCreateView eventID: " + eventID);
+            facilityID = getArguments().getString("facilityID");
+            Log.d("update_event", "onCreateView eventID: " + eventID + " facilityID: " + facilityID);
             getEventFromDatabase(eventID);
+            getFacilityFromDatabase(facilityID);
         }
 
-        // Initialize Views
-        ImageView eventPicture = view.findViewById(R.id.view_event_picture);
+        eventPicture = view.findViewById(R.id.view_event_picture);
+        facilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
         geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -224,6 +235,46 @@ public class update_event extends Fragment {
         Glide.with(getView().getContext())
                 .load(event.getEventPictureURL())
                 .into((ImageView) getView().findViewById(R.id.view_event_picture));
+    }
+
+    /**
+     * gets the facility record from the firestore database
+     * @param facilityID String facility ID
+     * @throws Exception Exception if error while getting facility
+     */
+    private void getFacilityFromDatabase(String facilityID) {
+        db = FirebaseFirestore.getInstance();
+
+        // Fetch specific event document by its event ID
+        db.collection("facilities").document(facilityID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        facility = documentSnapshot.toObject(Facility.class);
+
+                        if (facility != null) {
+                            updateFacilityDisplayed(facility);
+                        }
+                    } else {
+                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID " + facilityID);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error getting facility: ", e);
+                });
+    }
+
+    /**
+     * sets the name and image for the facility
+     * @param facility Facility object
+     */
+    private void updateFacilityDisplayed(Facility facility) {
+        facilityName.setText(facility.getName());
+
+        // Load image
+        Glide.with(getView().getContext())
+                .load(facility.getPictureURL())
+                .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
     }
 
     /**
