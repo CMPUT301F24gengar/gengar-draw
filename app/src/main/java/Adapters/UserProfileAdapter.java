@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +18,10 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.FacilityManager;
 import Classes.UserProfile;
+import Classes.UserProfileManager;
+
 /**
  * This is the UserProfileAdapter which is a custom adapter to display all the user profiles.
  */
@@ -64,6 +68,19 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
      */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int deletedPosition = holder.getAdapterPosition();
+                UserProfileManager userProfileManager = new UserProfileManager();
+//                Log.d("userprofile",localUserProfiles.get(deletedPosition).getDeviceID());
+                userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
+                Toast.makeText(view.getContext(), "Deleted " + localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                localUserProfiles.remove(deletedPosition);
+                notifyItemRemoved(deletedPosition);
+            }
+        });
+
         UserProfile userProfile = localUserProfiles.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
