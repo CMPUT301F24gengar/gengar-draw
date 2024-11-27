@@ -553,6 +553,7 @@ public class event_details extends Fragment {
                     }
 
                     cancelEntrantsButton.setVisibility(View.VISIBLE);
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
 
                     fetchUserProfiles(chosenList, new OnProfilesLoadedListener(){
                         @Override
@@ -670,6 +671,8 @@ public class event_details extends Fragment {
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
 
+                    if (!boolValue) return;
+
                     String notification = createNotification(event, eventID, "YOU HAVE BEEN SELECTED AS A WINNER!");
                     for (String winner : winners) {
                         notificationManager.addNotification(winner, notification, new NotificationManager.OnNotificationUpdateListener(){
@@ -706,6 +709,36 @@ public class event_details extends Fragment {
                 public void onError(Exception e) {
                     buttonDebounce = false;
                 }
+            });
+        });
+
+        notifyEntrantsButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            // send notifications to users in chosenlist
+            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                @Override
+                public void onEventListsFetched(EventLists eventLists) {
+                    List<String> chosenList = eventLists.getChosenList();
+                    String notification = createNotification(event, eventID, "PLEASE ACCEPT/DECLINE YOUR INVITATION");
+                    for (String userID : chosenList) {
+                        notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                            @Override
+                            public void onSuccess(String message) {}
+                            @Override
+                            public void onError(Exception e) {}
+                        });
+                    }
+                    buttonDebounce = false;
+                    Toast.makeText(getContext(), "Reminder sent", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onEventListsFetchError(Exception e) {
+                    // Handle the error
+                    buttonDebounce = false;
+                }
+
             });
         });
 
