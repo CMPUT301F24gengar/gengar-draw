@@ -70,7 +70,6 @@ public class update_event extends Fragment {
     private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
-    private ImageView eventPicture;
 
     public update_event() {
         // Required empty public constructor
