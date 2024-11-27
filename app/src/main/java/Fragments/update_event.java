@@ -197,6 +197,7 @@ public class update_event extends Fragment {
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         detailsEditText.setText(event.getEventDetails());
+        geolocationToggle.setChecked(event.getEnableGeolocation());
 
         // Load image
         Glide.with(getView().getContext())
