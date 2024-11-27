@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,6 +60,7 @@ public class update_event extends Fragment {
     private TextView updateEventSaveBtn;
     private TextView updateEventCancelBtn;
     private CheckBox geolocationToggle;
+    private Boolean editGeolocationToggle;
 
     public update_event() {
         // Required empty public constructor
@@ -127,6 +129,13 @@ public class update_event extends Fragment {
 
         // Initialize Views
         ImageView eventPicture = view.findViewById(R.id.view_event_picture);
+
+        geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                editGeolocationToggle = !editGeolocationToggle;
+            }
+        });
 
         updateEventSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,7 +206,8 @@ public class update_event extends Fragment {
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         detailsEditText.setText(event.getEventDetails());
-        geolocationToggle.setChecked(event.getEnableGeolocation());
+        editGeolocationToggle = event.getEnableGeolocation();
+        geolocationToggle.setChecked(editGeolocationToggle);
 
         // Load image
         Glide.with(getView().getContext())
