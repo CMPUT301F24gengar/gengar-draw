@@ -1,5 +1,6 @@
 package Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -63,6 +64,7 @@ public class update_event extends Fragment {
     private TextView updateEventCancelBtn;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
+    private ImageView eventPicture;
 
     public update_event() {
         // Required empty public constructor
@@ -248,6 +250,28 @@ public class update_event extends Fragment {
             activity.getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new my_events()).commit();
         } else {
             // Handle error
+        }
+    }
+
+    /**
+     * sets image if activity result indicates success
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     * @see Fragment
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                imageURI = data.getData();
+                eventPicture.setImageURI(imageURI);
+            }
         }
     }
 }
