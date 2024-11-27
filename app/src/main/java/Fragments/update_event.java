@@ -36,12 +36,13 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.EventManager;
+import Classes.Facility;
 
 /**
  * Update Event Fragment
  *     Handles updates to the update event page fragment
  *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
- *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>formatDate</li></ul>
+ *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>getFacilityFromDatabase</li> <li>updateFacilityDisplayed</li> <li>formatDate</li></ul>
  *
  * @author Rheanna
  * @see Event
@@ -49,6 +50,7 @@ import Classes.EventManager;
 public class update_event extends Fragment {
     private FirebaseFirestore db;
     private String eventID;
+    private String facilityID;
     private EditText detailsEditText;
     private Uri imageURI;
     private Event event;
@@ -57,8 +59,12 @@ public class update_event extends Fragment {
     private TextView eventRegistrationDeadline;
     private TextView eventMaxWinners;
     private TextView eventDetails;
+    private ImageView eventPicture;
     private TextView updateEventSaveBtn;
     private TextView updateEventCancelBtn;
+    private Facility facility;
+    private TextView facilityName;
+    private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
 
@@ -86,7 +92,8 @@ public class update_event extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            Log.d("update_event", "onCreate eventID: " + eventID);
+            facilityID = getArguments().getString("facilityID");
+            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID );
         }
     }
 
@@ -121,14 +128,18 @@ public class update_event extends Fragment {
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
 
+        facilityName = view.findViewById(R.id.view_event_facility_name);
+
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            Log.d("update_event", "onCreateView eventID: " + eventID);
+            facilityID = getArguments().getString("facilityID");
+            Log.d("update_event", "onCreateView eventID: " + eventID + " facilityID: " + facilityID);
             getEventFromDatabase(eventID);
+            getFacilityFromDatabase(facilityID);
         }
 
-        // Initialize Views
-        ImageView eventPicture = view.findViewById(R.id.view_event_picture);
+        eventPicture = view.findViewById(R.id.view_event_picture);
+        facilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
         geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
