@@ -70,6 +70,7 @@ public class update_event extends Fragment {
     private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
+    private EventManager event_manager;
 
     public update_event() {
         // Required empty public constructor
@@ -96,7 +97,9 @@ public class update_event extends Fragment {
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
             facilityID = getArguments().getString("facilityID");
+            event_manager = new EventManager();
             Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID );
+
         }
     }
 
@@ -177,6 +180,7 @@ public class update_event extends Fragment {
                         .addOnFailureListener(e -> {
                             Log.e("Firestore", "error updating event details: ", e);
                         });
+                    event_manager.uploadEventPicture(imageURI, eventID,);
                 closeFragment();
             }
         });
