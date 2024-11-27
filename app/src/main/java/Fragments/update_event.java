@@ -1,6 +1,7 @@
 package Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -137,6 +139,11 @@ public class update_event extends Fragment {
             }
         });
 
+        eventPicture.setOnClickListener(view1 -> {
+            Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(OpenGalleryIntent, 1000);
+        });
+
         updateEventSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,7 +165,7 @@ public class update_event extends Fragment {
                         .addOnFailureListener(e -> {
                             Log.e("Firestore", "error updating event details: ", e);
                         });
-                //return;
+                closeFragment();
             }
         });
         //Go back to my_events view
