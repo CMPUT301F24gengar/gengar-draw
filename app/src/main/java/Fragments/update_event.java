@@ -229,6 +229,46 @@ public class update_event extends Fragment {
     }
 
     /**
+     * gets the facility record from the firestore database
+     * @param facilityID String facility ID
+     * @throws Exception Exception if error while getting facility
+     */
+    private void getFacilityFromDatabase(String facilityID) {
+        db = FirebaseFirestore.getInstance();
+
+        // Fetch specific event document by its event ID
+        db.collection("facilities").document(facilityID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        facility = documentSnapshot.toObject(Facility.class);
+
+                        if (facility != null) {
+                            updateFacilityDisplayed(facility);
+                        }
+                    } else {
+                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID " + facilityID);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error getting facility: ", e);
+                });
+    }
+
+    /**
+     * sets the name and image for the facility
+     * @param facility Facility object
+     */
+    private void updateFacilityDisplayed(Facility facility) {
+        facilityName.setText(facility.getName());
+
+        // Load image
+        Glide.with(getView().getContext())
+                .load(facility.getPictureURL())
+                .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+    }
+
+    /**
      * formats the dates for the event
      * @param date Dates for the event
      * @return String Dates for the event
