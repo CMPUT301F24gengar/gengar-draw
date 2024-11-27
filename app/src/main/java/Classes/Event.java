@@ -49,7 +49,7 @@ public class Event {
      * @param LocationReference  Reference ID of the associated location document
      * @param QRCode         QR code for event identification
      */
-    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode){
+    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode, String eventID){
         this.organizerID = organizerID;
         this.eventTitle = eventTitle;
         this.regOpenDate = regOpenDate;
@@ -63,6 +63,7 @@ public class Event {
         this.ListReference = listReference;
         this.LocationReference = LocationReference;
         this.QRCode = QRCode;
+        this.eventID = eventID;
     }
 
     /**

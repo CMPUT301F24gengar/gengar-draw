@@ -1,7 +1,12 @@
 package Classes;
 
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.example.gengardraw.MainActivity;
+import com.example.gengardraw.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -10,6 +15,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Date;
 import java.util.Objects;
+
+import Fragments.event_details;
 
 /**
  * EventManager
@@ -63,6 +70,7 @@ public class EventManager {
         String listReference = document.getString("listReference");
         String locationReference = document.getString("locationReference");
         String QRCode = document.getString("qrcode");
+        String eventID = document.getString("eventID");
 
         return new Event(
                 organizerID,
@@ -77,7 +85,8 @@ public class EventManager {
                 enableGeolocation,
                 listReference,
                 locationReference,
-                QRCode
+                QRCode,
+                eventID
         );
     }
 
@@ -98,6 +107,7 @@ public class EventManager {
 
         String QRCodeID = qrcodeManager.addQRcode(qrcode);
         event.setQRCode(QRCodeID);
+        event.setEventID(docID);
 
         eventListsManager.addEventLists(eventLists);
 
@@ -189,6 +199,42 @@ public class EventManager {
                 .update("eventPictureURL", picURL)
                 .addOnSuccessListener(aVoid -> listener.onSuccess())
                 .addOnFailureListener(listener::onError);
+    }
+
+    /**
+     * Deletes an event from the database by deleting the qrcode first and the eventLists and then the event itself.
+     * @param eventID The ID of the event object to be deleted
+     */
+    public void deleteEvent(String eventID){
+        getEvent(eventID, new OnEventFetchListener() {
+            @Override
+            public void onEventFetched(Event event) {
+                if (event != null) {
+                    qrcodeManager.deleteQRcode(event.getQRCode());
+                    eventListsManager.deleteEventLists(eventID);
+                    db.collection("events").document(eventID).delete();
+                } else {
+                    // Handle the error
+                }
+            }
+
+            @Override
+            public void onEventFetchError(Exception e) {
+                // Handle Error
+            }
+        });
+        //delete qrcode of this event
+//        String qrcode = db.collection("events").document("qrcode").get().toString();
+//        Log.d("123",qrcode);
+//        qrcodeManager.deleteQRcode(qrcode);
+
+        //delete eventlists of this event
+//        eventListsManager.deleteEventLists(eventID);
+
+        //delete event
+//        db.collection("events")
+//                .document(eventID)
+//                .delete();
     }
 
     /**

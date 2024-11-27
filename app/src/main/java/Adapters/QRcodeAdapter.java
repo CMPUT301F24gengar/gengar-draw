@@ -18,26 +18,30 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import Classes.EventManager;
-import Classes.Facility;
-import Classes.FacilityManager;
+import Classes.QRcode;
+import Classes.QRcodeManager;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 /**
- * This is the FacilityAdapter which is a custom adapter to display all the facilities along with their profile picture.
+ * This is the QRcodeAdapter which is a custom adapter to display all the qrcodes.
  */
-
-public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyViewHolder> {
+public class QRcodeAdapter extends RecyclerView.Adapter<QRcodeAdapter.MyViewHolder> {
 
     private Context context;
-    private List<Facility> localFacilities;
+    private List<String> localQRCodes;
+    private Boolean showDelete;
+
     /**
-     * Constructor for FacilityAdapter done with context and an arraylist of facilties.
+     * Constructor for QRcodeAdapter done with context and an arraylist of qrCodes.
      * @param context the context in which the adapter is working.
-     * @param facilities the list to be displayed in the adapter.
+     * @param qrCodes the list to be displayed in the adapter.
+     * @param showDelete the delete button
      */
-    public FacilityAdapter(Context context, ArrayList<Facility> facilities) {
+    public QRcodeAdapter(Context context, ArrayList<String> qrCodes, Boolean showDelete) {
         this.context=context;
-        localFacilities = facilities;
+        localQRCodes = qrCodes;
+        this.showDelete = showDelete;
     }
     /**
      * Called when the RecyclerView needs a new viewHolder.
@@ -51,44 +55,41 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyView
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View row = LayoutInflater.from(context).inflate(R.layout.user_profile_item, parent, false); //change to facility_item
+        View row = LayoutInflater.from(context).inflate(R.layout.user_profile_item, parent, false);
         return new MyViewHolder(row);
     }
     /**
-     * Binds the data from the facility at a specified position to the view holder.
-     * Sets the name to the facility's name at the specified position
-     * If there is a picture present, it loads the picture into the profilePicture.
-     * Otherwise, it puts in a default image.
+     * Binds the data from the qrCode at a specified position to the view holder.
+     * Sets the name to the qrCode's text at the specified position
      * @param holder The ViewHolder which should be updated to represent the contents of the
      *        item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        String qrCode = localQRCodes.get(position);
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int deletedPosition = holder.getAdapterPosition();
-                FacilityManager facilityManager = new FacilityManager();
-                facilityManager.deleteFacility(localFacilities.get(deletedPosition).getDeviceID());
-                Toast.makeText(view.getContext(), "Deleted " + localFacilities.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
-                localFacilities.remove(deletedPosition);
+                QRcodeManager qrCodeManager = new QRcodeManager();
+                qrCodeManager.deleteQRcode(localQRCodes.get(deletedPosition));
+                Toast.makeText(view.getContext(), "Deleted " + localQRCodes.get(deletedPosition),Toast.LENGTH_SHORT).show();
+                localQRCodes.remove(deletedPosition);
                 notifyItemRemoved(deletedPosition);
             }
         });
-        Facility facility = localFacilities.get(position);
-        holder.name.setText(facility.getName());
-        if (facility.getPictureURL() != null) {
-            Glide.with(context).load(facility.getPictureURL()).into(holder.profilePicture);
+
+        if (qrCode == null) {
+            Log.d("qrcode","null");
         } else {
-            holder.profilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+            Log.d("qrcode adapter",qrCode);
         }
+        holder.name.setText(qrCode);
     }
     /**
      * Used to get references for views of a single item.
      */
-    // can reuse user_profile_item.xml for facility
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         ImageView profilePicture;
@@ -102,10 +103,10 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyView
         }
     }
     /**
-     * @return Gets the total count of localFacilities.
+     * @return Gets the total count of localQRCodes.
      */
     @Override
     public int getItemCount() {
-        return localFacilities.size();
+        return localQRCodes.size();
     }
 }

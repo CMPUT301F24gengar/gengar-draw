@@ -97,6 +97,17 @@
                     android:src="@drawable/facility"
                     app:tint="@color/grey" />
 
+                <ImageView
+                    android:id="@+id/admin_qrcode_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/black2"
+                    android:contentDescription="@string/todo"
+                    android:padding="8dp"
+                    android:src="@drawable/scan"
+                    app:tint="@color/grey" />
+
             </LinearLayout>
 
         </LinearLayout>

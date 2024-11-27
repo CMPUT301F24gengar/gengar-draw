@@ -128,6 +128,10 @@ public class UserProfileManager {
      */
     public void deleteUserProfile(String deviceID) {
         assert db != null;
+        //delete facility in a user profile
+        FacilityManager facilityManager = new FacilityManager();
+        facilityManager.deleteFacility(deviceID);
+        //delete user profile itself
         db.collection("users").document(deviceID) // Use deviceID as the document ID
                 .delete();
     }

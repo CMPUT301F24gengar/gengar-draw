@@ -206,7 +206,7 @@ public class create_event extends Fragment {
             Integer maxWinnersInt = Integer.parseInt(maxWinners);
             Integer maxEntrantsInt = maxEntrants.isEmpty() ? null : Integer.parseInt(maxEntrants);
 
-            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null);
+            Event event = new Event(deviceID, title, registrationOpens, registrationDeadline, eventStarts, maxWinnersInt, maxEntrantsInt, details, null, enableGeolocation, null, null, null, null);
             QRcode qrcode = new QRcode();
 
             EventLists eventLists = new EventLists(null, maxWinnersInt, maxEntrantsInt, enableGeolocation, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new HashMap<>());
