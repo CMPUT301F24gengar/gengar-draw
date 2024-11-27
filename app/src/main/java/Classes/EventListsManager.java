@@ -226,7 +226,7 @@ public class EventListsManager {
 
                     if (slotsLeft > 0) {
                         Collections.shuffle(waitingList);
-                        List<String> winners = waitingList.subList(0, slotsLeft);
+                        List<String> winners = new ArrayList<>(waitingList.subList(0, slotsLeft));
 
                         chosenList.addAll(winners);
                         waitingList.removeAll(winners); // Remove the winners from the waitingList
@@ -246,7 +246,7 @@ public class EventListsManager {
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get(), null); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get(), users.get()); })
                 .addOnFailureListener(listener::onError);
     }
 

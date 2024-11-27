@@ -681,26 +681,26 @@ public class event_details extends Fragment {
                     }
 
                     // get the users in the waiting list of the eventlist
-                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
-                        @Override
-                        public void onEventListsFetched(EventLists eventLists) {
-                            List<String> waitingList = eventLists.getWaitingList();
-                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
-                            for (String userID : waitingList) {
-                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
-                                    @Override
-                                    public void onSuccess(String message) {}
-                                    @Override
-                                    public void onError(Exception e) {}
-                                });
-                            }
-                        }
-                        @Override
-                        public void onEventListsFetchError(Exception e) {
-                            // Handle the error
-                        }
-
-                    });
+//                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+//                        @Override
+//                        public void onEventListsFetched(EventLists eventLists) {
+//                            List<String> waitingList = eventLists.getWaitingList();
+//                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
+//                            for (String userID : waitingList) {
+//                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+//                                    @Override
+//                                    public void onSuccess(String message) {}
+//                                    @Override
+//                                    public void onError(Exception e) {}
+//                                });
+//                            }
+//                        }
+//                        @Override
+//                        public void onEventListsFetchError(Exception e) {
+//                            // Handle the error
+//                        }
+//
+//                    });
 
                 }
                 @Override
@@ -807,7 +807,8 @@ public class event_details extends Fragment {
 
     private String createNotification(Event event, String eventID, String message) {
         String day,month,time;
-        String[] DMT = formatDate(event.getEventStartDate()).split(" ");
+        String Date = formatDate(event.getEventStartDate());
+        String[] DMT = Date.split(" ");
         String notificationAppend = "$"+DMT[0]+"$"+DMT[1]+"$"+DMT[2]+"$"+eventID+"$"+event.getEventTitle();
         return message + notificationAppend;
     }
