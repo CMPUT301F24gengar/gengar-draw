@@ -61,6 +61,7 @@ import Classes.EventListsManager;
 import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
+import Classes.NotificationManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
@@ -98,6 +99,7 @@ public class event_details extends Fragment {
     private Date eventStartDate;
 
     private EventListsManager eventListsManager = new EventListsManager();
+    private NotificationManager notificationManager = new NotificationManager();
 
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
@@ -323,7 +325,7 @@ public class event_details extends Fragment {
     private void joinEvent( String eventID ){
         eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
-                    public void onSuccess(String message, boolean boolValue) {
+                    public void onSuccess(String message, boolean boolValue, List<String> users) {
                         inWaitingList = boolValue;
                         // if in waiting list, add eventID to users joined events
                         if (inWaitingList) {
@@ -380,7 +382,7 @@ public class event_details extends Fragment {
             } else {
                 eventListsManager.removeUserFromWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
-                    public void onSuccess(String message, boolean boolValue) {
+                    public void onSuccess(String message, boolean boolValue, List<String> users) {
                         inWaitingList = !boolValue;
                         // if not in waiting list, remove eventID from users joined events
                         if (!inWaitingList) {
@@ -408,7 +410,7 @@ public class event_details extends Fragment {
 
             eventListsManager.addUserToWinnersList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.green));
                     statusText.setText("!!! WINNER !!!");
@@ -429,7 +431,7 @@ public class event_details extends Fragment {
 
             eventListsManager.removeUserFromChosenList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.red));
                     statusText.setText("!!! DECLINED !!!");
@@ -574,7 +576,7 @@ public class event_details extends Fragment {
 
             eventListsManager.addUsersToCancelledList(eventID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     userProfiles.clear();
                     customAdapter.notifyDataSetChanged();
                     cancelEntrantsButton.setVisibility(View.GONE);
@@ -664,9 +666,42 @@ public class event_details extends Fragment {
 
             eventListsManager.chooseWinners(eventID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> winners) {
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
+
+                    String notification = createNotification(event, eventID, "YOU HAVE BEEN SELECTED AS A WINNER!");
+                    for (String winner : winners) {
+                        notificationManager.addNotification(winner, notification, new NotificationManager.OnNotificationUpdateListener(){
+                            @Override
+                            public void onSuccess(String message) {}
+                            @Override
+                            public void onError(Exception e) {}
+                        });
+                    }
+
+                    // get the users in the waiting list of the eventlist
+                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                        @Override
+                        public void onEventListsFetched(EventLists eventLists) {
+                            List<String> waitingList = eventLists.getWaitingList();
+                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
+                            for (String userID : waitingList) {
+                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                                    @Override
+                                    public void onSuccess(String message) {}
+                                    @Override
+                                    public void onError(Exception e) {}
+                                });
+                            }
+                        }
+                        @Override
+                        public void onEventListsFetchError(Exception e) {
+                            // Handle the error
+                        }
+
+                    });
+
                 }
                 @Override
                 public void onError(Exception e) {
@@ -768,6 +803,13 @@ public class event_details extends Fragment {
             return formatter.format(date).toUpperCase(); // Convert to uppercase to match the format
         }
         return ""; // Return empty string for null dates
+    }
+
+    private String createNotification(Event event, String eventID, String message) {
+        String day,month,time;
+        String[] DMT = formatDate(event.getEventStartDate()).split(" ");
+        String notificationAppend = "$"+DMT[0]+"$"+DMT[1]+"$"+DMT[2]+"$"+eventID+"$"+event.getEventTitle();
+        return message + notificationAppend;
     }
 
     /**

@@ -152,7 +152,7 @@ public class EventListsManager {
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -191,7 +191,7 @@ public class EventListsManager {
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), removed.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), removed.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -204,6 +204,7 @@ public class EventListsManager {
     public void chooseWinners(String eventID, OnEventListsUpdateListener listener) {
         AtomicReference<String> message = new AtomicReference<>();
         AtomicBoolean chosen = new AtomicBoolean(false);
+        AtomicReference<List<String>> users = new AtomicReference<>();
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -235,15 +236,17 @@ public class EventListsManager {
 
                         message.set("Winners chosen");
                         chosen.set(true);
+                        users.set(winners);
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     } else {
                         message.set("Winners list is full");
                         chosen.set(false);
+                        users.set(null);
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -277,7 +280,7 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -297,9 +300,7 @@ public class EventListsManager {
 //                    Remove user from locationList if present
                     Map<String, Object> locationList = eventLists.getLocationList();
                     for (String userID : chosenList) {
-                        if (locationList.containsKey(userID)) {
-                            locationList.remove(userID);
-                        }
+                        locationList.remove(userID);
                     }
                     eventLists.setLocationList(locationList);
                     chosenList.clear();
@@ -310,7 +311,7 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -337,7 +338,7 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -370,7 +371,7 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -386,7 +387,7 @@ public class EventListsManager {
      * Listener interface for updating event data.
      */
     public interface OnEventListsUpdateListener {
-        void onSuccess(String message, boolean boolValue);
+        void onSuccess(String message, boolean boolValue, List<String> users);
         void onError(Exception e);
     }
 
