@@ -680,27 +680,26 @@ public class event_details extends Fragment {
                         });
                     }
 
-                    // get the users in the waiting list of the eventlist
-//                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
-//                        @Override
-//                        public void onEventListsFetched(EventLists eventLists) {
-//                            List<String> waitingList = eventLists.getWaitingList();
-//                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
-//                            for (String userID : waitingList) {
-//                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
-//                                    @Override
-//                                    public void onSuccess(String message) {}
-//                                    @Override
-//                                    public void onError(Exception e) {}
-//                                });
-//                            }
-//                        }
-//                        @Override
-//                        public void onEventListsFetchError(Exception e) {
-//                            // Handle the error
-//                        }
-//
-//                    });
+                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                        @Override
+                        public void onEventListsFetched(EventLists eventLists) {
+                            List<String> waitingList = eventLists.getWaitingList();
+                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
+                            for (String userID : waitingList) {
+                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                                    @Override
+                                    public void onSuccess(String message) {}
+                                    @Override
+                                    public void onError(Exception e) {}
+                                });
+                            }
+                        }
+                        @Override
+                        public void onEventListsFetchError(Exception e) {
+                            // Handle the error
+                        }
+
+                    });
 
                 }
                 @Override
