@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,8 @@ public class update_event extends Fragment {
     private Boolean editGeolocationToggle;
     private EventManager event_manager;
 
+    private Boolean isEditable;
+
     public update_event() {
         // Required empty public constructor
     }
@@ -98,7 +101,8 @@ public class update_event extends Fragment {
             eventID = getArguments().getString("eventID");
             facilityID = getArguments().getString("facilityID");
             event_manager = new EventManager();
-            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID );
+            isEditable = (facilityID == Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID + " is editable: " + isEditable);
 
         }
     }
