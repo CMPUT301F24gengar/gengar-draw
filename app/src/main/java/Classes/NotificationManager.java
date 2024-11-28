@@ -43,6 +43,17 @@ public class NotificationManager {
             // Get the user document
             DocumentSnapshot snapshot = transaction.get(db.collection("users").document(userID));
 
+            // If the user document doesn't exist, return
+            if (!snapshot.exists()) {
+                return null;
+            }
+
+            // If the users notification enabled is false, return
+            Boolean allowNotifications = snapshot.getBoolean("allowNotifications");
+            if (!allowNotifications) {
+                return null;
+            }
+
             // Get current notifications
             List<String> notificationsArray = (List<String>) snapshot.get("notificationsArray");
 
