@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,8 +104,24 @@ public class FacilityManager {
      * @param deviceID unique id pertaining to user's device
      */
     public void deleteFacility(String deviceID) {
-        db.collection("facilities").document(deviceID)
-                .delete();
+        //iterate through events in a facility
+        getFacility(deviceID, new FacilityManager.OnFacilityFetchListener() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
+                List<String> events = facility.getEvents();
+                EventManager eventManager = new EventManager();
+                for (String event : events){
+                    //delete each event
+                    eventManager.deleteEvent(event);
+                }
+                //then delete the facility itself
+                db.collection("facilities").document(deviceID).delete();
+            }
+            @Override
+            public void onFacilityFetchError(Exception e) {
+                Log.d("facilities fetch ERROR", e.toString());
+            }
+        });
     }
 
     /**

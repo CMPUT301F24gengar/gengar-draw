@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,7 @@ import java.util.Locale;
 
 import Classes.Event;
 import Classes.FacilityManager;
+import Classes.EventManager;
 import Classes.UserProfile;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
@@ -62,6 +64,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int deletedPosition = holder.getAdapterPosition();
+                EventManager eventManager = new EventManager();
+                eventManager.deleteEvent(localEvents.get(deletedPosition).getEventID());
+                Toast.makeText(view.getContext(), "Deleted " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                localEvents.remove(deletedPosition);
+                notifyItemRemoved(deletedPosition);
+            }
+        });
+
         Event event = localEvents.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.facilityNameTextView.setText(facilityName);

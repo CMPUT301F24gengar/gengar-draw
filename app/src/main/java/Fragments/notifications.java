@@ -3,64 +3,81 @@ package Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.gengardraw.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link notifications#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
+import Classes.Notification;
+import Classes.NotificationManager;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
+
 public class notifications extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String deviceID;
+    private boolean buttonDebounce;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ImageView bell;
 
-    public notifications() {
-        // Required empty public constructor
-    }
+    private FirebaseFirestore db;
+    private RecyclerView notificationsRecyclerView;
+    private NotificationManager notificationManager;
+    private ArrayList<Notification> notifications;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment notifications.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static notifications newInstance(String param1, String param2) {
-        notifications fragment = new notifications();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private UserProfileManager userProfileManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View view = inflater.inflate(R.layout.fragment_notifications, container, false);
+
+        deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        db = FirebaseFirestore.getInstance();
+        notificationsRecyclerView = view.findViewById(R.id.notifications_list);
+        notificationManager = new NotificationManager();
+
+        bell = view.findViewById(R.id.notification_button);
+        bell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!buttonDebounce) {
+                    buttonDebounce = true;
+                    // set users allownotifications to false if true and true if false
+                    userProfileManager = new UserProfileManager();
+                    userProfileManager.getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
+                        @Override
+                        public void onUserProfileFetched(UserProfile userProfileFetched) {
+                            if (userProfileFetched.isAllowNotifications()) {
+                                userProfileFetched.setAllowNotifications(false);
+                                bell.setImageResource(R.drawable.bell_off);
+                            } else {
+                                userProfileFetched.setAllowNotifications(true);
+                                bell.setImageResource(R.drawable.bell);
+                            }
+                            userProfileManager.updateUserProfile(userProfileFetched, deviceID);
+                            buttonDebounce = false;
+                        }
+                        @Override
+                        public void onUserProfileFetchError(Exception e) {
+                            //Handle the error
+                            buttonDebounce = false;
+                        }
+                    });
+                }
+            }
+        });
+
+        return view;
     }
 }

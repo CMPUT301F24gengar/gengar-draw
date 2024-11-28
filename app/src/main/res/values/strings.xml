@@ -64,4 +64,5 @@
     <string name="this_event_requires_geolocation_in_order_to_join_the_waiting_list">THIS EVENT REQUIRES GEOLOCATION IN ORDER TO JOIN THE WAITING LIST</string>
     <string name="warning">WARNING</string>
     <string name="map">MAP</string>
+    <string name="click_user_to_add_a_profile_picture">CLICK USER TO ADD A PROFILE PICTURE</string>
 </resources>

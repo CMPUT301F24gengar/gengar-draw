@@ -23,6 +23,7 @@ import Classes.UserProfileManager;
 import Fragments.admin_events;
 import Fragments.admin_facility_profiles;
 import Fragments.admin_images;
+import Fragments.admin_qrcodes;
 import Fragments.admin_user_profiles;
 import Fragments.create_event;
 import Fragments.facility_profile;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
     ImageView adminEventsButton;
     ImageView adminImagesButton;
     ImageView adminFacilitiesButton;
+    ImageView adminQRcodesButton;
 
     UserProfileManager userProfileManager;
     UserProfile userProfile;
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
         adminEventsButton = findViewById(R.id.admin_events_button);
         adminImagesButton = findViewById(R.id.admin_images_button);
         adminFacilitiesButton = findViewById(R.id.admin_facilities_button);
+        adminQRcodesButton = findViewById(R.id.admin_qrcode_button);
 
         highlightedAdminButton = adminButton;
 
@@ -186,6 +189,14 @@ public class MainActivity extends AppCompatActivity implements register.OnRegist
                 setHighlightedAdminButton(adminFacilitiesButton, isExpanded, false);
                 setHighlightedButton(highlightedButton, true);
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new admin_facility_profiles()).commit();
+            }
+        });
+        adminQRcodesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHighlightedAdminButton(adminQRcodesButton, isExpanded, false);
+                setHighlightedButton(highlightedButton, true);
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new admin_qrcodes()).commit();
             }
         });
     }

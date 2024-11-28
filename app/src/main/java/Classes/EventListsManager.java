@@ -124,7 +124,7 @@ public class EventListsManager {
                     List<String> waitingList = eventLists.getWaitingList();
 
                     if (eventLists.getEnableGeolocation() && (latitude == null || longitude == null)) {
-                        message.set("Geolocation is enabled but no location provided");
+                        message.set("No location provided");
                         added.set(false);
                         return null;
                     }
@@ -293,7 +293,6 @@ public class EventListsManager {
                     List<String> cancelledList = eventLists.getCancelledList();
 
                     cancelledList.addAll(chosenList);
-                    chosenList.clear();
 
 //                    Remove user from locationList if present
                     Map<String, Object> locationList = eventLists.getLocationList();
@@ -303,6 +302,7 @@ public class EventListsManager {
                         }
                     }
                     eventLists.setLocationList(locationList);
+                    chosenList.clear();
 
                     message.set("Cancelled");
                     cancelled.set(true);
