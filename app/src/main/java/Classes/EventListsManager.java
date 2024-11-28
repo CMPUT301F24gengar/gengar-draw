@@ -356,7 +356,9 @@ public class EventListsManager {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
 
+                    // remove all users from chosen list and add to cancelled list
                     eventLists.removeFromChosenList(userID);
+                    eventLists.addToCancelledList(userID);
 
 //                    Remove user from locationList if present
                     Map<String, Object> locationList = eventLists.getLocationList();

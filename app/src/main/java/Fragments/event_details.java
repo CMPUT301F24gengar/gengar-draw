@@ -425,7 +425,7 @@ public class event_details extends Fragment {
                 public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.green));
-                    statusText.setText("!!! WINNER !!!");
+                    statusText.setText("!!! ACCEPTED !!!");
                     statusText.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
@@ -446,7 +446,7 @@ public class event_details extends Fragment {
                 public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.red));
-                    statusText.setText("!!! DECLINED !!!");
+                    statusText.setText("!!! CANCELLED !!!");
                     statusText.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
@@ -804,7 +804,7 @@ public class event_details extends Fragment {
                                 statusText.setVisibility(View.VISIBLE);
                             } else if (inWinnersList) {
                                 statusText.setTextColor(getResources().getColor(R.color.green));
-                                statusText.setText("!!! WINNER !!!");
+                                statusText.setText("!!! ACCEPTED !!!");
                                 statusText.setVisibility(View.VISIBLE);
                             }
                         }
