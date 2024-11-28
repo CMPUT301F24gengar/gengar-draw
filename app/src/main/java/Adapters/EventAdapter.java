@@ -1,6 +1,8 @@
 package Adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import Classes.Event;
+import Classes.FacilityManager;
 import Classes.EventManager;
 import Classes.UserProfile;
 
@@ -30,12 +33,26 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     private List<Event> localEvents;
     private Boolean showDelete;
     private OnEventClickListener listener;
+    private String facilityName;
+    private String facilityPictureURL;
 
     public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
         this.showDelete = showDelete;
         this.listener = listener;
+        this.facilityName = "";
+        this.facilityPictureURL = "";
+    }
+
+    public void setFacilityName(String facilityName) {
+        this.facilityName = facilityName;
+        notifyDataSetChanged();
+    }
+
+    public void setFacilityPicture(String facilityPictureURL) {
+        this.facilityPictureURL = facilityPictureURL;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -62,6 +79,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
         Event event = localEvents.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
+        holder.facilityNameTextView.setText(facilityName);
+        Log.d("EventAdapter", "onBindViewHolder FacilityPictureURL: " + facilityPictureURL);
+
+        if (!facilityPictureURL.isEmpty()) {
+            holder.facilityPicture.setImageTintList(null);
+            Glide.with(context).load(facilityPictureURL).into(holder.facilityPicture);
+        } else {
+            holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+            holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+        }
         holder.eventTitle.setText(event.getEventTitle());
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
@@ -82,6 +109,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView facilityNameTextView;
+        ImageView facilityPicture;
         TextView eventTitle;
         TextView eventStartDay;
         TextView eventStartMonth;
@@ -91,6 +120,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
         public MyViewHolder(View itemView){
             super(itemView);
+            facilityNameTextView = itemView.findViewById(R.id.view_event_facility_name);
+            facilityPicture = itemView.findViewById(R.id.view_event_facility_picture);
             eventTitle = itemView.findViewById(R.id.view_event_title);
             eventStartDay = itemView.findViewById(R.id.view_event_day);
             eventStartMonth = itemView.findViewById(R.id.view_event_month);

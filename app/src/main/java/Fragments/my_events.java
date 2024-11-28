@@ -186,6 +186,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
         Bundle bundle = new Bundle();
         bundle.putString("eventID", selectedEventID);
+        bundle.putString("facilityID", deviceID);
 
         update_event updateEvent = new update_event(); // call update_event to display event details
         updateEvent.setArguments(bundle); // pass eventID to update_event
@@ -247,6 +248,9 @@ public void checkForFacility() {
         public void onFacilityExists(Facility facility) {
             missingFacilityFrame.setVisibility(View.GONE);
             eventIDs = facility.getEvents();
+
+            customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
+            customAdapter.setFacilityPicture(facility.getPictureURL());
 
             fetchEvents(eventIDs, new FetchEventsCallback() {
                 @Override
