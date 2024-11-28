@@ -48,7 +48,7 @@ import Classes.Facility;
  *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
  *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>getFacilityFromDatabase</li> <li>updateFacilityDisplayed</li> <li>formatDate</li></ul>
  *
- * @author Rheanna
+ * @author Rheanna, Meghan
  * @see Event
  */
 public class update_event extends Fragment {
@@ -58,6 +58,8 @@ public class update_event extends Fragment {
     private EditText detailsEditText;
     private Uri imageURI;
     private Event event;
+    private TextView eventStartDay;
+    private TextView eventStartMonth;
     private TextView eventTitle;
     private TextView eventRegistrationOpens;
     private TextView eventRegistrationDeadline;
@@ -74,6 +76,7 @@ public class update_event extends Fragment {
     private EventManager event_manager;
 
     private Boolean isEditable;
+    private Boolean eventPictureUpdated = false;
 
     public update_event() {
         // Required empty public constructor
@@ -133,6 +136,8 @@ public class update_event extends Fragment {
         detailsEditText = view.findViewById(R.id.update_event_details);
         geolocationToggle = view.findViewById(R.id.update_event_checkbox);
 
+        eventStartDay = view.findViewById(R.id.view_event_day);
+        eventStartMonth = view.findViewById(R.id.view_event_month);
         eventTitle = view.findViewById(R.id.view_event_title);
         eventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
@@ -161,17 +166,17 @@ public class update_event extends Fragment {
         eventPicture.setOnClickListener(view1 -> {
             Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(OpenGalleryIntent, 1000);
+            eventPictureUpdated = true;
         });
 
         updateEventSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String details = detailsEditText.getText().toString().trim();
-                    if (details.isEmpty()) {
-                        Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
+                if (details.isEmpty()) {
+                    Toast.makeText(getContext(), "Event details cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 db.collection("events").document(eventID)
                         .update(
@@ -179,11 +184,13 @@ public class update_event extends Fragment {
                                 "enableGeolocation", editGeolocationToggle
                         )
                         .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(getContext(), "Event details updated successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Event updated successfully", Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e -> {
                             Log.e("Firestore", "error updating event details: ", e);
                         });
+
+                if (eventPictureUpdated) {
                     event_manager.uploadEventPicture(imageURI, eventID, new EventManager.OnUploadPictureListener() {
                         @Override
                         public void onSuccess(Uri downloadUrl) {
@@ -192,9 +199,11 @@ public class update_event extends Fragment {
 
                         @Override
                         public void onError(Exception e) {
-                            Log.e("Firestore", "error uploading udpated event image",e);
+                            Log.e("Firestore", "error uploading updated event image", e);
                         }
                     });
+                    eventPictureUpdated = false;
+                }
                 closeFragment();
             }
         });
@@ -240,6 +249,8 @@ public class update_event extends Fragment {
      * @param event Event object
      */
     private void updateEventDisplayed(Event event) {
+        eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
+        eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
         eventTitle.setText(event.getEventTitle());
         eventRegistrationOpens.setText(formatDate(event.getEventStartDate()));
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
