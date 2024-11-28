@@ -262,6 +262,7 @@ public class event_details extends Fragment {
             listContainer.setVisibility(View.GONE);
             cancelEntrantsButton.setVisibility(View.GONE);
             notifyEntrantsButton.setVisibility(View.GONE);
+            notificationLayout.setVisibility(View.GONE);
         });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -475,6 +476,8 @@ public class event_details extends Fragment {
                         return;
                     }
 
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
+
                     fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
                         @Override
                         public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
@@ -620,6 +623,8 @@ public class event_details extends Fragment {
                         return;
                     }
 
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
+
                     fetchUserProfiles(cancelledList, new OnProfilesLoadedListener(){
                         @Override
                         public void onProfilesLoaded(ArrayList<UserProfile> userProfiles) {
@@ -726,31 +731,6 @@ public class event_details extends Fragment {
         notifyEntrantsButton.setOnClickListener(v -> {
             notificationText.setText("");
             notificationLayout.setVisibility(View.VISIBLE);
-
-            // send notifications to users in chosenlist
-//            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
-//                @Override
-//                public void onEventListsFetched(EventLists eventLists) {
-//                    List<String> chosenList = eventLists.getChosenList();
-//                    String notification = createNotification(event, eventID, "PLEASE ACCEPT/DECLINE YOUR INVITATION");
-//                    for (String userID : chosenList) {
-//                        notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
-//                            @Override
-//                            public void onSuccess(String message) {}
-//                            @Override
-//                            public void onError(Exception e) {}
-//                        });
-//                    }
-//                    buttonDebounce = false;
-//                    Toast.makeText(getContext(), "Reminder sent", Toast.LENGTH_SHORT).show();
-//                }
-//                @Override
-//                public void onEventListsFetchError(Exception e) {
-//                    // Handle the error
-//                    buttonDebounce = false;
-//                }
-//
-//            });
         });
 
         sendNotificationButton.setOnClickListener(v -> {
@@ -780,6 +760,7 @@ public class event_details extends Fragment {
             }
             buttonDebounce = false;
             Toast.makeText(getContext(), "Notification sent", Toast.LENGTH_SHORT).show();
+            notificationLayout.setVisibility(View.GONE);
         });
 
         cancelNotificationButton.setOnClickListener(v -> {
