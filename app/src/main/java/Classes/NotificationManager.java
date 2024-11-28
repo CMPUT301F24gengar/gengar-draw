@@ -24,9 +24,11 @@ public class NotificationManager {
     public Notification parseNotification(String notificationString) {
         String[] parts = notificationString.split("\\$");
 
-        if (parts.length != 6) {
-            throw new IllegalArgumentException("Invalid format");
+        if (parts.length != 7) {
+//            throw new IllegalArgumentException("Invalid format");
+            return null;
         }
+
 
         String message = parts[0];
         String day = parts[1];
@@ -34,17 +36,21 @@ public class NotificationManager {
         String time = parts[3];
         String eventID = parts[4];
         String title = parts[5];
+        boolean notified = parts[6].equals("1");
 
-        return new Notification(title, day, month, time, eventID, message);
+        return new Notification(title, day, month, time, eventID, message, notified);
     }
 
     public String unparseNotification(Notification notification) {
-        return notification.getMessage() + "$" +
+        String message = notification.getMessage() + "$" +
                 notification.getEventStartDateDay() + "$" +
                 notification.getEventStartDateMonth() + "$" +
                 notification.getEventStartDateTime() + "$" +
                 notification.getEventID() + "$" +
-                notification.getEventTitle();
+                notification.getEventTitle() + "$" +
+                (notification.getNotified() ? "1" : "0");
+        Log.d("abc", "unparseNotification: " + message + notification.getNotified());
+        return message;
     }
 
     public void addNotification(String userID, String notification, OnNotificationUpdateListener listener) {

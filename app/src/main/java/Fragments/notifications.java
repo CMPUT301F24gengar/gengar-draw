@@ -60,7 +60,7 @@ public class notifications extends Fragment {
             @Override
             public void onNotificationsLoaded(ArrayList<Notification> notifications) {
                 //adding notifications to adapter
-                notificationsRecyclerView.setLayoutManager(layoutManager); //
+                notificationsRecyclerView.setLayoutManager(layoutManager);
                 notificationsRecyclerView.setAdapter(customAdapter);
             }
         });

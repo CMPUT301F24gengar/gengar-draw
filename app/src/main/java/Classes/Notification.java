@@ -2,6 +2,7 @@ package Classes;
 
 
 public class Notification {
+    private boolean notified;
     private String eventTitle;
     private String eventStartDateDay;
     private String eventStartDateMonth;
@@ -14,13 +15,14 @@ public class Notification {
     }
 
     public Notification(String eventTitle, String eventStartDateDay, String eventStartDateMonth,
-                        String eventStartDateTime, String eventID, String message) {
+                        String eventStartDateTime, String eventID, String message, boolean notified) {
         this.eventTitle = eventTitle;
         this.eventStartDateDay = eventStartDateDay;
         this.eventStartDateMonth = eventStartDateMonth;
         this.eventStartDateTime = eventStartDateTime;
         this.eventID = eventID;
         this.message = message;
+        this.notified = notified;
     }
 
     // Getters and setters
@@ -70,6 +72,14 @@ public class Notification {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean getNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
     }
 }
 
