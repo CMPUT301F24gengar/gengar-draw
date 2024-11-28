@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,6 +62,7 @@ import Classes.EventListsManager;
 import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
+import Classes.NotificationManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
@@ -98,6 +100,7 @@ public class event_details extends Fragment {
     private Date eventStartDate;
 
     private EventListsManager eventListsManager = new EventListsManager();
+    private NotificationManager notificationManager = new NotificationManager();
 
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
@@ -131,7 +134,12 @@ public class event_details extends Fragment {
     TextView declineButton;
 
     ImageView cancelEntrantsButton;
+
     ImageView notifyEntrantsButton;
+    FrameLayout notificationLayout;
+    EditText notificationText;
+    TextView sendNotificationButton;
+    TextView cancelNotificationButton;
 
     TextView waitingListButton;
     TextView mapButton;
@@ -214,7 +222,12 @@ public class event_details extends Fragment {
         declineButton = view.findViewById(R.id.view_event_decline);
 
         cancelEntrantsButton = view.findViewById(R.id.cancel_entrants_button);
+
         notifyEntrantsButton = view.findViewById(R.id.notify_entrants_button);
+        notificationLayout = view.findViewById(R.id.notification_layout);
+        notificationText = view.findViewById(R.id.notification_message);
+        sendNotificationButton = view.findViewById(R.id.send_notification_btn);
+        cancelNotificationButton = view.findViewById(R.id.cancel_notification_btn);
 
         waitingListButton = view.findViewById(R.id.view_event_waiting_list);
         mapButton = view.findViewById(R.id.view_event_map);
@@ -249,6 +262,7 @@ public class event_details extends Fragment {
             listContainer.setVisibility(View.GONE);
             cancelEntrantsButton.setVisibility(View.GONE);
             notifyEntrantsButton.setVisibility(View.GONE);
+            notificationLayout.setVisibility(View.GONE);
         });
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -323,7 +337,7 @@ public class event_details extends Fragment {
     private void joinEvent( String eventID ){
         eventListsManager.addUserToWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
-                    public void onSuccess(String message, boolean boolValue) {
+                    public void onSuccess(String message, boolean boolValue, List<String> users) {
                         inWaitingList = boolValue;
                         // if in waiting list, add eventID to users joined events
                         if (inWaitingList) {
@@ -380,7 +394,7 @@ public class event_details extends Fragment {
             } else {
                 eventListsManager.removeUserFromWaitingList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                     @Override
-                    public void onSuccess(String message, boolean boolValue) {
+                    public void onSuccess(String message, boolean boolValue, List<String> users) {
                         inWaitingList = !boolValue;
                         // if not in waiting list, remove eventID from users joined events
                         if (!inWaitingList) {
@@ -408,10 +422,10 @@ public class event_details extends Fragment {
 
             eventListsManager.addUserToWinnersList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.green));
-                    statusText.setText("!!! WINNER !!!");
+                    statusText.setText("!!! ACCEPTED !!!");
                     statusText.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
@@ -429,10 +443,10 @@ public class event_details extends Fragment {
 
             eventListsManager.removeUserFromChosenList(eventID, deviceID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     accept_declineLayout.setVisibility(View.GONE);
                     statusText.setTextColor(getResources().getColor(R.color.red));
-                    statusText.setText("!!! DECLINED !!!");
+                    statusText.setText("!!! CANCELLED !!!");
                     statusText.setVisibility(View.VISIBLE);
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
@@ -461,6 +475,8 @@ public class event_details extends Fragment {
                         buttonDebounce = false;
                         return;
                     }
+
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
 
                     fetchUserProfiles(waitingList, new OnProfilesLoadedListener(){
                         @Override
@@ -551,6 +567,7 @@ public class event_details extends Fragment {
                     }
 
                     cancelEntrantsButton.setVisibility(View.VISIBLE);
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
 
                     fetchUserProfiles(chosenList, new OnProfilesLoadedListener(){
                         @Override
@@ -574,7 +591,7 @@ public class event_details extends Fragment {
 
             eventListsManager.addUsersToCancelledList(eventID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> users) {
                     userProfiles.clear();
                     customAdapter.notifyDataSetChanged();
                     cancelEntrantsButton.setVisibility(View.GONE);
@@ -605,6 +622,8 @@ public class event_details extends Fragment {
                         buttonDebounce = false;
                         return;
                     }
+
+                    notifyEntrantsButton.setVisibility(View.VISIBLE);
 
                     fetchUserProfiles(cancelledList, new OnProfilesLoadedListener(){
                         @Override
@@ -664,15 +683,88 @@ public class event_details extends Fragment {
 
             eventListsManager.chooseWinners(eventID, new EventListsManager.OnEventListsUpdateListener() {
                 @Override
-                public void onSuccess(String message, boolean boolValue) {
+                public void onSuccess(String message, boolean boolValue, List<String> winners) {
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
+
+                    if (!boolValue) return;
+
+                    String notification = createNotification(event, eventID, "YOU HAVE BEEN SELECTED AS A WINNER!");
+                    for (String winner : winners) {
+                        notificationManager.addNotification(winner, notification, new NotificationManager.OnNotificationUpdateListener(){
+                            @Override
+                            public void onSuccess(String message) {}
+                            @Override
+                            public void onError(Exception e) {}
+                        });
+                    }
+
+                    eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+                        @Override
+                        public void onEventListsFetched(EventLists eventLists) {
+                            List<String> waitingList = eventLists.getWaitingList();
+                            String notification = createNotification(event, eventID, "YOU HAVE NOT BEEN SELECTED");
+                            for (String userID : waitingList) {
+                                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                                    @Override
+                                    public void onSuccess(String message) {}
+                                    @Override
+                                    public void onError(Exception e) {}
+                                });
+                            }
+                        }
+                        @Override
+                        public void onEventListsFetchError(Exception e) {
+                            // Handle the error
+                        }
+
+                    });
+
                 }
                 @Override
                 public void onError(Exception e) {
                     buttonDebounce = false;
                 }
             });
+        });
+
+        notifyEntrantsButton.setOnClickListener(v -> {
+            notificationText.setText("");
+            notificationLayout.setVisibility(View.VISIBLE);
+        });
+
+        sendNotificationButton.setOnClickListener(v -> {
+            if (buttonDebounce) return;
+            buttonDebounce = true;
+
+            List<String> userIDs = new ArrayList<>();
+            for (UserProfile userProfile : userProfiles) {
+                userIDs.add(userProfile.getDeviceID());
+            }
+
+            if (userIDs.isEmpty()) {
+                buttonDebounce = false;
+                Toast.makeText(getContext(), "No users to notify", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String message = notificationText.getText().toString();
+            String notification = createNotification(event, eventID, message);
+            for (String userID : userIDs) {
+                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                    @Override
+                    public void onSuccess(String message) {}
+                    @Override
+                    public void onError(Exception e) {}
+                });
+            }
+            buttonDebounce = false;
+            Toast.makeText(getContext(), "Notification sent", Toast.LENGTH_SHORT).show();
+            notificationLayout.setVisibility(View.GONE);
+        });
+
+        cancelNotificationButton.setOnClickListener(v -> {
+            notificationLayout.setVisibility(View.GONE);
         });
 
         // Initialize conditions and buttons
@@ -712,7 +804,7 @@ public class event_details extends Fragment {
                                 statusText.setVisibility(View.VISIBLE);
                             } else if (inWinnersList) {
                                 statusText.setTextColor(getResources().getColor(R.color.green));
-                                statusText.setText("!!! WINNER !!!");
+                                statusText.setText("!!! ACCEPTED !!!");
                                 statusText.setVisibility(View.VISIBLE);
                             }
                         }
@@ -768,6 +860,14 @@ public class event_details extends Fragment {
             return formatter.format(date).toUpperCase(); // Convert to uppercase to match the format
         }
         return ""; // Return empty string for null dates
+    }
+
+    private String createNotification(Event event, String eventID, String message) {
+        String day,month,time;
+        String Date = formatDate(event.getEventStartDate());
+        String[] DMT = Date.split(" ");
+        String notificationAppend = "$"+DMT[0]+"$"+DMT[1]+"$"+DMT[2]+"$"+eventID+"$"+event.getEventTitle();
+        return message + notificationAppend;
     }
 
     /**

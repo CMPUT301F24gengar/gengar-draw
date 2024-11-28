@@ -65,4 +65,7 @@
     <string name="warning">WARNING</string>
     <string name="map">MAP</string>
     <string name="click_user_to_add_a_profile_picture">CLICK USER TO ADD A PROFILE PICTURE</string>
+    <string name="send_notification">SEND NOTIFICATION</string>
+    <string name="enter_notification_message">ENTER NOTIFICATION MESSAGE</string>
+    <string name="send">SEND</string>
 </resources>
