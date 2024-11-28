@@ -249,6 +249,9 @@ public void checkForFacility() {
             missingFacilityFrame.setVisibility(View.GONE);
             eventIDs = facility.getEvents();
 
+            customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
+            customAdapter.setFacilityPicture(facility.getPictureURL());
+
             fetchEvents(eventIDs, new FetchEventsCallback() {
                 @Override
                 public void onSuccess(ArrayList<Event> curr_events) {
