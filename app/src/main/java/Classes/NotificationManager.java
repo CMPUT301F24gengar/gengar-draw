@@ -49,7 +49,6 @@ public class NotificationManager {
                 notification.getEventID() + "$" +
                 notification.getEventTitle() + "$" +
                 (notification.getNotified() ? "1" : "0");
-        Log.d("abc", "unparseNotification: " + message + notification.getNotified());
         return message;
     }
 
