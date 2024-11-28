@@ -38,6 +38,15 @@ public class NotificationManager {
         return new Notification(title, day, month, time, eventID, message);
     }
 
+    public String unparseNotification(Notification notification) {
+        return notification.getMessage() + "$" +
+                notification.getEventStartDateDay() + "$" +
+                notification.getEventStartDateMonth() + "$" +
+                notification.getEventStartDateTime() + "$" +
+                notification.getEventID() + "$" +
+                notification.getEventTitle();
+    }
+
     public void addNotification(String userID, String notification, OnNotificationUpdateListener listener) {
         db.runTransaction(transaction -> {
             // Get the user document

@@ -3,9 +3,11 @@ package Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,9 @@ import com.example.gengardraw.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import Adapters.NotificationAdapter;
 import Classes.Notification;
 import Classes.NotificationManager;
 import Classes.UserProfile;
@@ -32,6 +36,8 @@ public class notifications extends Fragment {
     private RecyclerView notificationsRecyclerView;
     private NotificationManager notificationManager;
     private ArrayList<Notification> notifications;
+    private RecyclerView.LayoutManager layoutManager;
+    private NotificationAdapter customAdapter;
 
     private UserProfileManager userProfileManager;
 
@@ -46,6 +52,18 @@ public class notifications extends Fragment {
         db = FirebaseFirestore.getInstance();
         notificationsRecyclerView = view.findViewById(R.id.notifications_list);
         notificationManager = new NotificationManager();
+        notifications = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(getActivity());
+        customAdapter = new NotificationAdapter(getContext(), notifications, deviceID, true);
+
+        fetchNotifications(new OnNotificationsLoadedListener() {
+            @Override
+            public void onNotificationsLoaded(ArrayList<Notification> notifications) {
+                //adding notifications to adapter
+                notificationsRecyclerView.setLayoutManager(layoutManager); //
+                notificationsRecyclerView.setAdapter(customAdapter);
+            }
+        });
 
         bell = view.findViewById(R.id.notification_button);
         bell.setOnClickListener(new View.OnClickListener() {
@@ -79,5 +97,31 @@ public class notifications extends Fragment {
         });
 
         return view;
+    }
+
+    public interface OnNotificationsLoadedListener {
+        void onNotificationsLoaded(ArrayList<Notification> notifications);
+    }
+
+    public void fetchNotifications(OnNotificationsLoadedListener listener){
+        // get userprofile
+        userProfileManager = new UserProfileManager();
+        userProfileManager.getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
+            @Override
+            public void onUserProfileFetched(UserProfile userProfile) {
+                // get notifications list
+                List<String> notificationsArray = userProfile.getNotificationsArray();
+                for (String notificationString : notificationsArray) {
+                    Notification notification = notificationManager.parseNotification(notificationString);
+                    notifications.add(notification);
+                }
+                listener.onNotificationsLoaded(notifications);
+            }
+            @Override
+            public void onUserProfileFetchError(Exception e) {
+                // Handle the error
+            }
+        });
+
     }
 }
