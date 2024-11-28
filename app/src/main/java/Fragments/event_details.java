@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -133,7 +134,12 @@ public class event_details extends Fragment {
     TextView declineButton;
 
     ImageView cancelEntrantsButton;
+
     ImageView notifyEntrantsButton;
+    FrameLayout notificationLayout;
+    EditText notificationText;
+    TextView sendNotificationButton;
+    TextView cancelNotificationButton;
 
     TextView waitingListButton;
     TextView mapButton;
@@ -216,7 +222,12 @@ public class event_details extends Fragment {
         declineButton = view.findViewById(R.id.view_event_decline);
 
         cancelEntrantsButton = view.findViewById(R.id.cancel_entrants_button);
+
         notifyEntrantsButton = view.findViewById(R.id.notify_entrants_button);
+        notificationLayout = view.findViewById(R.id.notification_layout);
+        notificationText = view.findViewById(R.id.notification_message);
+        sendNotificationButton = view.findViewById(R.id.send_notification_btn);
+        cancelNotificationButton = view.findViewById(R.id.cancel_notification_btn);
 
         waitingListButton = view.findViewById(R.id.view_event_waiting_list);
         mapButton = view.findViewById(R.id.view_event_map);
@@ -713,33 +724,66 @@ public class event_details extends Fragment {
         });
 
         notifyEntrantsButton.setOnClickListener(v -> {
+            notificationText.setText("");
+            notificationLayout.setVisibility(View.VISIBLE);
+
+            // send notifications to users in chosenlist
+//            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
+//                @Override
+//                public void onEventListsFetched(EventLists eventLists) {
+//                    List<String> chosenList = eventLists.getChosenList();
+//                    String notification = createNotification(event, eventID, "PLEASE ACCEPT/DECLINE YOUR INVITATION");
+//                    for (String userID : chosenList) {
+//                        notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+//                            @Override
+//                            public void onSuccess(String message) {}
+//                            @Override
+//                            public void onError(Exception e) {}
+//                        });
+//                    }
+//                    buttonDebounce = false;
+//                    Toast.makeText(getContext(), "Reminder sent", Toast.LENGTH_SHORT).show();
+//                }
+//                @Override
+//                public void onEventListsFetchError(Exception e) {
+//                    // Handle the error
+//                    buttonDebounce = false;
+//                }
+//
+//            });
+        });
+
+        sendNotificationButton.setOnClickListener(v -> {
             if (buttonDebounce) return;
             buttonDebounce = true;
 
-            // send notifications to users in chosenlist
-            eventListsManager.getEventLists(eventID, new EventListsManager.OnEventListsFetchListener() {
-                @Override
-                public void onEventListsFetched(EventLists eventLists) {
-                    List<String> chosenList = eventLists.getChosenList();
-                    String notification = createNotification(event, eventID, "PLEASE ACCEPT/DECLINE YOUR INVITATION");
-                    for (String userID : chosenList) {
-                        notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
-                            @Override
-                            public void onSuccess(String message) {}
-                            @Override
-                            public void onError(Exception e) {}
-                        });
-                    }
-                    buttonDebounce = false;
-                    Toast.makeText(getContext(), "Reminder sent", Toast.LENGTH_SHORT).show();
-                }
-                @Override
-                public void onEventListsFetchError(Exception e) {
-                    // Handle the error
-                    buttonDebounce = false;
-                }
+            List<String> userIDs = new ArrayList<>();
+            for (UserProfile userProfile : userProfiles) {
+                userIDs.add(userProfile.getDeviceID());
+            }
 
-            });
+            if (userIDs.isEmpty()) {
+                buttonDebounce = false;
+                Toast.makeText(getContext(), "No users to notify", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String message = notificationText.getText().toString();
+            String notification = createNotification(event, eventID, message);
+            for (String userID : userIDs) {
+                notificationManager.addNotification(userID, notification, new NotificationManager.OnNotificationUpdateListener() {
+                    @Override
+                    public void onSuccess(String message) {}
+                    @Override
+                    public void onError(Exception e) {}
+                });
+            }
+            buttonDebounce = false;
+            Toast.makeText(getContext(), "Notification sent", Toast.LENGTH_SHORT).show();
+        });
+
+        cancelNotificationButton.setOnClickListener(v -> {
+            notificationLayout.setVisibility(View.GONE);
         });
 
         // Initialize conditions and buttons
