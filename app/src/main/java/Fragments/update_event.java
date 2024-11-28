@@ -194,7 +194,8 @@ public class update_event extends Fragment {
                     event_manager.uploadEventPicture(imageURI, eventID, new EventManager.OnUploadPictureListener() {
                         @Override
                         public void onSuccess(Uri downloadUrl) {
-                            Toast.makeText(getContext(), "Event image updated successfully", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "Event image updated successfully", Toast.LENGTH_SHORT).show();
+                            Log.d("Firestore","Event image successfully updated");
                         }
 
                         @Override
