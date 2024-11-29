@@ -91,6 +91,8 @@
                             android:scaleType="centerCrop" />
 
                         <TextView
+                            android:id="@+id/update_event_update_poster"
+                            android:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/update_poster"
@@ -315,9 +317,21 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/update_event_details_static"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
                     <EditText
                         android:id="@+id/update_event_details"
                         style="@style/main"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -346,6 +360,7 @@
 
                         <CheckBox
                             android:id="@+id/update_event_checkbox"
+                            android:clickable="false"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:buttonTint="@color/grey" />
