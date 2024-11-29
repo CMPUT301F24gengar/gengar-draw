@@ -57,6 +57,8 @@ import Classes.Facility;
 import Classes.FacilityManager;
 //import kotlinx.coroutines.EventLoop;
 import Adapters.UserProfileAdapter;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 /**
  * My Events Activity
@@ -98,14 +100,14 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * Construct the my_events fragment view
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return constructed View
      * @see Fragment
      */
@@ -119,6 +121,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         recyclerView = view.findViewById(R.id.my_events_list);
         eventManager = new EventManager();
         events = new ArrayList<>();
+        eventIDs = new ArrayList<>();
 
         layoutManager = new LinearLayoutManager(getActivity());
         customAdapter = new EventAdapter(getContext(), events, false, this);
@@ -162,14 +165,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         joinedEventsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Empty out the events ArrayList to hold the Event objects
-                events.clear();
-                customAdapter.notifyDataSetChanged();
-
-                //switch views
-                setHighlightedButton(joinedEventsBtn);
-                missingFacilityFrame.setVisibility(View.GONE);
-                eventListView.setVisibility(View.VISIBLE);
+                createJoinedEventsList();
             }
         });
         createFacilityBtn.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +195,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * returns user to the homepage
+     *
      * @throws Exception activity not instance of MainActivity
      * @see MainActivity
      */
@@ -213,7 +210,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * switches which button is highlighted
-     * @param button    TextView representing a button
+     *
+     * @param button TextView representing a button
      */
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));
@@ -225,6 +223,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * replaces the current fragment with the facility fragment
+     *
      * @throws Exception activity not instance of MainActivity
      * @see facility_profile
      */
@@ -236,119 +235,213 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
             // Handle error
         }
     }
-public interface OnEventsLoadedListener {
-    void onEventsLoaded(ArrayList<Event> events);
-}
 
-public void checkForFacility() {
-    //decide which fragment to open
-    FacilityManager facilityManager = new FacilityManager();
-    facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
-        @Override
-        public void onFacilityExists(Facility facility) {
-            missingFacilityFrame.setVisibility(View.GONE);
-            eventIDs = facility.getEvents();
+    public interface OnEventsLoadedListener {
+        void onEventsLoaded(ArrayList<Event> events);
+    }
 
-            customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
-            customAdapter.setFacilityPicture(facility.getPictureURL());
+    public void checkForFacility() {
+        //decide which fragment to open
+        FacilityManager facilityManager = new FacilityManager();
+        facilityManager.checkFacilityExists(deviceID, new FacilityManager.OnFacilityCheckListener() {
+            @Override
+            public void onFacilityExists(Facility facility) {
+                missingFacilityFrame.setVisibility(View.GONE);
+                eventIDs = facility.getEvents();
 
-            fetchEvents(eventIDs, new FetchEventsCallback() {
-                @Override
-                public void onSuccess(ArrayList<Event> curr_events) {
-                    Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
-                }
+                customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
+                customAdapter.setFacilityPicture(facility.getPictureURL());
 
-                @Override
-                public void onFailure(Exception e) {
-                    Log.e("checkForFacility", "Error in fetching events", e);
-                }
-            });
+                fetchEvents(eventIDs, new FetchEventsCallback() {
+                    @Override
+                    public void onSuccess(ArrayList<Event> curr_events) {
+                        Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("checkForFacility", "Error in fetching events", e);
+                    }
+                });
+            }
+
+
+            @Override
+            public void onFacilityNotExists() {
+                //missing facility layout
+                missingFacilityFrame.setVisibility(View.VISIBLE);
+                eventListView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("my events", "Error checking facility exists", e);
+            }
+        });
+    }
+
+    // Creates listener since firebase's get() is asynchronous in nature,
+    // so it notifies when all events have been loaded.
+    public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
+        Log.d("fetchEvents", "Event IDs : " + eventIDs);
+
+        int totalEvents = eventIDs.size();  // total number of events to fetch
+
+        AtomicInteger completedTasks = new AtomicInteger(0);  // needed for incrementAndGet()
+
+        // Loop through each event
+        for (String eventID : eventIDs) {
+
+            // Fetch specific event document by its ID
+            db.collection("events").document(eventID)
+                    .get()
+                    .addOnCompleteListener(task -> {
+
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+
+                            if (document != null && document.exists()) {
+                                String currentDocumentID = document.getId();
+
+                                eventManager.getEvent(currentDocumentID, new EventManager.OnEventFetchListener() {
+                                    @Override
+                                    public void onEventFetched(Event current_event) {
+                                        Log.d("onEventFetched", "Event title : " + current_event.getEventTitle());
+                                        Event curr_event = document.toObject(Event.class);
+                                        curr_event.setEventID(document.getId()); // This Event object has eventID field added
+                                        events.add(curr_event);  // Add retrieved Event object to the List
+
+                                        // Notify adapter that event was added
+                                        customAdapter.notifyItemInserted(events.size() - 1);
+
+                                        if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
+                                            callback.onSuccess(events);  // Pass retrieved events list
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onEventFetchError(Exception e) {
+                                        Log.e("fetchEvents", "Failed to fetch Event for ID: " + currentDocumentID + e);
+
+                                        if (completedTasks.incrementAndGet() == totalEvents) {
+                                            callback.onSuccess(events);  // Pass events which were retrieved
+                                        }
+                                    }
+                                });
+                            } else {
+                                Log.d("fetchEvents", "Document does not exist for eventID: " + eventID);  // Skip deleted event records???
+
+                                if (completedTasks.incrementAndGet() == totalEvents) {
+                                    callback.onSuccess(events);  // Pass events which were retrieved
+                                }
+                            }
+                        } else {
+
+                            Log.e("fetchEvents", "Failed to fetch document for eventID: " + eventID, task.getException());
+
+                            if (completedTasks.incrementAndGet() == totalEvents) {
+                                callback.onSuccess(events);  // Pass events which were retrieved
+                            }
+                        }
+                    });
         }
+    }
 
+    public interface FetchEventsCallback {
+        void onSuccess(ArrayList<Event> events);
 
-        @Override
-        public void onFacilityNotExists() {
-            //missing facility layout
-            missingFacilityFrame.setVisibility(View.VISIBLE);
-            eventListView.setVisibility(View.INVISIBLE);
-        }
+        void onFailure(Exception e);
+    }
 
-        @Override
-        public void onError(Exception e) {
-            Log.e("my events", "Error checking facility exists", e);
-        }
-    });
-}
+    /**
+     * This method fetches all the events the user joined from firebase currently stored
+     * and adds it to a list of events.
+     * @param deviceID the device ID of the user.
+     */
+    //creates listener since firebase's get() is asynchronous in nature,
+    //so it notifies when all profiles have been loaded.
+    public void fetchJoinedEvents(String deviceID) {
+        fetchJoinedEventIDs(deviceID, new FetchJoinedEventIDsCallback() {
+            @Override
+            public void onJoinedEventIDsFetched(List<String> eventIDs) {
+                Log.d("fetchJoinedEvents", "Before call fetchEvents: Joined Event IDs: " + eventIDs);
+                fetchEvents(eventIDs, new FetchEventsCallback() {
+                    @Override
+                    public void onSuccess(ArrayList<Event> curr_events) {
+                        Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
+                    }
 
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("fetchJoinedEvents", "Error in fetching events", e);
+                    }
+                });
+            }
 
-// Creates listener since firebase's get() is asynchronous in nature,
-// so it notifies when all events have been loaded.
-public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
-    int totalEvents = eventIDs.size();  // total number of events to fetch
+            @Override
+            public void onError(Exception e) {
+                Log.e("fetchJoinedEvents", "Error");
+            }
+        });
+    }
 
-    AtomicInteger completedTasks = new AtomicInteger(0);  // needed for incrementAndGet()
+    /**
+     * This method creates the joined events list for the user.
+     */
+    public void createJoinedEventsList() {
+        customAdapter.setFacilityName("");  // Clear facility name to be passed to adapter
+        customAdapter.setFacilityPicture("");
 
-    // Loop through each event
-    for (String eventID : eventIDs) {
+        eventIDs.clear();
+        // Empty out the events ArrayList to hold the Event objects
+        events.clear();
+        customAdapter.notifyDataSetChanged();
 
-        // Fetch specific event document by its ID
-        db.collection("events").document(eventID)
+        //switch views
+        setHighlightedButton(joinedEventsBtn);
+        missingFacilityFrame.setVisibility(View.GONE);
+        eventListView.setVisibility(View.VISIBLE);
+        fetchJoinedEvents(deviceID);
+    }
+
+    /**
+     * This method fetches all the event IDs from firebase currently stored
+     * and adds it to a list of event IDs.
+     * @param deviceID the device ID of the user.
+     * @param callback to check if all the event IDs have been loaded.
+     */
+    //creates callback since firebase's get() is asynchronous in nature,
+    //so it notifies when all profiles have been loaded.
+    public void fetchJoinedEventIDs(String deviceID, final FetchJoinedEventIDsCallback callback) {
+        db.collection("users").document(deviceID)
                 .get()
+
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
 
                         if (document != null && document.exists()) {
-                            String currentDocumentID = document.getId();
-
-                            eventManager.getEvent(currentDocumentID, new EventManager.OnEventFetchListener() {
-                                @Override
-                                public void onEventFetched(Event current_event) {
-                                    Log.d("onEventFetched", "Event title : " + current_event.getEventTitle());
-                                    Event curr_event = document.toObject(Event.class);
-                                    curr_event.setEventID(document.getId()); // This Event object has eventID field added
-                                    events.add(curr_event);  // Add retrieved Event object to the List
-
-                                    // Notify adapter that event was added
-                                    customAdapter.notifyItemInserted(events.size() - 1);
-
-                                    if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
-                                        callback.onSuccess(events);  // Pass retrieved events list
-                                    }
-                                }
-
-                                @Override
-                                public void onEventFetchError(Exception e) {
-                                    Log.e("fetchEvents", "Failed to fetch Event for ID: " + currentDocumentID + e);
-
-                                    if (completedTasks.incrementAndGet() == totalEvents) {
-                                        callback.onSuccess(events);  // Pass events which were retrieved
-                                    }
-                                }
-                            });
-                        } else {
-                            Log.e("fetchEvents", "Document does not exist for eventID: " + eventID);
-
-                            if (completedTasks.incrementAndGet() == totalEvents) {
-                                callback.onSuccess(events);  // Pass events which were retrieved
+                            eventIDs = (List<String>) document.get("joinedEvents");
+                            if (eventIDs != null) {
+                                Log.d("fetchJoinedEventIDs", "Joined Event IDs: " + eventIDs);
+                                callback.onJoinedEventIDsFetched(eventIDs);
+                            } else {
+                                Log.d("fetchJoinedEventIDs", "No Joined Events found");
+                                callback.onJoinedEventIDsFetched(eventIDs);
                             }
+                        } else {
+                            Log.e("fetchJoinedEventIDs", "No User document for device ID:  " + deviceID);
+                            callback.onError(new Exception("No User document found for deviceID:" + deviceID));
                         }
                     } else {
-
-                        Log.e("fetchEvents", "Failed to fetch document for eventID: " + eventID, task.getException());
-
-                        if (completedTasks.incrementAndGet() == totalEvents) {
-                            callback.onSuccess(events); // Pass events which were retrieved
-                        }
+                        callback.onError(task.getException());
                     }
                 });
     }
-}
 
-
-    public interface FetchEventsCallback {
-        void onSuccess(ArrayList<Event> events);
-        void onFailure(Exception e);
+    public interface FetchJoinedEventIDsCallback {
+        void onJoinedEventIDsFetched(List<String> eventIDs);
+        void onError(Exception e);
     }
 }
