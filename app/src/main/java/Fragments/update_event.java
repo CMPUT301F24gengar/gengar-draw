@@ -104,8 +104,8 @@ public class update_event extends Fragment {
             eventID = getArguments().getString("eventID");
             facilityID = getArguments().getString("facilityID");
             event_manager = new EventManager();
-            isEditable = (facilityID == Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID + " is editable: " + isEditable);
+            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID);
+
         }
     }
 
@@ -150,6 +150,7 @@ public class update_event extends Fragment {
             getEventFromDatabase(eventID);
             getFacilityFromDatabase(eventID);
         }
+
 
         eventPicture = view.findViewById(R.id.view_event_picture);
         facilityPicture = view.findViewById(R.id.view_event_facility_picture);
@@ -301,6 +302,9 @@ public class update_event extends Fragment {
      */
     private void updateFacilityDisplayed(Facility facility) {
         facilityName.setText(facility.getName());
+        String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        isEditable = (facility.getDeviceID().equals(deviceID));
+        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID()+" userID: "+deviceID+" editable? "+isEditable);
 
         // Load image
         Glide.with(getView().getContext())
