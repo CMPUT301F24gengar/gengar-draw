@@ -82,6 +82,29 @@ public class NotificationManager {
         }).addOnFailureListener(listener::onError);
     }
 
+    public void updateNotified(String userID, OnNotificationUpdateListener listener) {
+        db.runTransaction(transaction -> {
+            // Get the user document
+            DocumentSnapshot snapshot = transaction.get(db.collection("users").document(userID));
+
+            // Get current notifications
+            List<String> notificationsArray = (List<String>) snapshot.get("notificationsArray");
+
+            // Change all strings last character from 0 to 1
+            for (int i = 0; i < notificationsArray.size(); i++) {
+                String notification = notificationsArray.get(i);
+                String newNotification = notification.substring(0, notification.length() - 1) + "1";
+                notificationsArray.set(i, newNotification);
+            }
+
+            // Update the database
+            transaction.update(db.collection("users").document(userID), "notificationsArray", notificationsArray);
+            return null;
+        }).addOnSuccessListener(aVoid -> {
+            listener.onSuccess("Notification removed successfully");
+        }).addOnFailureListener(listener::onError);
+    }
+
     public void removeNotification(String userID, String notification, OnNotificationUpdateListener listener) {
         db.runTransaction(transaction -> {
             // Get the user document
