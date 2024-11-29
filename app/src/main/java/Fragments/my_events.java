@@ -147,6 +147,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
         //set highlighted button
         highlightedButton = joinedEventsBtn;
+        createJoinedEventsList();
 
         //onclick listeners
         hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
