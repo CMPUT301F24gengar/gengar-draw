@@ -266,7 +266,11 @@ public class update_event extends Fragment {
         geolocationToggle.setChecked(editGeolocationToggle);
 
         //differentiate editable
-
+        if (isEditable){
+            updateEventPosterText.setVisibility(View.VISIBLE);
+        }else{
+            updateEventPosterText.setVisibility(View.INVISIBLE);
+        }
 
         // Load image
         Glide.with(getView().getContext())
