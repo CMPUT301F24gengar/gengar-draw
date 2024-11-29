@@ -70,6 +70,7 @@ public class update_event extends Fragment {
     private Boolean editGeolocationToggle;
     private TextView detailsStaticText;
     private TextView updateEventPosterText;
+    private ImageView updateImageOverlay;
 
     private EventManager event_manager;
 
@@ -140,6 +141,7 @@ public class update_event extends Fragment {
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
         updateEventPosterText = view.findViewById(R.id.update_event_update_poster);
+        updateImageOverlay = view.findViewById(R.id.view_event_update_overlay);
 
         facilityName = view.findViewById(R.id.view_event_facility_name);
 
@@ -248,6 +250,22 @@ public class update_event extends Fragment {
      * @param event Event object
      */
     private void updateEventDisplayed(Event event) {
+        //set dynamic visibilities
+        if (isEditable.get()){
+            updateEventPosterText.setVisibility(View.VISIBLE);
+            detailsStaticText.setVisibility(View.GONE);
+            detailsEditText.setVisibility(View.VISIBLE);
+            geolocationToggle.setClickable(true);
+            updateImageOverlay.setVisibility(View.VISIBLE);
+            updateEventSaveBtn.setVisibility(View.VISIBLE);
+        }else{
+            updateEventPosterText.setVisibility(View.INVISIBLE);
+            detailsStaticText.setVisibility(View.VISIBLE);
+            detailsEditText.setVisibility(View.GONE);
+            geolocationToggle.setClickable(false);
+            updateImageOverlay.setVisibility(View.INVISIBLE);
+            updateEventSaveBtn.setVisibility(View.GONE);
+        }
         //populate all fields
         eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
@@ -259,19 +277,6 @@ public class update_event extends Fragment {
         detailsStaticText.setText(event.getEventDetails());
         editGeolocationToggle = event.getEnableGeolocation();
         geolocationToggle.setChecked(editGeolocationToggle);
-
-        //set dynamic visibilities
-        if (isEditable.get()){
-            updateEventPosterText.setVisibility(View.VISIBLE);
-            detailsStaticText.setVisibility(View.GONE);
-            detailsEditText.setVisibility(View.VISIBLE);
-            geolocationToggle.setClickable(true);
-        }else{
-            updateEventPosterText.setVisibility(View.INVISIBLE);
-            detailsStaticText.setVisibility(View.VISIBLE);
-            detailsEditText.setVisibility(View.GONE);
-            geolocationToggle.setClickable(false);
-        }
 
         // Load image
         Glide.with(getView().getContext())

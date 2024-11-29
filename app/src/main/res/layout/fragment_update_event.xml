@@ -74,6 +74,8 @@
                         app:cardCornerRadius="10dp">
 
                         <ImageView
+                            android:id="@+id/view_event_update_overlay"
+                            android:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:contentDescription="@string/todo"
