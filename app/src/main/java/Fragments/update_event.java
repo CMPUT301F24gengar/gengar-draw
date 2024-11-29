@@ -106,7 +106,6 @@ public class update_event extends Fragment {
             event_manager = new EventManager();
             isEditable = (facilityID == Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
             Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID + " is editable: " + isEditable);
-
         }
     }
 
@@ -147,10 +146,9 @@ public class update_event extends Fragment {
 
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            facilityID = getArguments().getString("facilityID");
-            Log.d("update_event", "onCreateView eventID: " + eventID + " facilityID: " + facilityID);
+            Log.d("update_event", "onCreateView eventID: " + eventID);
             getEventFromDatabase(eventID);
-            getFacilityFromDatabase(facilityID);
+            getFacilityFromDatabase(eventID);
         }
 
         eventPicture = view.findViewById(R.id.view_event_picture);
@@ -268,24 +266,28 @@ public class update_event extends Fragment {
 
     /**
      * gets the facility record from the firestore database
-     * @param facilityID String facility ID
+     //     * @param facilityID String facility ID
      * @throws Exception Exception if error while getting facility
      */
-    private void getFacilityFromDatabase(String facilityID) {
-        db = FirebaseFirestore.getInstance();
+    private void getFacilityFromDatabase(String eventID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Fetch specific event document by its event ID
-        db.collection("facilities").document(facilityID)
+        db.collection("facilities")
+                .whereArrayContains("events", eventID)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        facility = documentSnapshot.toObject(Facility.class);
+
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+                        facility = document.toObject(Facility.class);
 
                         if (facility != null) {
                             updateFacilityDisplayed(facility);
                         }
                     } else {
-                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID " + facilityID);
+                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID: " + facilityID);
                     }
                 })
                 .addOnFailureListener(e -> {
