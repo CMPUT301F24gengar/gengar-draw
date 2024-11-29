@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,6 +80,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         });
 
         Event event = localEvents.get(position);
+        String eventID = localEvents.get(position).getEventID();
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.facilityNameTextView.setText(facilityName);
         Log.d("EventAdapter", "onBindViewHolder FacilityPictureURL: " + facilityPictureURL);
@@ -106,6 +109,40 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 Log.d("EventAdapter", "setOnClickListener position: " + position + " event title: " + event.getEventTitle());
             }
         });
+
+        // Joined Events don't have facility names passed to the adapter
+        if (facilityName == "") {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("facilities")
+//                    .whereEqualTo("EventID", eventID)
+                    .whereArrayContains("events", eventID)
+                    .get()
+
+                    .addOnCompleteListener(task -> {
+
+                        if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+                            String curr_facilityName = document.getString("name");
+                            String curr_facilityPictureURL = document.getString("pictureURL");
+
+                            Log.d("EventAdapter", "Found facility facilityName: " + curr_facilityName + " eventID: " + eventID);
+
+                            holder.facilityNameTextView.setText(curr_facilityName);
+
+                            if (!curr_facilityPictureURL.isEmpty()) {
+                                holder.facilityPicture.setImageTintList(null);
+                                Glide.with(context).load(curr_facilityPictureURL).into(holder.facilityPicture);
+                            } else {
+                                holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                                holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+                            }
+                        } else {
+                            Log.e("EventAdapter", "No facility found for EventID: " + eventID);
+                        }
+                    });
+        }
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
