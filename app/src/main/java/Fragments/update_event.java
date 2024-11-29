@@ -265,11 +265,17 @@ public class update_event extends Fragment {
         editGeolocationToggle = event.getEnableGeolocation();
         geolocationToggle.setChecked(editGeolocationToggle);
 
-        //differentiate editable
+        //set dynamic visibilities
         if (isEditable){
             updateEventPosterText.setVisibility(View.VISIBLE);
+            detailsStaticText.setVisibility(View.GONE);
+            detailsEditText.setVisibility(View.VISIBLE);
+            geolocationToggle.setClickable(true);
         }else{
             updateEventPosterText.setVisibility(View.INVISIBLE);
+            detailsStaticText.setVisibility(View.VISIBLE);
+            detailsEditText.setVisibility(View.GONE);
+            geolocationToggle.setClickable(false);
         }
 
         // Load image
