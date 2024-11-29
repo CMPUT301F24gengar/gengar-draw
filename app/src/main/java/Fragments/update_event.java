@@ -73,6 +73,9 @@ public class update_event extends Fragment {
     private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
+    private TextView detailsStaticText;
+    private TextView updateEventPosterText;
+
     private EventManager event_manager;
 
     private Boolean isEditable;
@@ -133,14 +136,15 @@ public class update_event extends Fragment {
         updateEventSaveBtn = view.findViewById(R.id.update_event_save_btn);
         updateEventCancelBtn = view.findViewById(R.id.update_event_cancel_btn);
         detailsEditText = view.findViewById(R.id.update_event_details);
+        detailsStaticText = view.findViewById(R.id.update_event_details_static);
         geolocationToggle = view.findViewById(R.id.update_event_checkbox);
-
         eventStartDay = view.findViewById(R.id.view_event_day);
         eventStartMonth = view.findViewById(R.id.view_event_month);
         eventTitle = view.findViewById(R.id.view_event_title);
         eventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
+        updateEventPosterText = view.findViewById(R.id.update_event_update_poster);
 
         facilityName = view.findViewById(R.id.view_event_facility_name);
 
@@ -151,10 +155,10 @@ public class update_event extends Fragment {
             getFacilityFromDatabase(eventID);
         }
 
-
         eventPicture = view.findViewById(R.id.view_event_picture);
         facilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
+        //onclick listeners
         geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -249,6 +253,7 @@ public class update_event extends Fragment {
      * @param event Event object
      */
     private void updateEventDisplayed(Event event) {
+        //populate all fields
         eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
         eventTitle.setText(event.getEventTitle());
@@ -256,8 +261,12 @@ public class update_event extends Fragment {
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         detailsEditText.setText(event.getEventDetails());
+        detailsStaticText.setText(event.getEventDetails());
         editGeolocationToggle = event.getEnableGeolocation();
         geolocationToggle.setChecked(editGeolocationToggle);
+
+        //differentiate editable
+
 
         // Load image
         Glide.with(getView().getContext())
