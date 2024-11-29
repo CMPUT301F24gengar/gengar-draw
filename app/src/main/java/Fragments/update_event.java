@@ -1,7 +1,6 @@
 package Fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -29,14 +27,11 @@ import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import Classes.Event;
 import Classes.EventManager;
@@ -78,7 +73,7 @@ public class update_event extends Fragment {
 
     private EventManager event_manager;
 
-    private Boolean isEditable;
+    private AtomicBoolean isEditable;
     private Boolean eventPictureUpdated = false;
 
     public update_event() {
@@ -151,8 +146,8 @@ public class update_event extends Fragment {
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
             Log.d("update_event", "onCreateView eventID: " + eventID);
+            isEditable = getFacilityFromDatabase(eventID);
             getEventFromDatabase(eventID);
-            getFacilityFromDatabase(eventID);
         }
 
         eventPicture = view.findViewById(R.id.view_event_picture);
@@ -266,7 +261,7 @@ public class update_event extends Fragment {
         geolocationToggle.setChecked(editGeolocationToggle);
 
         //set dynamic visibilities
-        if (isEditable){
+        if (isEditable.get()){
             updateEventPosterText.setVisibility(View.VISIBLE);
             detailsStaticText.setVisibility(View.GONE);
             detailsEditText.setVisibility(View.VISIBLE);
@@ -286,10 +281,12 @@ public class update_event extends Fragment {
 
     /**
      * gets the facility record from the firestore database
-     //     * @param facilityID String facility ID
+     * //     * @param facilityID String facility ID
+     *
      * @throws Exception Exception if error while getting facility
      */
-    private void getFacilityFromDatabase(String eventID) {
+    private AtomicBoolean getFacilityFromDatabase(String eventID) {
+        AtomicBoolean editable = new AtomicBoolean(false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("facilities")
@@ -304,7 +301,9 @@ public class update_event extends Fragment {
                         facility = document.toObject(Facility.class);
 
                         if (facility != null) {
-                            updateFacilityDisplayed(facility);
+                            editable.set(updateFacilityDisplayed(facility));
+                        }else{
+                            Log.d("firestore","null facility");
                         }
                     } else {
                         Log.d("firestore get", "documentSnapshot.NOT exists facilityID: " + facilityID);
@@ -313,22 +312,24 @@ public class update_event extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error getting facility: ", e);
                 });
+        return editable;
     }
 
     /**
      * sets the name and image for the facility
      * @param facility Facility object
      */
-    private void updateFacilityDisplayed(Facility facility) {
+    private boolean updateFacilityDisplayed(Facility facility) {
         facilityName.setText(facility.getName());
         String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        isEditable = (facility.getDeviceID().equals(deviceID));
-        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID()+" userID: "+deviceID+" editable? "+isEditable);
+        Boolean editable = (facility.getDeviceID().equals(deviceID));
+        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID()+" userID: "+deviceID+" editable? "+editable);
 
         // Load image
         Glide.with(getView().getContext())
                 .load(facility.getPictureURL())
                 .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+        return editable;
     }
 
     /**
