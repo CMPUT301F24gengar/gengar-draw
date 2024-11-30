@@ -41,7 +41,7 @@ import Classes.Facility;
 /**
  * Update Event Fragment
  *     Handles updates to the update event page fragment
- *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
+ *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li> <li>event picture</li> <li>update event save and cancel buttons</li> <li>facility name and picture</li> <li>geolocation toggle</li></ul>
  *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>getFacilityFromDatabase</li> <li>updateFacilityDisplayed</li> <li>formatDate</li></ul>
  *
  * @author Rheanna, Meghan
@@ -304,8 +304,9 @@ public class update_event extends Fragment {
     }
 
     /**
-     * gets the facility record from the firestore database
-     * //     * @param facilityID String facility ID
+     * gets the facility record from the firestore database.
+     * Use the event ID because cannot access joined events by facility ID.
+     * @param eventID String event ID
      *
      * @throws Exception Exception if error while getting facility
      */
