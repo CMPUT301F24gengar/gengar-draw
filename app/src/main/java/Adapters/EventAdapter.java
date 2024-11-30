@@ -85,13 +85,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.facilityNameTextView.setText(facilityName);
         Log.d("EventAdapter", "onBindViewHolder FacilityPictureURL: " + facilityPictureURL);
 
-        if (!facilityPictureURL.isEmpty()) {
-            holder.facilityPicture.setImageTintList(null);
-            Glide.with(context).load(facilityPictureURL).into(holder.facilityPicture);
-        } else {
+        if (facilityPictureURL == null) {
             holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
             holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
-        }
+        } else if (!facilityPictureURL.isEmpty()) {
+            holder.facilityPicture.setImageTintList(null);
+            Glide.with(context).load(facilityPictureURL).into(holder.facilityPicture);
+        } //else {
+//            holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+//            holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+//        }
         holder.eventTitle.setText(event.getEventTitle());
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
@@ -131,13 +134,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
                             holder.facilityNameTextView.setText(curr_facilityName);
 
-                            if (curr_facilityPictureURL != null) {
-                                holder.facilityPicture.setImageTintList(null);
-                                Glide.with(context).load(curr_facilityPictureURL).into(holder.facilityPicture);
-                            } else {
+                            if (curr_facilityPictureURL == null) {
                                 holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
                                 holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
-                            }
+                            } else if (!curr_facilityPictureURL.isEmpty()) {
+                                holder.facilityPicture.setImageTintList(null);
+                                Glide.with(context).load(curr_facilityPictureURL).into(holder.facilityPicture);
+                            } //else {
+//                                holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+//                                holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+//                            }
                         } else {
                             Log.e("EventAdapter", "No facility found for EventID: " + eventID);
                         }
