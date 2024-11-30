@@ -107,7 +107,6 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
-            holder.profilePicture.setImageTintList(null);
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
             holder.profilePicture.setVisibility(View.VISIBLE);
 

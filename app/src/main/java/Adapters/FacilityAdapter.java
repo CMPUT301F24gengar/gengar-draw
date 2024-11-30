@@ -82,8 +82,8 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyView
             Glide.with(context).load(facility.getPictureURL()).into(holder.profilePicture);
         } else {
             holder.profilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
         }
+        holder.profilePicture.setVisibility(View.VISIBLE);
     }
     /**
      * Used to get references for views of a single item.
