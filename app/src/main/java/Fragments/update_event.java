@@ -74,8 +74,8 @@ public class update_event extends Fragment {
 
     private EventManager event_manager;
 
-    private AtomicBoolean isEditable;
-    private Boolean eventPictureUpdated = false;
+    private boolean isEditable;
+    private boolean eventPictureUpdated = false;
 
     public update_event() {
         // Required empty public constructor
@@ -148,7 +148,7 @@ public class update_event extends Fragment {
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
             Log.d("update_event", "onCreateView eventID: " + eventID);
-            isEditable = getFacilityFromDatabase(eventID);
+            getFacilityFromDatabase(facilityID);
             getEventFromDatabase(eventID);
         }
 
@@ -164,7 +164,7 @@ public class update_event extends Fragment {
         });
 
         eventPicture.setOnClickListener(view1 -> {
-            if (isEditable.get()){
+            if (isEditable){
             Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(OpenGalleryIntent, 1000);
             eventPictureUpdated = true;}
@@ -251,8 +251,10 @@ public class update_event extends Fragment {
      * @param event Event object
      */
     private void updateEventDisplayed(Event event) {
+        String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        isEditable = event.getOrganizerID().equals(deviceID);
         //set dynamic visibilities
-        if (isEditable.get()){
+        if (isEditable){
             updateEventPosterText.setVisibility(View.VISIBLE);
             detailsStaticText.setVisibility(View.GONE);
             detailsEditText.setVisibility(View.VISIBLE);
@@ -291,8 +293,7 @@ public class update_event extends Fragment {
      *
      * @throws Exception Exception if error while getting facility
      */
-    private AtomicBoolean getFacilityFromDatabase(String eventID) {
-        AtomicBoolean editable = new AtomicBoolean(false);
+    private void getFacilityFromDatabase(String eventID) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("facilities")
@@ -306,11 +307,10 @@ public class update_event extends Fragment {
 
                         facility = document.toObject(Facility.class);
 
-                        if (facility != null) {
-                            editable.set(updateFacilityDisplayed(facility));
-                        }else{
+                        if (facility == null) {
                             Log.d("firestore","null facility");
                         }
+
                     } else {
                         Log.d("firestore get", "documentSnapshot.NOT exists facilityID: " + facilityID);
                     }
@@ -318,24 +318,21 @@ public class update_event extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error getting facility: ", e);
                 });
-        return editable;
     }
 
     /**
      * sets the name and image for the facility
      * @param facility Facility object
      */
-    private boolean updateFacilityDisplayed(Facility facility) {
+    private void updateFacilityDisplayed(Facility facility) {
         facilityName.setText(facility.getName());
-        String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        Boolean editable = (facility.getDeviceID().equals(deviceID));
-        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID()+" userID: "+deviceID+" editable? "+editable);
+
+        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID());
 
         // Load image
         Glide.with(getView().getContext())
                 .load(facility.getPictureURL())
                 .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
-        return editable;
     }
 
     /**
