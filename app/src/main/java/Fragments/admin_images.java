@@ -62,6 +62,7 @@ public class admin_images extends Fragment {
     private TextView userProfileImagesButton;
     private TextView facilityImagesButton;
     private TextView eventImagesButton;
+    private int count;
 
     TextView highlightedButton;
 
@@ -87,6 +88,7 @@ public class admin_images extends Fragment {
         userProfileImagesButton = view.findViewById(R.id.admin_user_profile_images_button);
         facilityImagesButton = view.findViewById(R.id.admin_facility_images_button);
         eventImagesButton = view.findViewById(R.id.admin_event_images_button);
+        count = 0;
         highlightedButton = userProfileImagesButton;
 
         userProfileImagesButton.setOnClickListener(new View.OnClickListener() {
@@ -194,10 +196,15 @@ public class admin_images extends Fragment {
                                 userProfileManager.getUserProfile(currentDeviceID, new UserProfileManager.OnUserProfileFetchListener() {
                                     @Override
                                     public void onUserProfileFetched(UserProfile userProfile) {
-                                        userProfiles.add(userProfile);
+                                        if (userProfile.getPictureURL() != null){
+                                            userProfiles.add(userProfile);
+                                        }
+                                        count++;
+
                                         // Check if all documents have been processed
-                                        if (userProfiles.size() == task.getResult().size()) {
+                                        if (count == task.getResult().size()) {
                                             listener.onProfilesLoaded(userProfiles); // Notify when done
+                                            count = 0;
                                         }
                                     }
 
@@ -248,11 +255,14 @@ public class admin_images extends Fragment {
                                 facilityManager.getFacility(currentDeviceID, new FacilityManager.OnFacilityFetchListener() {
                                     @Override
                                     public void onFacilityFetched(Facility facility) {
-
-                                        facilities.add(facility);
+                                        if (facility.getPictureURL() != null){
+                                            facilities.add(facility);
+                                        }
+                                        count++;
                                         // Check if all documents have been processed
-                                        if (facilities.size() == task.getResult().size()) {
+                                        if (count == task.getResult().size()) {
                                             listener.onFacilitiesLoaded(facilities); // Notify when done
+                                            count = 0;
                                         }
                                     }
                                     @Override
@@ -300,10 +310,14 @@ public class admin_images extends Fragment {
                                 eventManager.getEvent(currentEventID, new EventManager.OnEventFetchListener() {
                                     @Override
                                     public void onEventFetched(Event event) {
-                                        events.add(event);
+                                        if (event.getEventPictureURL() != null){
+                                            events.add(event);
+                                        }
+                                        count++;
                                         // Check if all documents have been processed
-                                        if (events.size() == task.getResult().size()) {
+                                        if (count == task.getResult().size()) {
                                             listener.onEventsLoaded(events); // Notify when done
+                                            count = 0;
                                         }
                                     }
                                     @Override

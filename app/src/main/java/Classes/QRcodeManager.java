@@ -106,6 +106,9 @@ public class QRcodeManager {
      * @param qrcode The ID of the qrcode object to be deleted
      */
     public void deleteQRcode(String qrcode){
+        if(qrcode == null){
+            return; //if there is no qrcode to delete, do nothing.
+        }
         db.collection("qrcodes")
                 .document(qrcode)
                 .delete();

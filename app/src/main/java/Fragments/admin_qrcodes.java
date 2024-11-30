@@ -27,8 +27,11 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import Adapters.EventAdapter;
 import Adapters.QRcodeAdapter;
 import Adapters.UserProfileAdapter;
+import Classes.Event;
+import Classes.EventManager;
 import Classes.QRcode;
 import Classes.QRcodeManager;
 import Classes.UserProfile;
@@ -44,44 +47,42 @@ public class admin_qrcodes extends Fragment {
 
     private FirebaseFirestore db;
     private RecyclerView recyclerView;
-    private QRcodeManager qrCodeManager;
-    private ArrayList<QRcode> qrCodes;
-    private ArrayList<String> qrCodesId;
-    private ArrayList<QRcode> searchQRCodes;
-    private ArrayList<String> searchQRCodesId;
+    private EventManager eventManager;
+    private ArrayList<Event> events;
+    private ArrayList<Event> searchEvents;
     private RecyclerView.LayoutManager layoutManager;
     private QRcodeAdapter customAdapter;
     private QRcodeAdapter searchCustomAdapter;
     private ImageView searchButton;
     private EditText searchBarText;
     private String searchQuery;
+    private EventAdapter.OnEventClickListener eventsListener;
+    private int count;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_admin_qrcodes, container, false);
+        View view = inflater.inflate(R.layout.fragment_admin_user_profiles, container, false);
 
         db = FirebaseFirestore.getInstance();
-        recyclerView = view.findViewById(R.id.admin_qrcodes_list);
-        searchButton = view.findViewById(R.id.admin_qrcode_search_button);
-        searchBarText = view.findViewById(R.id.admin_qrcode_search_bar);
-        qrCodeManager = new QRcodeManager();
-        qrCodes = new ArrayList<>();
-        qrCodesId = new ArrayList<>();
-        searchQRCodes = new ArrayList<>();
-        searchQRCodesId = new ArrayList<>();
+        recyclerView = view.findViewById(R.id.admin_user_profiles_list);
+        searchButton = view.findViewById(R.id.admin_user_profiles_search_button);
+        searchBarText = view.findViewById(R.id.admin_user_profiles_search_bar);
+        eventManager= new EventManager();
+        events = new ArrayList<>();
+        searchEvents = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new QRcodeAdapter(getContext(),qrCodesId, true);
-        searchCustomAdapter = new QRcodeAdapter(getContext(),searchQRCodesId, true);
+        customAdapter = new QRcodeAdapter(getContext(),events, true);
+        searchCustomAdapter = new QRcodeAdapter(getContext(),searchEvents, true);
+        count = 0;
 
 
-        fetchQRcodes(new OnQRCodeLoadedListener() {
+        fetchEvents(new OnEventsLoadedListener() {
             @Override
-            public void onQRCodeLoaded(ArrayList<String> qrCodes) {
-                //adding qrCodes to adapter
-                Log.d("size in : ","size: " + qrCodes.size());
-                recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
+            public void onEventsLoaded(ArrayList<Event> events) {
+                //adding userProfiles to adapter
+                recyclerView.setLayoutManager(layoutManager);  // arranges recyclerView in linear form
                 recyclerView.setAdapter(customAdapter);
             }
         });
@@ -89,12 +90,12 @@ public class admin_qrcodes extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchQRCodesId.clear(); //in case it is filled from a search before.
+                searchEvents.clear(); //in case it is filled from a search before.
                 searchQuery = searchBarText.getText().toString(); //get text from searchbar edittext
                 //query with the text
-                for (int i=0; i<qrCodesId.size();i++){
-                    if(qrCodesId.get(i).toLowerCase().contains(searchQuery.toLowerCase())){
-                        searchQRCodesId.add(qrCodesId.get(i));
+                for (int i=0; i<events.size();i++){
+                    if(events.get(i).getEventTitle().toLowerCase().contains(searchQuery.toLowerCase())){
+                        searchEvents.add(events.get(i));
                     }
                 }
                 searchCustomAdapter.notifyDataSetChanged();
@@ -105,47 +106,56 @@ public class admin_qrcodes extends Fragment {
         return view;
     }
 
-    /**
-     * interface for listener to check if all the QRCodes have been loaded.
-     */
-    public interface OnQRCodeLoadedListener {
-        void onQRCodeLoaded(ArrayList<String> qrCodes);
+    public interface OnEventsLoadedListener {
+        void onEventsLoaded(ArrayList<Event> events);
     }
 
-    /**
-     * This method fetches all the qr codes from firebase currently stored
-     * and adds it to a list of qr codes.
-     * @param listener to check if all the qr codes have been loaded.
-     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
-    public void fetchQRcodes(OnQRCodeLoadedListener listener) {
-        db.collection("qrcodes")
+    public void fetchEvents(OnEventsLoadedListener listener) {
+        db.collection("events")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().isEmpty()) {
-                                listener.onQRCodeLoaded(qrCodesId);
+                                listener.onEventsLoaded(events);
                                 return;
                             }
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("qrcode", document.getId() + " => " + document.getData());
+                                Log.d("event", document.getId() + " => " + document.getData());
 
-                                String qrCodeID = document.getId();
-                                Log.d("qrcodeID","QRCODEID: "+qrCodeID);
-                                qrCodesId.add(qrCodeID);
-                                if(qrCodesId.size() == task.getResult().size()){
-                                    listener.onQRCodeLoaded(qrCodesId);
-                                    Log.d("qrcode loaded","loaded");
-                                }
+                                String eventID = document.getId();
+
+                                eventManager.getEvent(eventID, new EventManager.OnEventFetchListener() {
+                                    @Override
+                                    public void onEventFetched(Event event) {
+                                        if(event.getQRCode() != null){
+                                            events.add(event);
+                                        }
+                                        count++;
+                                        // Check if all documents have been processed
+                                        if (count == task.getResult().size()) {
+                                            Log.d("qrcode events","peepee");
+                                            listener.onEventsLoaded(events); // Notify when done
+                                        }
+                                        else{
+                                            Log.d("12345","event size: "+events.size());
+                                            Log.d("12345","event size: "+task.getResult().size());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onEventFetchError(Exception e) {
+                                        Log.d("userProfiles fetch ERROR", e.toString());
+                                    }
+                                });
                             }
                         } else {
-                            Log.d("qrcode doc", "Error getting documents: ", task.getException());
+                            Log.d("userprofile doc", "Error getting documents: ", task.getException());
                         }
                     }
                 });
     }
-
 }

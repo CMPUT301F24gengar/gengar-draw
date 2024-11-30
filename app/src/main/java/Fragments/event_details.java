@@ -866,7 +866,7 @@ public class event_details extends Fragment {
         String day,month,time;
         String Date = formatDate(event.getEventStartDate());
         String[] DMT = Date.split(" ");
-        String notificationAppend = "$"+DMT[0]+"$"+DMT[1]+"$"+DMT[2]+"$"+eventID+"$"+event.getEventTitle();
+        String notificationAppend = "$"+DMT[0]+"$"+DMT[1]+"$"+DMT[2]+"$"+eventID+"$"+event.getEventTitle() + "$" + "0";
         return message + notificationAppend;
     }
 
