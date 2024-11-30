@@ -93,13 +93,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
         holder.eventStartTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
+
         if (event.getEventPictureURL() != null) {
-            holder.eventPicture.setImageTintList(null);
             Glide.with(context).load(event.getEventPictureURL()).into(holder.eventPicture);
+            holder.eventPicture.setVisibility(View.VISIBLE);
         } else {
-            holder.eventPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.eventPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+            holder.eventPicture.setVisibility(View.GONE);
         }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEventClick(localEvents.get(position).getEventID());

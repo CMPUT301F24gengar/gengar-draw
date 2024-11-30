@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Classes.UserProfile;
+import Classes.UserProfileManager;
+
 /**
  * This is the UserProfileImageAdapter which is a custom adapter to display all the images of the user profiles.
  */
@@ -60,6 +63,27 @@ public class UserProfileImageAdapter extends RecyclerView.Adapter<UserProfileIma
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserProfile userProfile = localUserProfiles.get(position);
+        UserProfileManager userProfileManager = new UserProfileManager();
+
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int deletedPosition = holder.getAdapterPosition();
+                userProfileManager.deleteProfilePicture(localUserProfiles.get(deletedPosition).getDeviceID(), new UserProfileManager.OnDeleteListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(context,"Deleted profile picture of "+ localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                        localUserProfiles.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Log.d("Error profile picture deletion: ", e.toString());
+                    }
+                });
+            }
+        });
+
         if (userProfile.getPictureURL() != null) {
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
         } else {

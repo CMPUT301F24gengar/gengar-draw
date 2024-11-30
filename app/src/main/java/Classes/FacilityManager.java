@@ -108,12 +108,20 @@ public class FacilityManager {
         getFacility(deviceID, new FacilityManager.OnFacilityFetchListener() {
             @Override
             public void onFacilityFetched(Facility facility) {
+
+                if(facility == null){
+                    return;
+                }
+
                 List<String> events = facility.getEvents();
                 EventManager eventManager = new EventManager();
                 for (String event : events){
                     //delete each event
                     eventManager.deleteEvent(event);
                 }
+                //first delete from firestore
+                StorageReference storageRef = storage.getReference().child("facilityPictures/" + deviceID);
+                storageRef.delete();
                 //then delete the facility itself
                 db.collection("facilities").document(deviceID).delete();
             }

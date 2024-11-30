@@ -202,6 +202,25 @@ public class EventManager {
     }
 
     /**
+     * Deletes event image from firestore and updates picture url of event to null.
+     * @param eventID
+     * @param listener
+     */
+
+    public void deleteEventPicture(String eventID, OnDeleteListener listener) {
+        StorageReference storageRef = storage.getReference().child("eventPictures/" + eventID);
+
+        storageRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    db.collection("events").document(eventID)
+                            .update("eventPictureURL", null)
+                            .addOnSuccessListener(aVoid1 -> listener.onSuccess())
+                            .addOnFailureListener(listener::onError);
+                })
+                .addOnFailureListener(listener::onError);
+    }
+
+    /**
      * Deletes an event from the database by deleting the qrcode first and the eventLists and then the event itself.
      * @param eventID The ID of the event object to be deleted
      */
@@ -210,6 +229,8 @@ public class EventManager {
             @Override
             public void onEventFetched(Event event) {
                 if (event != null) {
+                    StorageReference storageRef = storage.getReference().child("eventPictures/" + eventID);
+                    storageRef.delete();
                     qrcodeManager.deleteQRcode(event.getQRCode());
                     eventListsManager.deleteEventLists(eventID);
                     db.collection("events").document(eventID).delete();
@@ -223,18 +244,6 @@ public class EventManager {
                 // Handle Error
             }
         });
-        //delete qrcode of this event
-//        String qrcode = db.collection("events").document("qrcode").get().toString();
-//        Log.d("123",qrcode);
-//        qrcodeManager.deleteQRcode(qrcode);
-
-        //delete eventlists of this event
-//        eventListsManager.deleteEventLists(eventID);
-
-        //delete event
-//        db.collection("events")
-//                .document(eventID)
-//                .delete();
     }
 
     /**
@@ -259,5 +268,13 @@ public class EventManager {
     public interface OnEventFetchListener {
         void onEventFetched(Event event);
         void onEventFetchError(Exception e);
+    }
+
+    /**
+     * Interface for handling the result of deleting the event picture.
+     */
+    public interface OnDeleteListener {
+        void onSuccess();
+        void onError(Exception e);
     }
 }
