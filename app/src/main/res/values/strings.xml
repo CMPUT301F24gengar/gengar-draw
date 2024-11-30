@@ -68,4 +68,6 @@
     <string name="send_notification">SEND NOTIFICATION</string>
     <string name="enter_notification_message">ENTER NOTIFICATION MESSAGE</string>
     <string name="send">SEND</string>
+    <string name="no_qr_code">NO QR CODE</string>
+    <string name="generate_qr_code">GENERATE NEW QR CODE</string>
 </resources>

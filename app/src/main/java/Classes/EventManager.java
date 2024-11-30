@@ -138,6 +138,18 @@ public class EventManager {
         return docID;
     }
 
+    public String generateQRCode(Event event) {
+        QRcode qrcode = new QRcode();
+        qrcode.setEventID(event.getEventID());
+
+        String QRCodeID = qrcodeManager.addQRcode(qrcode);
+        event.setQRCode(QRCodeID);
+
+        eventsRef.document(event.getEventID()).set(event);
+
+        return QRCodeID;
+    }
+
     /**
      * Retrieves an event by ID and executes a callback with the fetched event.
      *

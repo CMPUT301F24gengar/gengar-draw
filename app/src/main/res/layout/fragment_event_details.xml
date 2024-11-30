@@ -315,6 +315,20 @@
                         android:textSize="16sp" />
 
                     <TextView
+                        android:id="@+id/generate_qr_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:visibility="gone"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/generate_qr_code"
+                        android:textAlignment="center"
+                        android:textColor="@color/green"
+                        android:textSize="16sp" />
+
+                    <TextView
                         android:id="@+id/view_qr_code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -570,6 +584,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/no_qr_code"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/no_qr_code"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/qr_code_image"
                 android:layout_width="300dp"
@@ -585,9 +610,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black1"
-        android:visibility="gone"
         android:gravity="top|center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -629,8 +654,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
             <LinearLayout
                 android:layout_width="60dp"
@@ -646,25 +670,25 @@
                     android:id="@+id/notify_entrants_button"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:visibility="gone"
                     android:background="@drawable/circle_background"
                     android:backgroundTint="@color/blue"
                     android:contentDescription="@string/todo"
                     android:padding="5dp"
                     android:src="@drawable/bell"
+                    android:visibility="gone"
                     app:tint="@color/black1" />
 
                 <ImageView
                     android:id="@+id/cancel_entrants_button"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:visibility="gone"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/circle_background"
                     android:backgroundTint="@color/red"
                     android:contentDescription="@string/todo"
-                    android:layout_marginTop="20dp"
                     android:padding="5dp"
                     android:src="@drawable/delete"
+                    android:visibility="gone"
                     app:tint="@color/black1" />
 
             </LinearLayout>
@@ -672,9 +696,9 @@
             <FrameLayout
                 android:id="@+id/notification_layout"
                 android:layout_width="match_parent"
-                android:visibility="gone"
                 android:layout_height="match_parent"
-                android:background="@color/black1">
+                android:background="@color/black1"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -687,28 +711,28 @@
 
                     <TextView
                         style="@style/main"
-                        android:layout_margin="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_margin="10dp"
                         android:text="@string/send_notification"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="24sp"/>
+                        android:textSize="24sp" />
 
                     <EditText
                         android:id="@+id/notification_message"
                         style="@style/main"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin = "10dp"
+                        android:layout_margin="10dp"
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/black2"
+                        android:hint="@string/enter_notification_message"
                         android:paddingStart="15dp"
                         android:paddingTop="13dp"
                         android:paddingEnd="15dp"
                         android:paddingBottom="13dp"
-                        android:hint="@string/enter_notification_message"
                         android:textColor="@color/white"
                         android:textColorHint="@color/grey"
                         android:textSize="18sp" />
@@ -718,8 +742,8 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="20dp"
                         android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="20dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -766,36 +790,40 @@
         android:id="@+id/black_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="@color/black1">
+        android:background="@color/black1"
+        android:visibility="gone">
+
         <LinearLayout
             android:id="@+id/geolocation_warning_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:orientation="vertical"
+            android:layout_margin="15dp"
             android:background="@drawable/rounded_corner"
-            android:backgroundTint="@color/black2">
+            android:backgroundTint="@color/black2"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <TextView
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:text="@string/warning"
                 android:textAlignment="center"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="28sp" />
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
             <TextView
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:text="@string/this_event_requires_geolocation_in_order_to_join_the_waiting_list"
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
+
             <FrameLayout
                 android:id="@+id/geolocation_proceed_btn"
                 android:layout_width="match_parent"
@@ -815,13 +843,14 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </FrameLayout>
+
             <FrameLayout
                 android:id="@+id/geolocation_cancel_btn"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginBottom="20dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_corner"
                 android:backgroundTint="@color/red">
 
@@ -846,10 +875,10 @@
         android:id="@+id/map_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="top|center"
-        android:visibility="gone"
         android:background="@color/black1"
-        android:orientation="vertical">
+        android:gravity="top|center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -884,10 +913,10 @@
         </FrameLayout>
 
         <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/google_map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
