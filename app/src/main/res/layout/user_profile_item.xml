@@ -32,11 +32,12 @@
             android:id="@+id/profile_user_initials"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:textStyle="bold"
             android:background="@drawable/circle_background"
             android:gravity="center"
             style="@style/main"
-            android:textColor="@color/white"
+            android:textColor="@color/black1"
             android:textAlignment="center"
             android:textSize="20sp" />
 

@@ -96,17 +96,18 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
-            holder.profilePicture.setVisibility(View.VISIBLE);
             holder.profilePicture.setImageTintList(null);
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
+            holder.profilePicture.setVisibility(View.VISIBLE);
 
             holder.Initials.setVisibility(View.GONE);
         } else {
             holder.profilePicture.setVisibility(View.GONE);
-            holder.Initials.setVisibility(View.VISIBLE);
+
             int nameLength = userProfile.getName().length();
             holder.Initials.setText(userProfile.getInitials());
             holder.Initials.setBackgroundColor(context.getResources().getColor(colors.get(nameLength % 6)));
+            holder.Initials.setVisibility(View.VISIBLE);
         }
     }
     /**
