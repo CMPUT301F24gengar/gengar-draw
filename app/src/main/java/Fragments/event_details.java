@@ -105,8 +105,10 @@ public class event_details extends Fragment {
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
     ImageView eventPicture;
+    TextView generateQRCode;
     TextView viewEventQRCode;
     LinearLayout qrCodeContainer;
+    TextView noQRcode;
     ImageView qrCodeImage;
     TextView qrCodeBack;
 
@@ -193,8 +195,10 @@ public class event_details extends Fragment {
 
         // Initialize Views
         eventPicture = view.findViewById(R.id.view_event_picture);
+        generateQRCode = view.findViewById(R.id.generate_qr_code);
         viewEventQRCode = view.findViewById(R.id.view_qr_code);
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
+        noQRcode = view.findViewById(R.id.no_qr_code);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
 
@@ -316,7 +320,22 @@ public class event_details extends Fragment {
                             .load(event.getEventPictureURL())
                             .into((ImageView) view.findViewById(R.id.view_event_picture));
 
-                    generateQRCode(event.getQRCode());
+                    if (event.getQRCode() != null) {
+                        generateQRCode(event.getQRCode());
+                    } else {
+                        noQRcode.setVisibility(View.VISIBLE);
+                        if (Objects.equals(deviceID, event.getOrganizerID())) { // ORGANIZER
+                            generateQRCode.setVisibility(View.VISIBLE);
+                            generateQRCode.setOnClickListener(v -> {
+                                // generate a new QR code for the event
+                                String QRCode = eventManager.generateQRCode(event);
+                                event.setQRCode(QRCode);
+                                generateQRCode(QRCode);
+                                generateQRCode.setVisibility(View.GONE);
+                                noQRcode.setVisibility(View.GONE);
+                            });
+                        }
+                    }
 
                     setupButtons(event, eventID);
 
@@ -845,7 +864,7 @@ public class event_details extends Fragment {
             Bitmap bitmap = barcodeEncoder.encodeBitmap(QRcode, BarcodeFormat.QR_CODE, 300, 300);
             qrCodeImage.setImageBitmap(bitmap); // Set the generated QR code to ImageView
         } catch (WriterException e) {
-            Toast.makeText(getContext(), "Failed to generate QR code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            // Handle the exception
         }
     }
 
