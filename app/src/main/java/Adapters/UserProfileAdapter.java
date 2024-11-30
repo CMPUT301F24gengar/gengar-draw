@@ -1,6 +1,7 @@
 package Adapters;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
     private Context context;
     private List<UserProfile> localUserProfiles;
     private Boolean showDelete;
+    String currentDeviceID;
+
 
     /**
      * Constructor for UserProfileAdapter done with context and an arraylist of userProfiles.
@@ -41,6 +44,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         this.context=context;
         localUserProfiles = userProfiles;
         this.showDelete = showDelete;
+        currentDeviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+
     }
     /**
      * Called when the RecyclerView needs a new viewHolder.
@@ -72,11 +77,17 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             @Override
             public void onClick(View view) {
                 int deletedPosition = holder.getAdapterPosition();
-                UserProfileManager userProfileManager = new UserProfileManager();
-                userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
-                Toast.makeText(view.getContext(), "Deleted " + localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
-                localUserProfiles.remove(deletedPosition);
-                notifyItemRemoved(deletedPosition);
+                // if userprofile id == ur device id, cannot do
+                if (localUserProfiles.get(deletedPosition).getDeviceID().equals(currentDeviceID) ){
+                    Toast.makeText(context,"Error: You cannot delete yourself.",Toast.LENGTH_SHORT).show();
+                }
+                else { //otherwise delete
+                    UserProfileManager userProfileManager = new UserProfileManager();
+                    userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
+                    Toast.makeText(view.getContext(), "Deleted " + localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                    localUserProfiles.remove(deletedPosition);
+                    notifyItemRemoved(deletedPosition);
+                }
             }
         });
 

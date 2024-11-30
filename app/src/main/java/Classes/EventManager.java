@@ -210,6 +210,8 @@ public class EventManager {
             @Override
             public void onEventFetched(Event event) {
                 if (event != null) {
+                    StorageReference storageRef = storage.getReference().child("eventPictures/" + eventID);
+                    storageRef.delete();
                     qrcodeManager.deleteQRcode(event.getQRCode());
                     eventListsManager.deleteEventLists(eventID);
                     db.collection("events").document(eventID).delete();

@@ -128,6 +128,10 @@ public class UserProfileManager {
      */
     public void deleteUserProfile(String deviceID) {
         assert db != null;
+        //delete image from firebase
+        StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
+        storageRef.delete();
+
         //delete facility in a user profile
         FacilityManager facilityManager = new FacilityManager();
         facilityManager.deleteFacility(deviceID);
