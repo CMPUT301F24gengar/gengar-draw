@@ -30,6 +30,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notifications_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
         <ImageView
             android:id="@+id/notification_button"
             android:layout_width="50dp"
@@ -43,11 +48,6 @@
             android:contentDescription="@string/todo"
             android:gravity="center"
             app:tint="@color/grey" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notifications_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
 
     </FrameLayout>
 

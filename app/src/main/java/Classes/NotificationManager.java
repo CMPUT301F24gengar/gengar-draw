@@ -24,9 +24,11 @@ public class NotificationManager {
     public Notification parseNotification(String notificationString) {
         String[] parts = notificationString.split("\\$");
 
-        if (parts.length != 6) {
-            throw new IllegalArgumentException("Invalid format");
+        if (parts.length != 7) {
+//            throw new IllegalArgumentException("Invalid format");
+            return null;
         }
+
 
         String message = parts[0];
         String day = parts[1];
@@ -34,8 +36,20 @@ public class NotificationManager {
         String time = parts[3];
         String eventID = parts[4];
         String title = parts[5];
+        boolean notified = parts[6].equals("1");
 
-        return new Notification(title, day, month, time, eventID, message);
+        return new Notification(title, day, month, time, eventID, message, notified);
+    }
+
+    public String unparseNotification(Notification notification) {
+        String message = notification.getMessage() + "$" +
+                notification.getEventStartDateDay() + "$" +
+                notification.getEventStartDateMonth() + "$" +
+                notification.getEventStartDateTime() + "$" +
+                notification.getEventID() + "$" +
+                notification.getEventTitle() + "$" +
+                (notification.getNotified() ? "1" : "0");
+        return message;
     }
 
     public void addNotification(String userID, String notification, OnNotificationUpdateListener listener) {
@@ -65,6 +79,29 @@ public class NotificationManager {
             return null;
         }).addOnSuccessListener(aVoid -> {
             listener.onSuccess("Notification added successfully");
+        }).addOnFailureListener(listener::onError);
+    }
+
+    public void updateNotified(String userID, OnNotificationUpdateListener listener) {
+        db.runTransaction(transaction -> {
+            // Get the user document
+            DocumentSnapshot snapshot = transaction.get(db.collection("users").document(userID));
+
+            // Get current notifications
+            List<String> notificationsArray = (List<String>) snapshot.get("notificationsArray");
+
+            // Change all strings last character from 0 to 1
+            for (int i = 0; i < notificationsArray.size(); i++) {
+                String notification = notificationsArray.get(i);
+                String newNotification = notification.substring(0, notification.length() - 1) + "1";
+                notificationsArray.set(i, newNotification);
+            }
+
+            // Update the database
+            transaction.update(db.collection("users").document(userID), "notificationsArray", notificationsArray);
+            return null;
+        }).addOnSuccessListener(aVoid -> {
+            listener.onSuccess("Notification removed successfully");
         }).addOnFailureListener(listener::onError);
     }
 

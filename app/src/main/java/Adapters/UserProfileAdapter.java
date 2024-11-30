@@ -73,7 +73,6 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             public void onClick(View view) {
                 int deletedPosition = holder.getAdapterPosition();
                 UserProfileManager userProfileManager = new UserProfileManager();
-//                Log.d("userprofile",localUserProfiles.get(deletedPosition).getDeviceID());
                 userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
                 Toast.makeText(view.getContext(), "Deleted " + localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
                 localUserProfiles.remove(deletedPosition);
