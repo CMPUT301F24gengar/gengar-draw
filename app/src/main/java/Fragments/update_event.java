@@ -148,7 +148,7 @@ public class update_event extends Fragment {
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
             Log.d("update_event", "onCreateView eventID: " + eventID);
-            getFacilityFromDatabase(facilityID);
+            getFacilityFromDatabase(eventID);  // event ID is used to search for its facility
             getEventFromDatabase(eventID);
         }
 
@@ -307,8 +307,8 @@ public class update_event extends Fragment {
 
                         facility = document.toObject(Facility.class);
 
-                        if (facility == null) {
-                            Log.d("firestore","null facility");
+                        if (facility != null) {
+                            updateFacilityDisplayed(facility);
                         }
 
                     } else {
@@ -330,9 +330,18 @@ public class update_event extends Fragment {
         Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID());
 
         // Load image
-        Glide.with(getView().getContext())
-                .load(facility.getPictureURL())
-                .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+        String tempFacilityPictureURL = facility.getPictureURL();
+        if (tempFacilityPictureURL == null) {
+            facilityPicture.setImageDrawable(getResources().getDrawable(R.drawable.user));
+            facilityPicture.setImageTintList(getResources().getColorStateList(R.color.green));
+        } else if (!tempFacilityPictureURL.isEmpty()) {
+            Glide.with(getView().getContext())
+                    .load(facility.getPictureURL())
+                    .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+        } //else {
+//            facilityPicture.setImageDrawable(getResources().getDrawable(R.drawable.user));
+//            facilityPicture.setImageTintList(getResources().getColorStateList(R.color.green));
+//        }
     }
 
     /**
