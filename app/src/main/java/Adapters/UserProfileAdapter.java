@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,8 @@ import Classes.UserProfileManager;
  */
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.MyViewHolder> {
 
-    private static final String[] colors = {"#8078dc", "#1FCBFF", "#FF1E52", "#FF9416", "#FFF947", "#61D771"};
+//    private static final String[] colors = {"#8078dc", "#1FCBFF", "#FF1E52", "#FF9416", "#FFF947", "#61D771"};
+    private List<Integer> colors = new ArrayList<>();
 
     private Context context;
     private List<UserProfile> localUserProfiles;
@@ -43,6 +45,13 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         this.context=context;
         localUserProfiles = userProfiles;
         this.showDelete = showDelete;
+
+        colors.add(R.color.pfp1);
+        colors.add(R.color.pfp2);
+        colors.add(R.color.pfp3);
+        colors.add(R.color.pfp4);
+        colors.add(R.color.pfp5);
+        colors.add(R.color.pfp6);
     }
     /**
      * Called when the RecyclerView needs a new viewHolder.
@@ -97,7 +106,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             holder.Initials.setVisibility(View.VISIBLE);
             int nameLength = userProfile.getName().length();
             holder.Initials.setText(userProfile.getInitials());
-            holder.Initials.setBackgroundColor(android.graphics.Color.parseColor(colors[nameLength % 6]));
+            holder.Initials.setBackgroundColor(context.getResources().getColor(colors.get(nameLength % 6)));
         }
     }
     /**
