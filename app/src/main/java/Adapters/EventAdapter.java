@@ -131,7 +131,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
                             holder.facilityNameTextView.setText(curr_facilityName);
 
-                            if (!curr_facilityPictureURL.isEmpty()) {
+                            if (curr_facilityPictureURL != null) {
                                 holder.facilityPicture.setImageTintList(null);
                                 Glide.with(context).load(curr_facilityPictureURL).into(holder.facilityPicture);
                             } else {
