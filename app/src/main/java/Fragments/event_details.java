@@ -110,6 +110,7 @@ public class event_details extends Fragment {
     LinearLayout qrCodeContainer;
     TextView noQRcode;
     ImageView qrCodeImage;
+    TextView downloadQRCode;
     TextView qrCodeBack;
 
     FrameLayout blackFrame;
@@ -200,6 +201,7 @@ public class event_details extends Fragment {
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
         noQRcode = view.findViewById(R.id.no_qr_code);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
+        downloadQRCode = view.findViewById(R.id.download_qr_code);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
 
         blackFrame = view.findViewById(R.id.black_frame);
@@ -322,8 +324,10 @@ public class event_details extends Fragment {
 
                     if (event.getQRCode() != null) {
                         generateQRCode(event.getQRCode());
+                        downloadQRCode.setVisibility(View.VISIBLE);
                     } else {
                         noQRcode.setVisibility(View.VISIBLE);
+                        downloadQRCode.setVisibility(View.GONE);
                         if (Objects.equals(deviceID, event.getOrganizerID())) { // ORGANIZER
                             generateQRCode.setVisibility(View.VISIBLE);
                             generateQRCode.setOnClickListener(v -> {
@@ -331,6 +335,7 @@ public class event_details extends Fragment {
                                 String QRCode = eventManager.generateQRCode(event);
                                 event.setQRCode(QRCode);
                                 generateQRCode(QRCode);
+                                downloadQRCode.setVisibility(View.VISIBLE);
                                 generateQRCode.setVisibility(View.GONE);
                                 noQRcode.setVisibility(View.GONE);
                             });
