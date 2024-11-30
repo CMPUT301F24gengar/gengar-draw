@@ -164,7 +164,12 @@ public class update_event extends Fragment {
         geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                editGeolocationToggle = !editGeolocationToggle;
+                if (b) {
+                    editGeolocationToggle = true;
+                } else {
+                    editGeolocationToggle = false;
+                }
+                //editGeolocationToggle = !editGeolocationToggle;
             }
         });
 
