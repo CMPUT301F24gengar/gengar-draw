@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Facility;
+import Classes.FacilityManager;
 
 /**
  * This is the FacilityImageAdapter which is a custom adapter to display all the images of the facilities.
@@ -61,6 +63,28 @@ public class FacilityImageAdapter extends RecyclerView.Adapter<FacilityImageAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Facility facility = localFacilities.get(position);
+        FacilityManager facilityManager = new FacilityManager();
+        //deleting
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int deletedPosition = holder.getAdapterPosition();
+                facilityManager.deleteFacilityPicture(localFacilities.get(deletedPosition).getDeviceID(), new FacilityManager.OnDeleteListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(context,"Deleted facility picture of " + localFacilities.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                        localFacilities.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Log.d("Facility picture deletion error",e.toString());
+                    }
+                });
+            }
+        });
+
+
         if (facility.getPictureURL() != null) {
             Glide.with(context).load(facility.getPictureURL()).into(holder.profilePicture);
         } else {

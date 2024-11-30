@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Classes.Event;
+import Classes.EventManager;
 import Classes.UserProfile;
 
 /**
@@ -66,11 +68,33 @@ public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.My
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Event event = localEvents.get(position);
+        EventManager eventManager = new EventManager();
+
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int deletedPosition = holder.getAdapterPosition();
+                eventManager.deleteEventPicture(localEvents.get(deletedPosition).getEventID(), new EventManager.OnDeleteListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(context,"Deleted event picture of " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                        localEvents.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        Log.d("Event picture deletion error: ",e.toString());
+                    }
+                });
+
+            }
+        });
+
         if (event.getEventPictureURL() != null) {
             Glide.with(context).load(event.getEventPictureURL()).into(holder.eventPicture);
+            holder.eventPicture.setVisibility(View.VISIBLE);
         } else {
-            holder.eventPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.eventPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+            holder.eventPicture.setVisibility(View.GONE);
         }
     }
 
