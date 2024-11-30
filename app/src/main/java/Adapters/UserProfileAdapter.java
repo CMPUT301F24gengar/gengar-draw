@@ -27,6 +27,8 @@ import Classes.UserProfileManager;
  */
 public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.MyViewHolder> {
 
+    private static final String[] colors = {"#8078dc", "#1FCBFF", "#FF1E52", "#FF9416", "#FFF947", "#61D771"};
+
     private Context context;
     private List<UserProfile> localUserProfiles;
     private Boolean showDelete;
@@ -85,11 +87,17 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
+            holder.profilePicture.setVisibility(View.VISIBLE);
             holder.profilePicture.setImageTintList(null);
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
+
+            holder.Initials.setVisibility(View.GONE);
         } else {
-            holder.profilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
+            holder.profilePicture.setVisibility(View.GONE);
+            holder.Initials.setVisibility(View.VISIBLE);
+            int nameLength = userProfile.getName().length();
+            holder.Initials.setText(userProfile.getInitials());
+            holder.Initials.setBackgroundColor(android.graphics.Color.parseColor(colors[nameLength % 6]));
         }
     }
     /**
@@ -98,12 +106,14 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         ImageView profilePicture;
+        TextView Initials;
         ImageView Delete;
 
         public MyViewHolder(View itemView){
             super(itemView);
             name = itemView.findViewById(R.id.profile_user_text);
             profilePicture = itemView.findViewById(R.id.profile_user_picture);
+            Initials = itemView.findViewById(R.id.profile_user_initials);
             Delete = itemView.findViewById(R.id.delete);
         }
     }

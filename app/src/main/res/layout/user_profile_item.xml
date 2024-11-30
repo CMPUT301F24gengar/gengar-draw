@@ -23,9 +23,23 @@
         <ImageView
             android:id="@+id/profile_user_picture"
             android:layout_width="40dp"
+            android:visibility="gone"
             android:layout_height="40dp"
             android:contentDescription="@string/todo"
             android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/profile_user_initials"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textStyle="bold"
+            android:background="@drawable/circle_background"
+            android:gravity="center"
+            style="@style/main"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
     </androidx.cardview.widget.CardView>
 
     <TextView
