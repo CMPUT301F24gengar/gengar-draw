@@ -133,8 +133,10 @@ public class admin_events extends Fragment implements EventAdapter.OnEventClickL
         void onEventsLoaded(ArrayList<Event> events);
     }
 
-    //creates listener since firebase's get() is asynchronous in nature,
-    //so it notifies when all profiles have been loaded.
+    /**
+     * fetches events for the list of event IDs.
+     * @param listener callback to let the calling method know when all the events have been loaded.
+     */
     public void fetchEvents(OnEventsLoadedListener listener) {
         db.collection("events")
                 .get()

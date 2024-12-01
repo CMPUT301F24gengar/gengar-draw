@@ -472,6 +472,9 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                 });
     }
 
+    /**
+     * This interface is used to check if all the event IDs have been loaded.
+     */
     public interface FetchJoinedEventIDsCallback {
         void onJoinedEventIDsFetched(List<String> eventIDs);
         void onError(Exception e);
