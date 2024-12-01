@@ -67,10 +67,6 @@ public class update_event extends Fragment {
     private Facility facility;
     private TextView facilityName;
     private ImageView facilityPicture;
-    private CheckBox geolocationToggle;
-    private Boolean editGeolocationToggle;
-    private TextView geolocationText;
-    private LinearLayout geolocationBackground;
     private TextView detailsStaticText;
     private TextView updateEventPosterText;
     private ImageView updateImageOverlay;
@@ -136,9 +132,6 @@ public class update_event extends Fragment {
         updateEventCancelBtn = view.findViewById(R.id.update_event_cancel_btn);
         detailsEditText = view.findViewById(R.id.update_event_details);
         detailsStaticText = view.findViewById(R.id.update_event_details_static);
-        geolocationToggle = view.findViewById(R.id.update_event_checkbox);
-        geolocationText = view.findViewById(R.id.geolocation_text);
-        geolocationBackground = view.findViewById(R.id.geolocation_background);
         eventStartDay = view.findViewById(R.id.view_event_day);
         eventStartMonth = view.findViewById(R.id.view_event_month);
         eventTitle = view.findViewById(R.id.view_event_title);
@@ -160,19 +153,6 @@ public class update_event extends Fragment {
         eventPicture = view.findViewById(R.id.view_event_picture);
         facilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
-        //onclick listeners
-        geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    editGeolocationToggle = true;
-                } else {
-                    editGeolocationToggle = false;
-                }
-                //editGeolocationToggle = !editGeolocationToggle;
-            }
-        });
-
         eventPicture.setOnClickListener(view1 -> {
             if (isEditable){
             Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -191,8 +171,7 @@ public class update_event extends Fragment {
 
                 db.collection("events").document(eventID)
                         .update(
-                                "eventDetails", details,
-                                "enableGeolocation", editGeolocationToggle
+                                "eventDetails", details
                         )
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(getContext(), "Event updated successfully", Toast.LENGTH_SHORT).show();
@@ -268,20 +247,12 @@ public class update_event extends Fragment {
             updateEventPosterText.setVisibility(View.VISIBLE);
             detailsStaticText.setVisibility(View.GONE);
             detailsEditText.setVisibility(View.VISIBLE);
-            geolocationToggle.setClickable(true);
-            geolocationToggle.setVisibility(View.VISIBLE);
-            geolocationText.setVisibility(View.VISIBLE);
-            geolocationBackground.setVisibility(View.VISIBLE);
             updateImageOverlay.setVisibility(View.VISIBLE);
             updateEventSaveBtn.setVisibility(View.VISIBLE);
         }else{
             updateEventPosterText.setVisibility(View.INVISIBLE);
             detailsStaticText.setVisibility(View.VISIBLE);
             detailsEditText.setVisibility(View.GONE);
-            geolocationToggle.setClickable(false);
-            geolocationToggle.setVisibility(View.GONE);
-            geolocationText.setVisibility(View.GONE);
-            geolocationBackground.setVisibility(View.GONE);
             updateImageOverlay.setVisibility(View.INVISIBLE);
             updateEventSaveBtn.setVisibility(View.GONE);
         }
@@ -294,8 +265,6 @@ public class update_event extends Fragment {
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         detailsEditText.setText(event.getEventDetails());
         detailsStaticText.setText(event.getEventDetails());
-        editGeolocationToggle = event.getEnableGeolocation();
-        geolocationToggle.setChecked(editGeolocationToggle);
 
         // Load image
         Glide.with(getView().getContext())
