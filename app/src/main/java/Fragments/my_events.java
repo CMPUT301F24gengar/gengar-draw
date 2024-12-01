@@ -57,16 +57,22 @@ import Classes.Facility;
 import Classes.FacilityManager;
 //import kotlinx.coroutines.EventLoop;
 import Adapters.UserProfileAdapter;
+import Classes.UserProfile;
+import Classes.UserProfileManager;
 
 /**
  * My Events Activity
  *
  *     handles interactions with the 'my events' fragment
  *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
- *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
+ *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li> <li>checkForFacility</li> <li>fetchEvents</li> <li>fetchJoinedEvents</li> <li>createJoinedEventsList</li> <li>fetchJoinedEventIDs</li></ul>
  *
- * @author Meghan, Rheanna
+ * @author Meghan, Rheanna, Rehan
  * @see Fragment
+ * @see EventManager
+ * @see Event
+ * @see Facility
+ * @see FacilityManager
  * @see <a href="https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/">https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/</a>
  */
 public class my_events extends Fragment implements EventAdapter.OnEventClickListener {
@@ -87,8 +93,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
     private ArrayList<Event> events;
     private ArrayList<Event> events2;
     private RecyclerView.LayoutManager layoutManager;
-    EventAdapter customAdapter;
-
+    EventAdapter customAdapterHosted;
+    EventAdapter customAdapterJoined;
     /**
      * Required empty public constructor
      */
@@ -98,14 +104,14 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * Construct the my_events fragment view
-     * @param inflater The LayoutInflater object that can be used to inflate
-     * any views in the fragment,
-     * @param container If non-null, this is the parent view that the fragment's
-     * UI should be attached to.  The fragment should not add the view itself,
-     * but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
      *
+     * @param inflater           The LayoutInflater object that can be used to inflate
+     *                           any views in the fragment,
+     * @param container          If non-null, this is the parent view that the fragment's
+     *                           UI should be attached to.  The fragment should not add the view itself,
+     *                           but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     *                           from a previous saved state as given here.
      * @return constructed View
      * @see Fragment
      */
@@ -119,12 +125,14 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         recyclerView = view.findViewById(R.id.my_events_list);
         eventManager = new EventManager();
         events = new ArrayList<>();
+        eventIDs = new ArrayList<>();
 
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(), events, false, this);
+        customAdapterHosted = new EventAdapter(getContext(), events, false, true, this);
+        customAdapterJoined = new EventAdapter(getContext(), events, false, false, this);
 
         recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
-        recyclerView.setAdapter(customAdapter);
+        recyclerView.setAdapter(customAdapterJoined);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -144,6 +152,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
         //set highlighted button
         highlightedButton = joinedEventsBtn;
+        createJoinedEventsList();
 
         //onclick listeners
         hostedEventsBtn.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +160,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
             public void onClick(View view) {
                 // Empty out the events ArrayList to hold the Event objects
                 events.clear();
-                customAdapter.notifyDataSetChanged();
+                customAdapterHosted.notifyDataSetChanged();
+                recyclerView.setAdapter(customAdapterHosted);
 
                 setHighlightedButton(hostedEventsBtn);
                 eventListView.setVisibility(View.VISIBLE);
@@ -162,14 +172,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         joinedEventsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Empty out the events ArrayList to hold the Event objects
-                events.clear();
-                customAdapter.notifyDataSetChanged();
-
-                //switch views
-                setHighlightedButton(joinedEventsBtn);
-                missingFacilityFrame.setVisibility(View.GONE);
-                eventListView.setVisibility(View.VISIBLE);
+                createJoinedEventsList();
             }
         });
         createFacilityBtn.setOnClickListener(new View.OnClickListener() {
@@ -181,11 +184,36 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
     }
 
     /**
-     * Handles click on an event
-     * @param EventID the ID of the event that was clicked
+     * Handles the event details button click
+     * @param EventID The event ID of the clicked event
      */
     @Override
-    public void onEventClick(String EventID) {
+    public void onEventDetailsClick(String EventID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventID", EventID);
+
+        event_details eventDetailsFragment = new event_details();
+        eventDetailsFragment.setArguments(bundle); // Pass the eventID to the fragment
+        // Navigate to event details fragment
+
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content, eventDetailsFragment) // Replace with your container ID
+                    .addToBackStack(null) // Optional: to add to back stack
+                    .commit();
+        } else {
+            // Handle the error
+        }
+    }
+
+    /**
+     * Handles the event update button click
+     * @param EventID The event ID of the clicked event
+     */
+    @Override
+    public void onEventUpdateClick(String EventID) {
         String selectedEventID = EventID;
 
         Bundle bundle = new Bundle();
@@ -203,6 +231,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * returns user to the homepage
+     *
      * @throws Exception activity not instance of MainActivity
      * @see MainActivity
      */
@@ -217,7 +246,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * switches which button is highlighted
-     * @param button    TextView representing a button
+     *
+     * @param button TextView representing a button
      */
     private void setHighlightedButton(TextView button) {
         highlightedButton.setTextColor(getResources().getColor(R.color.grey));
@@ -229,6 +259,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
 
     /**
      * replaces the current fragment with the facility fragment
+     *
+     * @throws Exception activity not instance of MainActivity
      * @see facility_profile
      */
     private void openFacilityFragment() {
@@ -239,12 +271,9 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
             // Handle error
         }
     }
-    public interface OnEventsLoadedListener {
-        void onEventsLoaded(ArrayList<Event> events);
-    }
 
     /**
-     * checks if a facility exists
+     * checks if a facility exists for hosted events list
      */
     public void checkForFacility() {
         //decide which fragment to open
@@ -255,10 +284,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                 missingFacilityFrame.setVisibility(View.GONE);
                 eventIDs = facility.getEvents();
 
-                customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
-                customAdapter.setFacilityPicture(facility.getPictureURL());
-
-                fetchEvents(eventIDs, new FetchEventsCallback() {
+                fetchEvents(eventIDs, true, new FetchEventsCallback() {
                     @Override
                     public void onSuccess(ArrayList<Event> curr_events) {
                         Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
@@ -271,9 +297,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                 });
             }
 
-            /**
-             * called when a facility does not exist
-             */
+
             @Override
             public void onFacilityNotExists() {
                 //missing facility layout
@@ -289,19 +313,22 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
     }
 
     /**
-     * Fetches events from the database
-     * @param eventIDs list of event IDs
-     * @param callback callback to handle the result
+     * fetches events for the list of event IDs.
+     * Creates listener since firebase's get() is asynchronous in nature,
+     * so it notifies when all events have been loaded.
+     *
+     * @param eventIDs String List of event IDs
+     * @param callback callback to let the calling method know when all the events have been loaded.
+     *
      */
-    public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
+    public void fetchEvents(List<String> eventIDs, boolean isHosted, final FetchEventsCallback callback) {
+        Log.d("fetchEvents", "Event IDs : " + eventIDs);
+
         int totalEvents = eventIDs.size();  // total number of events to fetch
 
         AtomicInteger completedTasks = new AtomicInteger(0);  // needed for incrementAndGet()
 
-        // Loop through each event
         for (String eventID : eventIDs) {
-
-            // Fetch specific event document by its ID
             db.collection("events").document(eventID)
                     .get()
                     .addOnCompleteListener(task -> {
@@ -321,7 +348,11 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                                         events.add(curr_event);  // Add retrieved Event object to the List
 
                                         // Notify adapter that event was added
-                                        customAdapter.notifyItemInserted(events.size() - 1);
+                                        if (isHosted) {
+                                            customAdapterHosted.notifyItemInserted(events.size() - 1);
+                                        } else {
+                                            customAdapterJoined.notifyItemInserted(events.size() - 1);
+                                        }
 
                                         if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
                                             callback.onSuccess(events);  // Pass retrieved events list
@@ -338,7 +369,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                                     }
                                 });
                             } else {
-                                Log.e("fetchEvents", "Document does not exist for eventID: " + eventID);
+                                Log.d("fetchEvents", "Document does not exist for eventID: " + eventID);  // Skip deleted event records???
 
                                 if (completedTasks.incrementAndGet() == totalEvents) {
                                     callback.onSuccess(events);  // Pass events which were retrieved
@@ -349,18 +380,103 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                             Log.e("fetchEvents", "Failed to fetch document for eventID: " + eventID, task.getException());
 
                             if (completedTasks.incrementAndGet() == totalEvents) {
-                                callback.onSuccess(events); // Pass events which were retrieved
+                                callback.onSuccess(events);  // Pass events which were retrieved
                             }
                         }
                     });
         }
     }
 
-    /**
-     * Callback interface for fetching events
-     */
     public interface FetchEventsCallback {
         void onSuccess(ArrayList<Event> events);
+
         void onFailure(Exception e);
+    }
+
+    /**
+     * This method fetches all the events the user joined from firebase currently stored
+     * and adds it to a list of events.
+     * @param deviceID the device ID of the user.
+     */
+    public void fetchJoinedEvents(String deviceID) {
+        fetchJoinedEventIDs(deviceID, new FetchJoinedEventIDsCallback() {
+            @Override
+            public void onJoinedEventIDsFetched(List<String> eventIDs) {
+                Log.d("fetchJoinedEvents", "Before call fetchEvents: Joined Event IDs: " + eventIDs);
+                fetchEvents(eventIDs, false, new FetchEventsCallback() {
+                    @Override
+                    public void onSuccess(ArrayList<Event> curr_events) {
+                        Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("fetchJoinedEvents", "Error in fetching events", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("fetchJoinedEvents", "Error");
+            }
+        });
+    }
+
+    /**
+     * This method creates the joined events list for the user.
+     */
+    public void createJoinedEventsList() {
+        eventIDs.clear();
+        events.clear();
+        recyclerView.setAdapter(customAdapterJoined);
+
+        //switch views
+        setHighlightedButton(joinedEventsBtn);
+        missingFacilityFrame.setVisibility(View.GONE);
+        eventListView.setVisibility(View.VISIBLE);
+        fetchJoinedEvents(deviceID);
+    }
+
+    /**
+     * This method fetches all the event IDs from firebase currently stored
+     * and adds it to a list of event IDs.
+     * @param deviceID the device ID of the user.
+     * @param callback to check if all the event IDs have been loaded.
+     */
+    public void fetchJoinedEventIDs(String deviceID, final FetchJoinedEventIDsCallback callback) {
+        db.collection("users").document(deviceID)
+                .get()
+
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+                            eventIDs = (List<String>) document.get("joinedEvents");
+                            if (eventIDs != null) {
+                                Log.d("fetchJoinedEventIDs", "Joined Event IDs: " + eventIDs);
+                                callback.onJoinedEventIDsFetched(eventIDs);
+                            } else {
+                                Log.d("fetchJoinedEventIDs", "No Joined Events found");
+                                callback.onJoinedEventIDsFetched(eventIDs);
+                            }
+                        } else {
+                            Log.e("fetchJoinedEventIDs", "No User document for device ID:  " + deviceID);
+                            callback.onError(new Exception("No User document found for deviceID:" + deviceID));
+                        }
+                    } else {
+                        callback.onError(task.getException());
+                    }
+                });
+    }
+
+    /**
+     * This interface is used to check if all the event IDs have been loaded.
+     */
+    public interface FetchJoinedEventIDsCallback {
+        void onJoinedEventIDsFetched(List<String> eventIDs);
+        void onError(Exception e);
     }
 }

@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.Event;
 import Classes.EventManager;
 import Classes.QRcode;
@@ -85,15 +87,26 @@ public class QRcodeAdapter extends RecyclerView.Adapter<QRcodeAdapter.MyViewHold
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                qrCodeManager.deleteQRcode(qrCode);
-                localEvents.get(deletedPosition).setQRCode(null);//set local copy's QR Code to null.
-                //set qrcode to null in firebase
-                db.collection("events").document(localEvents.get(deletedPosition).getEventID())
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        qrCodeManager.deleteQRcode(qrCode);
+                        localEvents.get(deletedPosition).setQRCode(null);//set local copy's QR Code to null.
+                        //set qrcode to null in firebase
+                        db.collection("events").document(localEvents.get(deletedPosition).getEventID())
                                 .update("qrcode",null);
-                Toast.makeText(view.getContext(), "Deleted "+localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
-                localEvents.remove(deletedPosition);
-                notifyItemRemoved(deletedPosition);
+                        Toast.makeText(view.getContext(), "Deleted "+localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                        localEvents.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+                    @Override
+                    public void onCancel() {
+                        //Do nothing
+                    }
+                });
+                dialog.show();
             }
         });
 

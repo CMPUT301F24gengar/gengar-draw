@@ -1,6 +1,7 @@
 package Adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.FacilityManager;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
@@ -88,18 +90,32 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                // if userprofile id == ur device id, cannot do
-                if (localUserProfiles.get(deletedPosition).getDeviceID().equals(currentDeviceID) ){
-                    Toast.makeText(context,"Error: You cannot delete yourself.",Toast.LENGTH_SHORT).show();
-                }
-                else { //otherwise delete
-                    UserProfileManager userProfileManager = new UserProfileManager();
-                    userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
-                    Toast.makeText(view.getContext(), "Deleted " + localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
-                    localUserProfiles.remove(deletedPosition);
-                    notifyItemRemoved(deletedPosition);
-                }
+                // Show the confirmation dialog
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        // if userprofile id == ur device id, cannot do
+                        if (localUserProfiles.get(deletedPosition).getDeviceID().equals(currentDeviceID) ){
+                            Toast.makeText(context,"Error: You cannot delete yourself.",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            // Delete the user profile upon confirmation
+                            UserProfileManager userProfileManager = new UserProfileManager();
+                            userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
+                            Toast.makeText(context, "Deleted " + localUserProfiles.get(deletedPosition).getName(), Toast.LENGTH_SHORT).show();
+                            localUserProfiles.remove(deletedPosition);
+                            notifyItemRemoved(deletedPosition);
+                        }
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Do nothing, just dismiss the dialog
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -107,7 +123,6 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
         holder.name.setText(userProfile.getName());
         if (userProfile.getPictureURL() != null) {
-            holder.profilePicture.setImageTintList(null);
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
             holder.profilePicture.setVisibility(View.VISIBLE);
 

@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -7,22 +8,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.Locale;
 
+import Classes.CustomDialogClass;
 import Classes.Event;
+import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.EventManager;
 import Classes.UserProfile;
@@ -30,15 +32,12 @@ import Classes.UserProfile;
 /**
  * This is the EventAdapter which is a custom adapter to display all the events along with their details.
  */
-
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
-
     private Context context;
     private List<Event> localEvents;
     private Boolean showDelete;
+    private Boolean showUpdate;
     private OnEventClickListener listener;
-    private String facilityName;
-    private String facilityPictureURL;
 
     /**
      * Constructor for event adapter
@@ -47,23 +46,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
      * @param showDelete
      * @param listener
      */
-    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, OnEventClickListener listener) {
+    private boolean buttonDebounce = false;
+    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, Boolean showUpdate, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
         this.showDelete = showDelete;
+        this.showUpdate = showUpdate;
         this.listener = listener;
-        this.facilityName = "";
-        this.facilityPictureURL = "";
-    }
-
-    public void setFacilityName(String facilityName) {
-        this.facilityName = facilityName;
-        notifyDataSetChanged();
-    }
-
-    public void setFacilityPicture(String facilityPictureURL) {
-        this.facilityPictureURL = facilityPictureURL;
-        notifyDataSetChanged();
     }
 
     /**
@@ -92,34 +81,65 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
      *        item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
-
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                EventManager eventManager = new EventManager();
-                eventManager.deleteEvent(localEvents.get(deletedPosition).getEventID());
-                Toast.makeText(view.getContext(), "Deleted " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
-                localEvents.remove(deletedPosition);
-                notifyItemRemoved(deletedPosition);
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        EventManager eventManager = new EventManager();
+                        eventManager.deleteEvent(localEvents.get(deletedPosition).getEventID());
+                        Toast.makeText(view.getContext(), "Deleted " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                        localEvents.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        //do nothing
+                    }
+                });
+                dialog.show();
             }
         });
 
         Event event = localEvents.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
-        holder.facilityNameTextView.setText(facilityName);
-        Log.d("EventAdapter", "onBindViewHolder FacilityPictureURL: " + facilityPictureURL);
+        holder.updateEvent.setVisibility(showUpdate ? View.VISIBLE : View.GONE);
+        String organizerID = event.getOrganizerID();
+        FacilityManager facilityManager = new FacilityManager();
+        facilityManager.getFacility(organizerID, new FacilityManager.OnFacilityFetchListener() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
 
-        if (!facilityPictureURL.isEmpty()) {
-            holder.facilityPicture.setImageTintList(null);
-            Glide.with(context).load(facilityPictureURL).into(holder.facilityPicture);
-        } else {
-            holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
-        }
+                if (facility == null){
+                    holder.facilityNameTextView.setText("Facility not found.");
+                    holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                } else{
+                    //set image
+                    if (facility.getPictureURL() == null){
+                        holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                    }
+                    else{
+                        holder.facilityPicture.setImageTintList(null);
+                        Glide.with(context).load(facility.getPictureURL()).into(holder.facilityPicture);
+                    }
+
+                    //set text to facility name
+                    holder.facilityNameTextView.setText(facility.getName());
+                }
+            }
+
+            @Override
+            public void onFacilityFetchError(Exception e) {
+                Log.d("Facility fetch error eventadapter: ", e.toString());
+            }
+        });
+
         holder.eventTitle.setText(event.getEventTitle());
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
@@ -132,17 +152,35 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             holder.eventPicture.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onEventClick(localEvents.get(position).getEventID());
-                Log.d("EventAdapter", "setOnClickListener position: " + position + " event title: " + event.getEventTitle());
+        holder.viewDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (buttonDebounce) {
+                    return;
+                }
+                buttonDebounce = true;
+
+                listener.onEventDetailsClick(event.getEventID());
             }
         });
-    }
 
     /**
      * Used to get references for views of a single item.
      */
+
+        holder.updateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (buttonDebounce) {
+                    return;
+                }
+                buttonDebounce = true;
+
+                listener.onEventUpdateClick(event.getEventID());
+            }
+        });
+
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView facilityNameTextView;
@@ -152,8 +190,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         TextView eventStartMonth;
         TextView eventStartTime;
         ImageView eventPicture;
+        FrameLayout updateEvent;
+        ImageView viewDetails;
         ImageView Delete;
-
         public MyViewHolder(View itemView){
             super(itemView);
             facilityNameTextView = itemView.findViewById(R.id.view_event_facility_name);
@@ -163,6 +202,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             eventStartMonth = itemView.findViewById(R.id.view_event_month);
             eventStartTime = itemView.findViewById(R.id.view_event_time);
             eventPicture = itemView.findViewById(R.id.view_event_picture);
+            updateEvent = itemView.findViewById(R.id.update_event_btn);
+            viewDetails = itemView.findViewById(R.id.view_details_btn);
             Delete = itemView.findViewById(R.id.delete);
         }
     }
@@ -175,8 +216,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     public int getItemCount() {
         return localEvents.size();
     }
-
     public interface OnEventClickListener {
-        void onEventClick(String eventID);
+        void onEventDetailsClick(String eventID);
+        void onEventUpdateClick(String eventID);
     }
 }

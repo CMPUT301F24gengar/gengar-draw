@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
@@ -68,19 +70,30 @@ public class UserProfileImageAdapter extends RecyclerView.Adapter<UserProfileIma
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                userProfileManager.deleteProfilePicture(localUserProfiles.get(deletedPosition).getDeviceID(), new UserProfileManager.OnDeleteListener() {
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
                     @Override
-                    public void onSuccess() {
-                        Toast.makeText(context,"Deleted profile picture of "+ localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
-                        localUserProfiles.remove(deletedPosition);
-                        notifyItemRemoved(deletedPosition);
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        userProfileManager.deleteProfilePicture(localUserProfiles.get(deletedPosition).getDeviceID(), new UserProfileManager.OnDeleteListener() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(context,"Deleted profile picture of "+ localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                                localUserProfiles.remove(deletedPosition);
+                                notifyItemRemoved(deletedPosition);
+                            }
+                            @Override
+                            public void onError(Exception e) {
+                                Log.d("Error profile picture deletion: ", e.toString());
+                            }
+                        });
                     }
                     @Override
-                    public void onError(Exception e) {
-                        Log.d("Error profile picture deletion: ", e.toString());
+                    public void onCancel() {
+                        //Do nothing
                     }
                 });
+                dialog.show();
             }
         });
 

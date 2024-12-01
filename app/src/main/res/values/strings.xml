@@ -70,4 +70,7 @@
     <string name="send">SEND</string>
     <string name="no_qr_code">NO QR CODE</string>
     <string name="generate_qr_code">GENERATE NEW QR CODE</string>
+    <string name="download_qr_code">DOWNLOAD QR CODE</string>
+    <string name="confirm_deletion">CONFIRM DELETION</string>
+    <string name="are_you_sure_you_want_to_delete_this_object">ARE YOU SURE YOU WANT TO DELETE THIS OBJECT</string>
 </resources>
