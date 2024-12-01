@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import Classes.Event;
+import Classes.Facility;
 import Classes.FacilityManager;
 import Classes.EventManager;
 import Classes.UserProfile;
@@ -79,16 +80,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
         Event event = localEvents.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
-        holder.facilityNameTextView.setText(facilityName);
-        Log.d("EventAdapter", "onBindViewHolder FacilityPictureURL: " + facilityPictureURL);
+        String organizerID = event.getOrganizerID();
+        FacilityManager facilityManager = new FacilityManager();
+        facilityManager.getFacility(organizerID, new FacilityManager.OnFacilityFetchListener() {
+            @Override
+            public void onFacilityFetched(Facility facility) {
+                //set image
+                if (facility.getPictureURL() == null){
+                    holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                }
+                else{
+                    holder.facilityPicture.setImageTintList(null);
+                    Glide.with(context).load(facility.getPictureURL()).into(holder.facilityPicture);
+                }
 
-        if (!facilityPictureURL.isEmpty()) {
-            holder.facilityPicture.setImageTintList(null);
-            Glide.with(context).load(facilityPictureURL).into(holder.facilityPicture);
-        } else {
-            holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.facilityPicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
-        }
+                //set text to facility name
+                holder.facilityNameTextView.setText(facility.getName());
+            }
+
+            @Override
+            public void onFacilityFetchError(Exception e) {
+                Log.d("Facility fetch error eventadapter: ", e.toString());
+            }
+        });
+
         holder.eventTitle.setText(event.getEventTitle());
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
