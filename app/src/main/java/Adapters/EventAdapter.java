@@ -152,6 +152,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             Delete = itemView.findViewById(R.id.delete);
         }
     }
+
     @Override
     public int getItemCount() {
         return localEvents.size();
