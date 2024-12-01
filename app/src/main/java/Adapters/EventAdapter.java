@@ -95,16 +95,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 Log.d("Facility fetch error eventadapter: ", e.toString());
             }
         });
+
         holder.eventTitle.setText(event.getEventTitle());
         holder.eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         holder.eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
         holder.eventStartTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
+
         if (event.getEventPictureURL() != null) {
             Glide.with(context).load(event.getEventPictureURL()).into(holder.eventPicture);
             holder.eventPicture.setVisibility(View.VISIBLE);
         } else {
             holder.eventPicture.setVisibility(View.GONE);
         }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onEventClick(localEvents.get(position).getEventID());

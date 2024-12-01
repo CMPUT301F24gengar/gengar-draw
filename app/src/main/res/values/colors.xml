@@ -9,4 +9,11 @@
     <color name="green">#01fea3</color>
     <color name="red">#f54258</color>
     <color name="blue">#01bdbc</color>
+
+    <color name="pfp1">#8078dc</color>
+    <color name="pfp2">#1FCBFF</color>
+    <color name="pfp3">#FF1E52</color>
+    <color name="pfp4">#FF9416</color>
+    <color name="pfp5">#FFF947</color>
+    <color name="pfp6">#61D771</color>
 </resources>

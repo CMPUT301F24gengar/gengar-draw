@@ -19,4 +19,20 @@
         android:contentDescription="@string/todo"
         android:scaleType="centerCrop" />
 
+    <ImageView
+        android:id="@+id/delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/circle_background"
+        android:backgroundTint="@color/black1"
+        android:contentDescription="@string/todo"
+        android:elevation="10dp"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/delete"
+        app:layout_constraintEnd_toEndOf="@+id/card_view"
+        app:layout_constraintTop_toTopOf="@+id/card_view"
+        app:tint="@color/red" />
+
 </FrameLayout>
