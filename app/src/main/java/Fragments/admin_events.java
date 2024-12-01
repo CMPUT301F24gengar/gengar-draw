@@ -35,8 +35,12 @@ import Classes.Event;
 import Classes.EventListsManager;
 import Classes.EventManager;
 
+/**
+ * @author Dion
+ * admin_events
+ * This fragment displays the list of facility profiles that an admin can browse through.
+ */
 public class admin_events extends Fragment implements EventAdapter.OnEventClickListener {
-
     private FirebaseFirestore db;
     private RecyclerView recyclerView;
     private EventManager eventManager;
@@ -96,6 +100,8 @@ public class admin_events extends Fragment implements EventAdapter.OnEventClickL
     }
 
     /**
+     * interface for the listener that checks if all the events have been loaded.
+     */
      * Handles the event details button click
      * @param EventID The event ID of the clicked event
      */
@@ -134,6 +140,7 @@ public class admin_events extends Fragment implements EventAdapter.OnEventClickL
     }
 
     /**
+     * fetchEvents
      * fetches events for the list of event IDs.
      * @param listener callback to let the calling method know when all the events have been loaded.
      */

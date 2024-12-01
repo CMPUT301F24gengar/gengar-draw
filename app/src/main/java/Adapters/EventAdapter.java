@@ -29,13 +29,23 @@ import Classes.FacilityManager;
 import Classes.EventManager;
 import Classes.UserProfile;
 
-
+/**
+ * This is the EventAdapter which is a custom adapter to display all the events along with their details.
+ */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
     private Context context;
     private List<Event> localEvents;
     private Boolean showDelete;
     private Boolean showUpdate;
     private OnEventClickListener listener;
+
+    /**
+     * Constructor for event adapter
+     * @param context
+     * @param events
+     * @param showDelete
+     * @param listener
+     */
     private boolean buttonDebounce = false;
     public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, Boolean showUpdate, OnEventClickListener listener) {
         this.context=context;
@@ -45,12 +55,32 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         this.listener = listener;
     }
 
+    /**
+     * Called when the RecyclerView needs a new viewHolder.
+     * Inflates the layout from event_item.
+     * @param parent The ViewGroup into which the new View will be added after it is bound to
+     *               an adapter position.
+     * @param viewType The view type of the new View.
+     *
+     * @return the new viewHolder
+     */
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(context).inflate(R.layout.event_item, parent, false);
         return new MyViewHolder(row);
     }
+
+    /**
+     * Binds the data from the event at a specified position to the view holder.
+     * Sets the details to the event's details at the specified position
+     * If there is a picture present, it loads the picture.
+     * Otherwise, it puts in a default image.
+     * @param holder The ViewHolder which should be updated to represent the contents of the
+     *        item at the given position in the data set.
+     * @param position The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.Delete.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +164,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             }
         });
 
+    /**
+     * Used to get references for views of a single item.
+     */
+
         holder.updateEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,6 +181,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         });
 
     }
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView facilityNameTextView;
         ImageView facilityPicture;
@@ -173,6 +208,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         }
     }
 
+    /**
+     *
+     * @return number of events
+     */
     @Override
     public int getItemCount() {
         return localEvents.size();
