@@ -95,13 +95,19 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
                 dialog.setDialogListener(new CustomDialogClass.DialogListener() {
                     @Override
                     public void onProceed() {
-                        // Delete the user profile upon confirmation
                         int deletedPosition = holder.getAdapterPosition();
-                        UserProfileManager userProfileManager = new UserProfileManager();
-                        userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
-                        Toast.makeText(context, "Deleted " + localUserProfiles.get(deletedPosition).getName(), Toast.LENGTH_SHORT).show();
-                        localUserProfiles.remove(deletedPosition);
-                        notifyItemRemoved(deletedPosition);
+                        // if userprofile id == ur device id, cannot do
+                        if (localUserProfiles.get(deletedPosition).getDeviceID().equals(currentDeviceID) ){
+                            Toast.makeText(context,"Error: You cannot delete yourself.",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            // Delete the user profile upon confirmation
+                            UserProfileManager userProfileManager = new UserProfileManager();
+                            userProfileManager.deleteUserProfile(localUserProfiles.get(deletedPosition).getDeviceID());
+                            Toast.makeText(context, "Deleted " + localUserProfiles.get(deletedPosition).getName(), Toast.LENGTH_SHORT).show();
+                            localUserProfiles.remove(deletedPosition);
+                            notifyItemRemoved(deletedPosition);
+                        }
                     }
 
                     @Override

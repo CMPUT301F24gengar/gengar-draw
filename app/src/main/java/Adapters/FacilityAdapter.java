@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.EventManager;
 import Classes.Facility;
 import Classes.FacilityManager;
@@ -68,12 +70,24 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyView
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                FacilityManager facilityManager = new FacilityManager();
-                facilityManager.deleteFacility(localFacilities.get(deletedPosition).getDeviceID());
-                Toast.makeText(view.getContext(), "Deleted " + localFacilities.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
-                localFacilities.remove(deletedPosition);
-                notifyItemRemoved(deletedPosition);
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        FacilityManager facilityManager = new FacilityManager();
+                        facilityManager.deleteFacility(localFacilities.get(deletedPosition).getDeviceID());
+                        Toast.makeText(view.getContext(), "Deleted " + localFacilities.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                        localFacilities.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Do nothing
+                    }
+                });
+                dialog.show();
             }
         });
         Facility facility = localFacilities.get(position);
