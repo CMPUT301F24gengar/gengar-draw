@@ -1,10 +1,15 @@
 package Fragments;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +54,9 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -82,6 +92,7 @@ public class event_details extends Fragment {
 
     private Boolean buttonDebounce = false;
 
+    private static final int DOWNLOAD_REQUEST_CODE = 1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     private FusedLocationProviderClient fusedLocationClient;
     private double latitude;
@@ -110,6 +121,7 @@ public class event_details extends Fragment {
     LinearLayout qrCodeContainer;
     TextView noQRcode;
     ImageView qrCodeImage;
+    TextView downloadQRCode;
     TextView qrCodeBack;
 
     FrameLayout blackFrame;
@@ -200,6 +212,7 @@ public class event_details extends Fragment {
         qrCodeContainer = view.findViewById(R.id.view_qr_code_container);
         noQRcode = view.findViewById(R.id.no_qr_code);
         qrCodeImage = view.findViewById(R.id.qr_code_image);
+        downloadQRCode = view.findViewById(R.id.download_qr_code);
         qrCodeBack = view.findViewById(R.id.qr_code_back);
 
         blackFrame = view.findViewById(R.id.black_frame);
@@ -322,8 +335,10 @@ public class event_details extends Fragment {
 
                     if (event.getQRCode() != null) {
                         generateQRCode(event.getQRCode());
+                        downloadQRCode.setVisibility(View.VISIBLE);
                     } else {
                         noQRcode.setVisibility(View.VISIBLE);
+                        downloadQRCode.setVisibility(View.GONE);
                         if (Objects.equals(deviceID, event.getOrganizerID())) { // ORGANIZER
                             generateQRCode.setVisibility(View.VISIBLE);
                             generateQRCode.setOnClickListener(v -> {
@@ -331,11 +346,18 @@ public class event_details extends Fragment {
                                 String QRCode = eventManager.generateQRCode(event);
                                 event.setQRCode(QRCode);
                                 generateQRCode(QRCode);
+                                downloadQRCode.setVisibility(View.VISIBLE);
                                 generateQRCode.setVisibility(View.GONE);
                                 noQRcode.setVisibility(View.GONE);
                             });
                         }
                     }
+
+                    downloadQRCode.setOnClickListener(v -> {
+                        if (event.getQRCode() != null) {
+                            saveImageToGallery();
+                        }
+                    });
 
                     setupButtons(event, eventID);
 
@@ -951,6 +973,45 @@ public class event_details extends Fragment {
         }
     }
 
+    private void saveImageToGallery() {
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) qrCodeImage.getDrawable();
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContentResolver resolver = requireContext().getContentResolver();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, System.currentTimeMillis() + ".png");
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/QRcodes");
+
+            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+            try {
+                OutputStream outputStream = resolver.openOutputStream(imageUri);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.close();
+                Toast.makeText(getContext(), "Image saved successfully", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File dir = new File(file.getAbsolutePath() + "/QRcodes");
+            dir.mkdirs();
+
+            String fileName = System.currentTimeMillis() + ".png";
+            File outFile = new File(dir, fileName);
+            try (FileOutputStream outputStream = new FileOutputStream(outFile)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                Toast.makeText(getContext(), "Image saved successfully", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
     /**
      * Gets location permission result, and gets location if permission allows
      * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
@@ -971,6 +1032,12 @@ public class event_details extends Fragment {
             } else {
                 // Permission denied, handle accordingly
             }
+        } else if (requestCode == DOWNLOAD_REQUEST_CODE) {
+//            if (grantResults.length > 0 && grantResults[0]  == PackageManager.PERMISSION_GRANTED) {
+//                saveImageToGallery();
+//            } else {
+//                // Permission denied, handle accordingly
+//            }
         }
     }
 
