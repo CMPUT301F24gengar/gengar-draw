@@ -101,7 +101,6 @@ public class admin_events extends Fragment implements EventAdapter.OnEventClickL
 
     /**
      * interface for the listener that checks if all the events have been loaded.
-     */
      * Handles the event details button click
      * @param EventID The event ID of the clicked event
      */
