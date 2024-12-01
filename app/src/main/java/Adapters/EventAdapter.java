@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,25 +32,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     private Context context;
     private List<Event> localEvents;
     private Boolean showDelete;
+    private Boolean showUpdate;
     private OnEventClickListener listener;
-    private String facilityName;
-    private String facilityPictureURL;
-    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, OnEventClickListener listener) {
+    private boolean buttonDebounce = false;
+    public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, Boolean showUpdate, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
         this.showDelete = showDelete;
+        this.showUpdate = showUpdate;
         this.listener = listener;
-        this.facilityName = "";
-        this.facilityPictureURL = "";
     }
-    public void setFacilityName(String facilityName) {
-        this.facilityName = facilityName;
-        notifyDataSetChanged();
-    }
-    public void setFacilityPicture(String facilityPictureURL) {
-        this.facilityPictureURL = facilityPictureURL;
-        notifyDataSetChanged();
-    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -72,6 +65,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
 
         Event event = localEvents.get(position);
         holder.Delete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
+        holder.updateEvent.setVisibility(showUpdate ? View.VISIBLE : View.GONE);
         String organizerID = event.getOrganizerID();
         FacilityManager facilityManager = new FacilityManager();
         facilityManager.getFacility(organizerID, new FacilityManager.OnFacilityFetchListener() {
@@ -108,12 +102,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             holder.eventPicture.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onEventClick(localEvents.get(position).getEventID());
-                Log.d("EventAdapter", "setOnClickListener position: " + position + " event title: " + event.getEventTitle());
+        holder.viewDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (buttonDebounce) {
+                    return;
+                }
+                buttonDebounce = true;
+
+                listener.onEventDetailsClick(event.getEventID());
             }
         });
+
+        holder.updateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (buttonDebounce) {
+                    return;
+                }
+                buttonDebounce = true;
+
+                listener.onEventUpdateClick(event.getEventID());
+            }
+        });
+
     }
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView facilityNameTextView;
@@ -123,6 +135,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         TextView eventStartMonth;
         TextView eventStartTime;
         ImageView eventPicture;
+        FrameLayout updateEvent;
+        ImageView viewDetails;
         ImageView Delete;
         public MyViewHolder(View itemView){
             super(itemView);
@@ -133,14 +147,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             eventStartMonth = itemView.findViewById(R.id.view_event_month);
             eventStartTime = itemView.findViewById(R.id.view_event_time);
             eventPicture = itemView.findViewById(R.id.view_event_picture);
+            updateEvent = itemView.findViewById(R.id.update_event_btn);
+            viewDetails = itemView.findViewById(R.id.view_details_btn);
             Delete = itemView.findViewById(R.id.delete);
         }
     }
+
     @Override
     public int getItemCount() {
         return localEvents.size();
     }
     public interface OnEventClickListener {
-        void onEventClick(String eventID);
+        void onEventDetailsClick(String eventID);
+        void onEventUpdateClick(String eventID);
     }
 }
