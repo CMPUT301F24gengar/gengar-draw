@@ -351,35 +351,6 @@
                         android:textSize="16sp" />
 
                     <LinearLayout
-                        android:id="@+id/geolocation_background"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/rounded_corner"
-                        android:backgroundTint="@color/black2"
-                        android:orientation="horizontal">
-
-                        <CheckBox
-                            android:id="@+id/update_event_checkbox"
-                            android:clickable="false"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:buttonTint="@color/grey" />
-
-                        <TextView
-                            android:id="@+id/geolocation_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:text="@string/enable_geolocation"
-                            android:textAlignment="center"
-                            android:textColor="@color/grey"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:layout_marginTop="20dp"
