@@ -113,6 +113,8 @@ public class event_details extends Fragment {
     private EventListsManager eventListsManager = new EventListsManager();
     private NotificationManager notificationManager = new NotificationManager();
 
+    private FacilityManager facilityManager;
+
     private String eventID; // Variable to hold the event ID
     private EventManager eventManager;
     ImageView eventPicture;
@@ -128,6 +130,9 @@ public class event_details extends Fragment {
     LinearLayout geoLocationWarning;
     FrameLayout geoLocationWarningProceed;
     FrameLayout geoLocationWarningCancel;
+
+    TextView viewEventFacilityName;
+    ImageView viewEventFacilityPicture;
 
     TextView viewEventTitle;
     TextView viewEventStartDay;
@@ -202,6 +207,9 @@ public class event_details extends Fragment {
             eventID = getArguments().getString("eventID");
         }
 
+        // Initialize FacilityManager
+        facilityManager = new FacilityManager();
+
         // Initialize EventManager
         eventManager = new EventManager();
 
@@ -219,6 +227,9 @@ public class event_details extends Fragment {
         geoLocationWarning = view.findViewById(R.id.geolocation_warning_layout);
         geoLocationWarningProceed = view.findViewById(R.id.geolocation_proceed_btn);
         geoLocationWarningCancel = view.findViewById(R.id.geolocation_cancel_btn);
+
+        viewEventFacilityName = view.findViewById(R.id.view_event_facility_name);
+        viewEventFacilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
         viewEventTitle = view.findViewById(R.id.view_event_title);
         viewEventStartDay = view.findViewById(R.id.view_event_day);
@@ -361,6 +372,31 @@ public class event_details extends Fragment {
 
                     setupButtons(event, eventID);
 
+                    facilityManager.getFacility(event.getOrganizerID(), new FacilityManager.OnFacilityFetchListener() {
+                        @Override
+                        public void onFacilityFetched(Facility facility) {
+                            if (facility == null){
+                                viewEventFacilityName.setText("Facility not found.");
+                                viewEventFacilityPicture.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user));
+                            }else{
+                                //set image
+                                if (facility.getPictureURL() == null){
+                                    viewEventFacilityPicture.setImageDrawable(getContext().getResources().getDrawable(R.drawable.user));
+                                }
+                                else{
+                                    viewEventFacilityPicture.setImageTintList(null);
+                                    Glide.with(getContext()).load(facility.getPictureURL()).into(viewEventFacilityPicture);
+                                }
+
+                                //set text to facility name
+                                viewEventFacilityName.setText(facility.getName());
+                            }
+                        }
+                        @Override
+                        public void onFacilityFetchError(Exception e) {
+                            Log.d("event details facility fetch error",e.toString());
+                        }
+                    });
                 }
             }
 
