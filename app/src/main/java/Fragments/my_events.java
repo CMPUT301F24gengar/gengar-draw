@@ -65,7 +65,7 @@ import Classes.UserProfileManager;
  *
  *     handles interactions with the 'my events' fragment
  *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
- *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li></ul>
+ *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li> <li>checkForFacility</li> <li>fetchEvents</li> <li>fetchJoinedEvents</li> <li>createJoinedEventsList</li> <li>fetchJoinedEventIDs</li></ul>
  *
  * @author Meghan, Rheanna
  * @see Fragment
@@ -241,6 +241,9 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         void onEventsLoaded(ArrayList<Event> events);
     }
 
+    /**
+     * checks if a facility exists for hosted events list
+     */
     public void checkForFacility() {
         //decide which fragment to open
         FacilityManager facilityManager = new FacilityManager();
@@ -281,8 +284,15 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         });
     }
 
-    // Creates listener since firebase's get() is asynchronous in nature,
-    // so it notifies when all events have been loaded.
+    /**
+     * fetches events for the list of event IDs.
+     * Creates listener since firebase's get() is asynchronous in nature,
+     * so it notifies when all events have been loaded.
+     *
+     * @param eventIDs String List of event IDs
+     * @param callback callback to let the calling method know when all the events have been loaded.
+     *
+     */
     public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
         Log.d("fetchEvents", "Event IDs : " + eventIDs);
 
