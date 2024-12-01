@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="30dp"
-    android:background="@drawable/rounded_corner"
-    android:backgroundTint="@color/black2"
+    android:background="@color/black2"
     android:gravity="center"
     android:orientation="vertical"
     android:visibility="visible">
