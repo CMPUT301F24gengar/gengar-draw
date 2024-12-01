@@ -10,16 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.gengardraw.R;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.Locale;
 
 import Classes.Event;
@@ -28,15 +26,14 @@ import Classes.FacilityManager;
 import Classes.EventManager;
 import Classes.UserProfile;
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
 
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> {
     private Context context;
     private List<Event> localEvents;
     private Boolean showDelete;
     private OnEventClickListener listener;
     private String facilityName;
     private String facilityPictureURL;
-
     public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
@@ -45,27 +42,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         this.facilityName = "";
         this.facilityPictureURL = "";
     }
-
     public void setFacilityName(String facilityName) {
         this.facilityName = facilityName;
         notifyDataSetChanged();
     }
-
     public void setFacilityPicture(String facilityPictureURL) {
         this.facilityPictureURL = facilityPictureURL;
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(context).inflate(R.layout.event_item, parent, false);
         return new MyViewHolder(row);
     }
-
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,7 +115,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             }
         });
     }
-
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView facilityNameTextView;
         ImageView facilityPicture;
@@ -133,7 +124,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         TextView eventStartTime;
         ImageView eventPicture;
         ImageView Delete;
-
         public MyViewHolder(View itemView){
             super(itemView);
             facilityNameTextView = itemView.findViewById(R.id.view_event_facility_name);
@@ -146,12 +136,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
             Delete = itemView.findViewById(R.id.delete);
         }
     }
-
     @Override
     public int getItemCount() {
         return localEvents.size();
     }
-
     public interface OnEventClickListener {
         void onEventClick(String eventID);
     }

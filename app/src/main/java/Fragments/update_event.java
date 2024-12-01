@@ -1,7 +1,6 @@
 package Fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,11 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +28,11 @@ import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import Classes.Event;
 import Classes.EventManager;
@@ -45,7 +41,7 @@ import Classes.Facility;
 /**
  * Update Event Fragment
  *     Handles updates to the update event page fragment
- *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li></ul>
+ *     data:<ul> <li>fragment views</li> <li>event title</li> <li>event registration opens and deadline dates</li> <li>event max winners</li> <li>event details</li> <li>event picture</li> <li>update event save and cancel buttons</li> <li>facility name and picture</li> <li>geolocation toggle</li></ul>
  *     methods:<ul> <li>onCreate</li> <li>onCreateView</li> <li>getEventFromDatabase</li> <li>updateEventDisplayed</li> <li>getFacilityFromDatabase</li> <li>updateFacilityDisplayed</li> <li>formatDate</li></ul>
  *
  * @author Rheanna, Meghan
@@ -73,10 +69,16 @@ public class update_event extends Fragment {
     private ImageView facilityPicture;
     private CheckBox geolocationToggle;
     private Boolean editGeolocationToggle;
+    private TextView geolocationText;
+    private LinearLayout geolocationBackground;
+    private TextView detailsStaticText;
+    private TextView updateEventPosterText;
+    private ImageView updateImageOverlay;
+
     private EventManager event_manager;
 
-    private Boolean isEditable;
-    private Boolean eventPictureUpdated = false;
+    private boolean isEditable;
+    private boolean eventPictureUpdated = false;
 
     public update_event() {
         // Required empty public constructor
@@ -104,8 +106,7 @@ public class update_event extends Fragment {
             eventID = getArguments().getString("eventID");
             facilityID = getArguments().getString("facilityID");
             event_manager = new EventManager();
-            isEditable = (facilityID == Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID + " is editable: " + isEditable);
+            Log.d("update_event", "onCreate eventID: " + eventID + " facilityID: " + facilityID);
 
         }
     }
@@ -134,39 +135,49 @@ public class update_event extends Fragment {
         updateEventSaveBtn = view.findViewById(R.id.update_event_save_btn);
         updateEventCancelBtn = view.findViewById(R.id.update_event_cancel_btn);
         detailsEditText = view.findViewById(R.id.update_event_details);
+        detailsStaticText = view.findViewById(R.id.update_event_details_static);
         geolocationToggle = view.findViewById(R.id.update_event_checkbox);
-
+        geolocationText = view.findViewById(R.id.geolocation_text);
+        geolocationBackground = view.findViewById(R.id.geolocation_background);
         eventStartDay = view.findViewById(R.id.view_event_day);
         eventStartMonth = view.findViewById(R.id.view_event_month);
         eventTitle = view.findViewById(R.id.view_event_title);
         eventRegistrationOpens = view.findViewById(R.id.view_event_registration_opens);
         eventRegistrationDeadline = view.findViewById(R.id.view_event_registration_deadline);
         eventMaxWinners = view.findViewById(R.id.view_event_max_winners);
+        updateEventPosterText = view.findViewById(R.id.update_event_update_poster);
+        updateImageOverlay = view.findViewById(R.id.view_event_update_overlay);
 
         facilityName = view.findViewById(R.id.view_event_facility_name);
 
         if (getArguments() != null) {
             eventID = getArguments().getString("eventID");
-            facilityID = getArguments().getString("facilityID");
-            Log.d("update_event", "onCreateView eventID: " + eventID + " facilityID: " + facilityID);
+            Log.d("update_event", "onCreateView eventID: " + eventID);
+            getFacilityFromDatabase(eventID);  // event ID is used to search for its facility
             getEventFromDatabase(eventID);
-            getFacilityFromDatabase(facilityID);
         }
 
         eventPicture = view.findViewById(R.id.view_event_picture);
         facilityPicture = view.findViewById(R.id.view_event_facility_picture);
 
+        //onclick listeners
         geolocationToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                editGeolocationToggle = !editGeolocationToggle;
+                if (b) {
+                    editGeolocationToggle = true;
+                } else {
+                    editGeolocationToggle = false;
+                }
+                //editGeolocationToggle = !editGeolocationToggle;
             }
         });
 
         eventPicture.setOnClickListener(view1 -> {
+            if (isEditable){
             Intent OpenGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(OpenGalleryIntent, 1000);
-            eventPictureUpdated = true;
+            eventPictureUpdated = true;}
         });
 
         updateEventSaveBtn.setOnClickListener(new View.OnClickListener() {
@@ -250,6 +261,31 @@ public class update_event extends Fragment {
      * @param event Event object
      */
     private void updateEventDisplayed(Event event) {
+        String deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        isEditable = event.getOrganizerID().equals(deviceID);
+        //set dynamic visibilities
+        if (isEditable){
+            updateEventPosterText.setVisibility(View.VISIBLE);
+            detailsStaticText.setVisibility(View.GONE);
+            detailsEditText.setVisibility(View.VISIBLE);
+            geolocationToggle.setClickable(true);
+            geolocationToggle.setVisibility(View.VISIBLE);
+            geolocationText.setVisibility(View.VISIBLE);
+            geolocationBackground.setVisibility(View.VISIBLE);
+            updateImageOverlay.setVisibility(View.VISIBLE);
+            updateEventSaveBtn.setVisibility(View.VISIBLE);
+        }else{
+            updateEventPosterText.setVisibility(View.INVISIBLE);
+            detailsStaticText.setVisibility(View.VISIBLE);
+            detailsEditText.setVisibility(View.GONE);
+            geolocationToggle.setClickable(false);
+            geolocationToggle.setVisibility(View.GONE);
+            geolocationText.setVisibility(View.GONE);
+            geolocationBackground.setVisibility(View.GONE);
+            updateImageOverlay.setVisibility(View.INVISIBLE);
+            updateEventSaveBtn.setVisibility(View.GONE);
+        }
+        //populate all fields
         eventStartDay.setText(String.valueOf(event.getEventStartDate().getDate()));
         eventStartMonth.setText(new SimpleDateFormat("MMM", Locale.getDefault()).format(event.getEventStartDate()).toUpperCase());
         eventTitle.setText(event.getEventTitle());
@@ -257,6 +293,7 @@ public class update_event extends Fragment {
         eventRegistrationDeadline.setText(formatDate(event.getRegDeadlineDate()));
         eventMaxWinners.setText(String.valueOf(event.getMaxWinners()));
         detailsEditText.setText(event.getEventDetails());
+        detailsStaticText.setText(event.getEventDetails());
         editGeolocationToggle = event.getEnableGeolocation();
         geolocationToggle.setChecked(editGeolocationToggle);
 
@@ -267,25 +304,32 @@ public class update_event extends Fragment {
     }
 
     /**
-     * gets the facility record from the firestore database
-     * @param facilityID String facility ID
+     * gets the facility record from the firestore database.
+     * Use the event ID because cannot access joined events by facility ID.
+     * @param eventID String event ID
+     *
      * @throws Exception Exception if error while getting facility
      */
-    private void getFacilityFromDatabase(String facilityID) {
-        db = FirebaseFirestore.getInstance();
+    private void getFacilityFromDatabase(String eventID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Fetch specific event document by its event ID
-        db.collection("facilities").document(facilityID)
+        db.collection("facilities")
+                .whereArrayContains("events", eventID)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        facility = documentSnapshot.toObject(Facility.class);
+
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+                        facility = document.toObject(Facility.class);
 
                         if (facility != null) {
                             updateFacilityDisplayed(facility);
                         }
+
                     } else {
-                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID " + facilityID);
+                        Log.d("firestore get", "documentSnapshot.NOT exists facilityID: " + facilityID);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -300,10 +344,21 @@ public class update_event extends Fragment {
     private void updateFacilityDisplayed(Facility facility) {
         facilityName.setText(facility.getName());
 
+        Log.d("update_event_DEBUG", "facilityID: "+facility.getDeviceID());
+
         // Load image
-        Glide.with(getView().getContext())
-                .load(facility.getPictureURL())
-                .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+        String tempFacilityPictureURL = facility.getPictureURL();
+        if (tempFacilityPictureURL == null) {
+            facilityPicture.setImageDrawable(getResources().getDrawable(R.drawable.user));
+            facilityPicture.setImageTintList(getResources().getColorStateList(R.color.green));
+        } else if (!tempFacilityPictureURL.isEmpty()) {
+            Glide.with(getView().getContext())
+                    .load(facility.getPictureURL())
+                    .into((ImageView) getView().findViewById(R.id.view_event_facility_picture));
+        } //else {
+//            facilityPicture.setImageDrawable(getResources().getDrawable(R.drawable.user));
+//            facilityPicture.setImageTintList(getResources().getColorStateList(R.color.green));
+//        }
     }
 
     /**
