@@ -12,15 +12,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * NotificationManager
+ *
+ * NotificationManager class handles interactions between the local instance(s) of a given facility with the firestore database
+ *
+ * @author Rehan, Rafi
+ * @see Notification
+ */
 public class NotificationManager {
 
     private final FirebaseFirestore db;
 
+    /**
+     * Empty constructor
+     */
     public NotificationManager() {
         this.db = FirebaseFirestore.getInstance();
     }
 
-
+    /**
+     * Parses a notification string into a Notification object
+     * @param notificationString contains notification information
+     * @return Notification object
+     */
     public Notification parseNotification(String notificationString) {
         String[] parts = notificationString.split("\\$");
 
@@ -41,6 +56,11 @@ public class NotificationManager {
         return new Notification(title, day, month, time, eventID, message, notified);
     }
 
+    /**
+     * Unparses a notification object into a string
+     * @param notification Notification object
+     * @return String containing notification information
+     */
     public String unparseNotification(Notification notification) {
         String message = notification.getMessage() + "$" +
                 notification.getEventStartDateDay() + "$" +
@@ -52,6 +72,12 @@ public class NotificationManager {
         return message;
     }
 
+    /**
+     * Adds a notification to the user's notifications
+     * @param userID the user's ID
+     * @param notification the notification to add
+     * @param listener the listener to call when the notification is added
+     */
     public void addNotification(String userID, String notification, OnNotificationUpdateListener listener) {
         db.runTransaction(transaction -> {
             // Get the user document
@@ -82,6 +108,11 @@ public class NotificationManager {
         }).addOnFailureListener(listener::onError);
     }
 
+    /**
+     * Updates the notified field of a notification
+     * @param userID the user's ID
+     * @param listener the listener to call when the notification is updated
+     */
     public void updateNotified(String userID, OnNotificationUpdateListener listener) {
         db.runTransaction(transaction -> {
             // Get the user document
@@ -105,6 +136,12 @@ public class NotificationManager {
         }).addOnFailureListener(listener::onError);
     }
 
+    /**
+     * Removes a notification from the user's notifications
+     * @param userID the user's ID
+     * @param notification the notification to remove
+     * @param listener the listener to call when the notification is removed
+     */
     public void removeNotification(String userID, String notification, OnNotificationUpdateListener listener) {
         db.runTransaction(transaction -> {
             // Get the user document
@@ -125,6 +162,9 @@ public class NotificationManager {
         }).addOnFailureListener(listener::onError);
     }
 
+    /**
+     * Interface for handling the result of adding a notification.
+     */
     public interface OnNotificationUpdateListener {
         void onSuccess(String message);
         void onError(Exception e);

@@ -48,6 +48,7 @@ public class Event {
      * @param listReference  Reference ID of the associated event list document
      * @param LocationReference  Reference ID of the associated location document
      * @param QRCode         QR code for event identification
+     * @param eventID        Unique ID of the event
      */
     public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode, String eventID){
         this.organizerID = organizerID;

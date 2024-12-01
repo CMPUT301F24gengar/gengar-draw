@@ -20,6 +20,8 @@ import Classes.NotificationManager;
 
 /**
  * This is the NotificationAdapter which is a custom adapter to display all the notifications.
+ *
+ * @author Rehan
  */
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.MyViewHolder> {
 
