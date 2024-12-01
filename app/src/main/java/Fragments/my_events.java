@@ -67,8 +67,12 @@ import Classes.UserProfileManager;
  *     data:<ul> <li>activity views</li> <li>device Id</li> <li>highlightedButton</li></ul>
  *     methods:<ul> <li>constructor</li> <li>onCreateView</li> <li>closeFragment</li> <li>setHighlightedButton</li> <li>openFacilityFragment</li> <li>checkForFacility</li> <li>fetchEvents</li> <li>fetchJoinedEvents</li> <li>createJoinedEventsList</li> <li>fetchJoinedEventIDs</li></ul>
  *
- * @author Meghan, Rheanna
+ * @author Meghan, Rheanna, Rehan
  * @see Fragment
+ * @see EventManager
+ * @see Event
+ * @see Facility
+ * @see FacilityManager
  * @see <a href="https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/">https://www.geeksforgeeks.org/atomicinteger-incrementandget-method-in-java-with-examples/</a>
  */
 public class my_events extends Fragment implements EventAdapter.OnEventClickListener {
@@ -89,8 +93,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
     private ArrayList<Event> events;
     private ArrayList<Event> events2;
     private RecyclerView.LayoutManager layoutManager;
-    EventAdapter customAdapter;
-
+    EventAdapter customAdapterHosted;
+    EventAdapter customAdapterJoined;
     /**
      * Required empty public constructor
      */
@@ -124,10 +128,11 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         eventIDs = new ArrayList<>();
 
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(), events, false, this);
+        customAdapterHosted = new EventAdapter(getContext(), events, false, true, this);
+        customAdapterJoined = new EventAdapter(getContext(), events, false, false, this);
 
         recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
-        recyclerView.setAdapter(customAdapter);
+        recyclerView.setAdapter(customAdapterJoined);
 
         deviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -155,7 +160,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
             public void onClick(View view) {
                 // Empty out the events ArrayList to hold the Event objects
                 events.clear();
-                customAdapter.notifyDataSetChanged();
+                customAdapterHosted.notifyDataSetChanged();
+                recyclerView.setAdapter(customAdapterHosted);
 
                 setHighlightedButton(hostedEventsBtn);
                 eventListView.setVisibility(View.VISIBLE);
@@ -177,8 +183,37 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         });
     }
 
+    /**
+     * Handles the event details button click
+     * @param EventID The event ID of the clicked event
+     */
     @Override
-    public void onEventClick(String EventID) {
+    public void onEventDetailsClick(String EventID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventID", EventID);
+
+        event_details eventDetailsFragment = new event_details();
+        eventDetailsFragment.setArguments(bundle); // Pass the eventID to the fragment
+        // Navigate to event details fragment
+
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content, eventDetailsFragment) // Replace with your container ID
+                    .addToBackStack(null) // Optional: to add to back stack
+                    .commit();
+        } else {
+            // Handle the error
+        }
+    }
+
+    /**
+     * Handles the event update button click
+     * @param EventID The event ID of the clicked event
+     */
+    @Override
+    public void onEventUpdateClick(String EventID) {
         String selectedEventID = EventID;
 
         Bundle bundle = new Bundle();
@@ -237,10 +272,6 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
         }
     }
 
-    public interface OnEventsLoadedListener {
-        void onEventsLoaded(ArrayList<Event> events);
-    }
-
     /**
      * checks if a facility exists for hosted events list
      */
@@ -253,10 +284,7 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                 missingFacilityFrame.setVisibility(View.GONE);
                 eventIDs = facility.getEvents();
 
-                customAdapter.setFacilityName(facility.getName()); // Pass facility name to adapter
-                customAdapter.setFacilityPicture(facility.getPictureURL());
-
-                fetchEvents(eventIDs, new FetchEventsCallback() {
+                fetchEvents(eventIDs, true, new FetchEventsCallback() {
                     @Override
                     public void onSuccess(ArrayList<Event> curr_events) {
                         Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
@@ -293,17 +321,14 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
      * @param callback callback to let the calling method know when all the events have been loaded.
      *
      */
-    public void fetchEvents(List<String> eventIDs, final FetchEventsCallback callback) {
+    public void fetchEvents(List<String> eventIDs, boolean isHosted, final FetchEventsCallback callback) {
         Log.d("fetchEvents", "Event IDs : " + eventIDs);
 
         int totalEvents = eventIDs.size();  // total number of events to fetch
 
         AtomicInteger completedTasks = new AtomicInteger(0);  // needed for incrementAndGet()
 
-        // Loop through each event
         for (String eventID : eventIDs) {
-
-            // Fetch specific event document by its ID
             db.collection("events").document(eventID)
                     .get()
                     .addOnCompleteListener(task -> {
@@ -323,7 +348,9 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                                         events.add(curr_event);  // Add retrieved Event object to the List
 
                                         // Notify adapter that event was added
-                                        customAdapter.notifyItemInserted(events.size() - 1);
+                                        if (isHosted) {
+                                            customAdapterHosted.notifyItemInserted(events.size() - 1);
+                                        }
 
                                         if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
                                             callback.onSuccess(events);  // Pass retrieved events list
@@ -369,14 +396,12 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
      * and adds it to a list of events.
      * @param deviceID the device ID of the user.
      */
-    //creates listener since firebase's get() is asynchronous in nature,
-    //so it notifies when all profiles have been loaded.
     public void fetchJoinedEvents(String deviceID) {
         fetchJoinedEventIDs(deviceID, new FetchJoinedEventIDsCallback() {
             @Override
             public void onJoinedEventIDsFetched(List<String> eventIDs) {
                 Log.d("fetchJoinedEvents", "Before call fetchEvents: Joined Event IDs: " + eventIDs);
-                fetchEvents(eventIDs, new FetchEventsCallback() {
+                fetchEvents(eventIDs, false, new FetchEventsCallback() {
                     @Override
                     public void onSuccess(ArrayList<Event> curr_events) {
                         Log.d("RecyclerView ", "AFTER fetchEvents curr_events size: " + curr_events.size());
@@ -400,13 +425,9 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
      * This method creates the joined events list for the user.
      */
     public void createJoinedEventsList() {
-        customAdapter.setFacilityName("");  // Clear facility name to be passed to adapter
-        customAdapter.setFacilityPicture("");
-
         eventIDs.clear();
-        // Empty out the events ArrayList to hold the Event objects
         events.clear();
-        customAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(customAdapterJoined);
 
         //switch views
         setHighlightedButton(joinedEventsBtn);
@@ -421,8 +442,6 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
      * @param deviceID the device ID of the user.
      * @param callback to check if all the event IDs have been loaded.
      */
-    //creates callback since firebase's get() is asynchronous in nature,
-    //so it notifies when all profiles have been loaded.
     public void fetchJoinedEventIDs(String deviceID, final FetchJoinedEventIDsCallback callback) {
         db.collection("users").document(deviceID)
                 .get()

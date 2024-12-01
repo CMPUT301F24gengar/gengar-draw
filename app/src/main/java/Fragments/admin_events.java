@@ -62,8 +62,8 @@ public class admin_events extends Fragment{
         events = new ArrayList<>();
         searchEvents = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(),events, true, eventsListener);
-        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true, eventsListener);
+        customAdapter = new EventAdapter(getContext(),events, true, false, eventsListener);
+        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true, false, eventsListener);
 
 
         fetchEvents(new OnEventsLoadedListener() {
