@@ -122,6 +122,8 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text=""
+                                android:paddingEnd="10dp"
+                                android:paddingStart="0dp"
                                 android:textColor="@color/white"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />

@@ -89,19 +89,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
                 if (facility == null){
                     holder.facilityNameTextView.setText("Facility not found.");
                     holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-                }
+                } else{
+                    //set image
+                    if (facility.getPictureURL() == null){
+                        holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                    }
+                    else{
+                        holder.facilityPicture.setImageTintList(null);
+                        Glide.with(context).load(facility.getPictureURL()).into(holder.facilityPicture);
+                    }
 
-                //set image
-                if (facility.getPictureURL() == null){
-                    holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                    //set text to facility name
+                    holder.facilityNameTextView.setText(facility.getName());
                 }
-                else{
-                    holder.facilityPicture.setImageTintList(null);
-                    Glide.with(context).load(facility.getPictureURL()).into(holder.facilityPicture);
-                }
-
-                //set text to facility name
-                holder.facilityNameTextView.setText(facility.getName());
             }
 
             @Override
