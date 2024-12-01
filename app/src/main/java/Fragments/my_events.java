@@ -350,6 +350,8 @@ public class my_events extends Fragment implements EventAdapter.OnEventClickList
                                         // Notify adapter that event was added
                                         if (isHosted) {
                                             customAdapterHosted.notifyItemInserted(events.size() - 1);
+                                        } else {
+                                            customAdapterJoined.notifyItemInserted(events.size() - 1);
                                         }
 
                                         if (completedTasks.incrementAndGet() == totalEvents) {  // All events have been fetched
