@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.Event;
 import Classes.EventManager;
 import Classes.UserProfile;
@@ -73,20 +75,30 @@ public class EventImageAdapter extends RecyclerView.Adapter<EventImageAdapter.My
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                eventManager.deleteEventPicture(localEvents.get(deletedPosition).getEventID(), new EventManager.OnDeleteListener() {
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
                     @Override
-                    public void onSuccess() {
-                        Toast.makeText(context,"Deleted event picture of " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
-                        localEvents.remove(deletedPosition);
-                        notifyItemRemoved(deletedPosition);
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        eventManager.deleteEventPicture(localEvents.get(deletedPosition).getEventID(), new EventManager.OnDeleteListener() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(context,"Deleted event picture of " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                                localEvents.remove(deletedPosition);
+                                notifyItemRemoved(deletedPosition);
+                            }
+                            @Override
+                            public void onError(Exception e) {
+                                Log.d("Event picture deletion error: ",e.toString());
+                            }
+                        });
                     }
                     @Override
-                    public void onError(Exception e) {
-                        Log.d("Event picture deletion error: ",e.toString());
+                    public void onCancel() {
+                        //DO NOTHING
                     }
                 });
-
+                dialog.show();
             }
         });
 

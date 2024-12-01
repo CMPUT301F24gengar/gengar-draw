@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import java.util.Locale;
 
+import Classes.CustomDialogClass;
 import Classes.Event;
 import Classes.Facility;
 import Classes.FacilityManager;
@@ -54,12 +56,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         holder.Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int deletedPosition = holder.getAdapterPosition();
-                EventManager eventManager = new EventManager();
-                eventManager.deleteEvent(localEvents.get(deletedPosition).getEventID());
-                Toast.makeText(view.getContext(), "Deleted " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
-                localEvents.remove(deletedPosition);
-                notifyItemRemoved(deletedPosition);
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        EventManager eventManager = new EventManager();
+                        eventManager.deleteEvent(localEvents.get(deletedPosition).getEventID());
+                        Toast.makeText(view.getContext(), "Deleted " + localEvents.get(deletedPosition).getEventTitle(),Toast.LENGTH_SHORT).show();
+                        localEvents.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        //do nothing
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -71,6 +85,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
         facilityManager.getFacility(organizerID, new FacilityManager.OnFacilityFetchListener() {
             @Override
             public void onFacilityFetched(Facility facility) {
+
+                if (facility == null){
+                    holder.facilityNameTextView.setText("Facility not found.");
+                    holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
+                }
+
                 //set image
                 if (facility.getPictureURL() == null){
                     holder.facilityPicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
