@@ -33,6 +33,12 @@ import Classes.Event;
 import Classes.EventListsManager;
 import Classes.EventManager;
 
+/**
+ * @author Dion
+ * admin_events
+ * This fragment displays the list of facility profiles that an admin can browse through.
+ */
+
 public class admin_events extends Fragment{
 
     private FirebaseFirestore db;
@@ -94,10 +100,18 @@ public class admin_events extends Fragment{
         return view;
     }
 
+    /**
+     * interface for the listener that checks if all the events have been loaded.
+     */
     public interface OnEventsLoadedListener {
         void onEventsLoaded(ArrayList<Event> events);
     }
 
+    /**
+     * fetchEvents
+     * @param listener
+     * method to get all the events in firebase currently and add it to the event array list.
+     */
     //creates listener since firebase's get() is asynchronous in nature,
     //so it notifies when all profiles have been loaded.
     public void fetchEvents(OnEventsLoadedListener listener) {
