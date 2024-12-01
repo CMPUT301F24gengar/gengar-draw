@@ -31,10 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Adapters.NotificationAdapter;
+import Classes.Event;
+import Classes.EventManager;
 import Classes.Notification;
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
+/**
+ * Notifications Fragment
+ *
+ *     Handles interactions with the notifications page fragment
+ *
+ * @author Rafi, Rehan
+ * @see Notification
+ * @see Classes.NotificationManager
+ */
 public class notifications extends Fragment {
 
     private String channelId = "notification_channel";
@@ -54,6 +65,18 @@ public class notifications extends Fragment {
 
     private UserProfileManager userProfileManager;
 
+    /**
+     * Construct the notifications fragment view
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return Constructed View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -148,6 +171,9 @@ public class notifications extends Fragment {
         return view;
     }
 
+    /**
+     * Create the notification channel
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "notification_channel";
@@ -160,10 +186,17 @@ public class notifications extends Fragment {
         }
     }
 
+    /**
+     * Interface for handling notifications loaded
+     */
     public interface OnNotificationsLoadedListener {
         void onNotificationsLoaded(ArrayList<Notification> notifications);
     }
 
+    /**
+     * Fetch notifications from the database
+     * @param listener The listener to call when notifications are loaded
+     */
     public void fetchNotifications(OnNotificationsLoadedListener listener){
         // get userprofile
         userProfileManager = new UserProfileManager();
@@ -185,6 +218,15 @@ public class notifications extends Fragment {
         });
     }
 
+    /**
+     * Request permissions for notifications and send notifications
+     * @param requestCode The request code passed in {@link #requestPermissions(String[], int)}.
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
+     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
+     *
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
