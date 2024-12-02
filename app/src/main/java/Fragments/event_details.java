@@ -397,6 +397,9 @@ public class event_details extends Fragment {
                             Log.d("event details facility fetch error",e.toString());
                         }
                     });
+                } else {
+                    Toast.makeText(getContext(), "Event not found!", Toast.LENGTH_SHORT).show();
+                    getActivity().onBackPressed();
                 }
             }
 

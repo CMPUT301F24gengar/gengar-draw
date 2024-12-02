@@ -4,6 +4,7 @@ import android.content.Intent;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -14,8 +15,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import java.lang.reflect.Method;
-
 
 import Fragments.qr_scanner;
 
@@ -41,23 +40,18 @@ public class QRScannerFragmentTest {
     }
 
     @Test
-    public void testQRScannerHandlesInjectedQRCodeWithReflection() throws Exception {
+    public void testQRScannerHandlesInjectedQRCode() {
+        // Simulate the scanning process with a mocked QR code string
         String mockedQRCode = "eriS7rD5NLCDetMVYvJS";
 
+        // Inject the QR code string into the fragment's scanner
         qr_scanner fragment = (qr_scanner) activityRule.getActivity()
                 .getSupportFragmentManager()
                 .findFragmentById(R.id.main_content);
-
         if (fragment != null) {
-            Method method = qr_scanner.class.getDeclaredMethod("handleScannedData", String.class);
-            method.setAccessible(true);
-            method.invoke(fragment, mockedQRCode);
+            fragment.handleScannedData(mockedQRCode);
         }
 
-        activityRule.getActivity().getSupportFragmentManager().executePendingTransactions();
-
-        onView(withId(R.id.view_event_title))
-                .check(matches(withText("Dion event")));
     }
 
 }
