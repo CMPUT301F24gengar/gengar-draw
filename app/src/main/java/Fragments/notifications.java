@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -46,7 +47,7 @@ import Classes.UserProfileManager;
  * @see Notification
  * @see Classes.NotificationManager
  */
-public class notifications extends Fragment {
+public class notifications extends Fragment implements NotificationAdapter.OnNotificationClickListener {
 
     private String channelId = "notification_channel";
 
@@ -90,7 +91,7 @@ public class notifications extends Fragment {
         notificationManager = new Classes.NotificationManager();
         notifications = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new NotificationAdapter(getContext(), notifications, deviceID, true);
+        customAdapter = new NotificationAdapter(getContext(), notifications, deviceID, true, this);
 
         bellButton = view.findViewById(R.id.notification_button);
         bellButton.setOnClickListener(new View.OnClickListener() {
@@ -216,6 +217,27 @@ public class notifications extends Fragment {
                 // Handle the error
             }
         });
+    }
+
+    @Override
+    public void onEventDetailsClick(String EventID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventID", EventID);
+
+        event_details eventDetailsFragment = new event_details();
+        eventDetailsFragment.setArguments(bundle); // Pass the eventID to the fragment
+        // Navigate to event details fragment
+
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content, eventDetailsFragment) // Replace with your container ID
+                    .addToBackStack(null) // Optional: to add to back stack
+                    .commit();
+        } else {
+            // Handle the error
+        }
     }
 
     /**

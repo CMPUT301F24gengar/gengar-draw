@@ -29,6 +29,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     private List<Notification> localNotifications;
     private String userID;
     private Boolean showDelete;
+    private OnNotificationClickListener listener;
 
     /**
      * Constructor for NotificationAdapter done with context and an arraylist of notifications.
@@ -37,11 +38,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
      * @param userID the user's id
      * @param showDelete the delete button
      */
-    public NotificationAdapter(Context context, ArrayList<Notification> notifications, String userID, Boolean showDelete) {
+    public NotificationAdapter(Context context, ArrayList<Notification> notifications, String userID, Boolean showDelete, OnNotificationClickListener listener) {
         this.context=context;
         this.localNotifications = notifications;
         this.userID = userID;
         this.showDelete = showDelete;
+        this.listener = listener;
     }
 
     /**
@@ -94,6 +96,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.month.setText(notification.getEventStartDateMonth());
         holder.time.setText(notification.getEventStartDateTime());
         holder.title.setText(notification.getEventTitle());
+
+        holder.viewDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onEventDetailsClick(notification.getEventID());
+            }
+        });
     }
 
     /**
@@ -106,6 +115,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextView time;
         TextView title;
         ImageView delete;
+        ImageView viewDetails;
 
         public MyViewHolder(View itemView){
             super(itemView);
@@ -115,6 +125,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             month = itemView.findViewById(R.id.view_event_month);
             time = itemView.findViewById(R.id.view_event_time);
             title = itemView.findViewById(R.id.view_event_title);
+            viewDetails = itemView.findViewById(R.id.view_details_btn);
         }
     }
 
@@ -124,5 +135,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public int getItemCount() {
         return localNotifications.size();
+    }
+
+    public interface OnNotificationClickListener {
+        void onEventDetailsClick(String eventID);
     }
 }

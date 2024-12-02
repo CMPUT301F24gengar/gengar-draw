@@ -100,7 +100,7 @@ public class qr_scanner extends Fragment {
      * Handles the scanned QR code data and navigates to the event details fragment
      * @param QRcode The scanned QR code data
      */
-    private void handleScannedData(String QRcode) {
+    public void handleScannedData(String QRcode) {
         Log.d("QRScanner", "scanned data: " + QRcode);
 
         // Create an instance of QRcodeManager

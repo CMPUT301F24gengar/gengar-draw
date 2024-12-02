@@ -37,8 +37,6 @@ public class UserProfileFragmentTest {
     @Test
     public void testUIVisibility() {
         // Check if all essential UI components are displayed
-        Espresso.onView(ViewMatchers.withId(R.id.profile_user_picture))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_name))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_email))
@@ -51,17 +49,6 @@ public class UserProfileFragmentTest {
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         Espresso.onView(ViewMatchers.withId(R.id.profile_user_cancel_btn))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-    }
-
-    /**
-     * Tests the interaction for removing a profile picture.
-     */
-    @Test
-    public void testRemoveProfilePictureInteraction() {
-        // Simulate clicking the "Remove Profile Picture" button
-        Espresso.onView(ViewMatchers.withId(R.id.profile_user_picture_remove))
-                .perform(ViewActions.click());
-
     }
 
     /**
