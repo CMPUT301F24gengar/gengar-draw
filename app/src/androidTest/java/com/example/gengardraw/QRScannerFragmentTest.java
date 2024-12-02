@@ -50,13 +50,13 @@ public class QRScannerFragmentTest {
 
         if (fragment != null) {
             Method method = qr_scanner.class.getDeclaredMethod("handleScannedData", String.class);
-            method.setAccessible(true); // Bypass private access
+            method.setAccessible(true);
             method.invoke(fragment, mockedQRCode);
         }
 
         activityRule.getActivity().getSupportFragmentManager().executePendingTransactions();
 
-        onView(withId(R.id.view_event_title)) // Replace with the actual TextView ID in event details fragment
+        onView(withId(R.id.view_event_title))
                 .check(matches(withText("Dion event")));
     }
 
