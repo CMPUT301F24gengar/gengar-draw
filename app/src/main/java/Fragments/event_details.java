@@ -451,6 +451,8 @@ public class event_details extends Fragment {
                 // check if lat and lon are null
                 if ( latitude != null && longitude != null ) {
                     joinEvent(eventID);
+                } else {
+                    buttonDebounce = false;
                 }
             }
             blackFrame.setVisibility(View.GONE);
@@ -472,6 +474,8 @@ public class event_details extends Fragment {
                 } else {
                     if ( latitude != null && longitude != null ) {
                         joinEvent(eventID);
+                    } else {
+                        buttonDebounce = false;
                     }
                 }
 
