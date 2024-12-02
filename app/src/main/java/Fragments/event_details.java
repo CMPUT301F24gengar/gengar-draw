@@ -95,8 +95,8 @@ public class event_details extends Fragment {
     private static final int DOWNLOAD_REQUEST_CODE = 1;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 2;
     private FusedLocationProviderClient fusedLocationClient;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     private String deviceID;
     private Date currentDate;
@@ -448,7 +448,10 @@ public class event_details extends Fragment {
                 Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
                 buttonDebounce = false;
             } else {
-                joinEvent(eventID);
+                // check if lat and lon are null
+                if ( latitude != null && longitude != null ) {
+                    joinEvent(eventID);
+                }
             }
             blackFrame.setVisibility(View.GONE);
         });
@@ -466,9 +469,10 @@ public class event_details extends Fragment {
                 if (event.getEnableGeolocation()) {
                     blackFrame.setVisibility(View.VISIBLE);
                     getLastLocation();
-
                 } else {
-                    joinEvent(eventID);
+                    if ( latitude != null && longitude != null ) {
+                        joinEvent(eventID);
+                    }
                 }
 
             } else {
