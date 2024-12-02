@@ -387,6 +387,7 @@ public class EventListsManager {
             eventLists.removeFromWaitingList(userID);
             eventLists.removeFromCancelledList(userID);
             eventLists.removeFromWinnersList(userID);
+            eventLists.getLocationList().remove(userID);
             message.set("Removed from all lists");
             removed.set(true);
             transaction.set(db.collection("event-lists").document(eventID), eventLists);
