@@ -143,14 +143,13 @@ public class UserProfileManager {
                 for (String eventID : userProfileFetched.getJoinedEvents()){
                     eventListsManager.removeUserFromAllLists(eventID, deviceID);
                 }
+                db.collection("users").document(deviceID).delete();
             }
             @Override
             public void onUserProfileFetchError(Exception e) {
                 //Handle the error
             }
         });
-
-
     }
 
     /**
