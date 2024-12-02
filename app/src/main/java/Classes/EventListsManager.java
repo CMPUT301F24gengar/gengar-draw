@@ -377,6 +377,23 @@ public class EventListsManager {
                 .addOnFailureListener(listener::onError);
     }
 
+    public void removeUserFromAllLists(String eventID, String userID) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean removed = new AtomicBoolean(false);
+        db.runTransaction(transaction -> {
+            DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+            EventLists eventLists = createEventListsFromDocument(snapshot);
+            eventLists.removeFromChosenList(userID);
+            eventLists.removeFromWaitingList(userID);
+            eventLists.removeFromCancelledList(userID);
+            eventLists.removeFromWinnersList(userID);
+            message.set("Removed from all lists");
+            removed.set(true);
+            transaction.set(db.collection("event-lists").document(eventID), eventLists);
+            return null;
+        });
+    }
+
     /**
      * Listener interface for fetching event data.
      */
