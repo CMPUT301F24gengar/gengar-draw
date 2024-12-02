@@ -38,15 +38,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder
     private Boolean showDelete;
     private Boolean showUpdate;
     private OnEventClickListener listener;
+    private boolean buttonDebounce = false;
+
 
     /**
      * Constructor for event adapter
-     * @param context
-     * @param events
-     * @param showDelete
-     * @param listener
+     * @param context the context in which the adapter is working.
+     * @param events the list to be displayed in the adapter.
+     * @param showDelete the delete button
+     * @param listener the listener for the event details button
+     * @param showUpdate the update button
      */
-    private boolean buttonDebounce = false;
     public EventAdapter(Context context, ArrayList<Event> events, Boolean showDelete, Boolean showUpdate, OnEventClickListener listener) {
         this.context=context;
         localEvents = events;
