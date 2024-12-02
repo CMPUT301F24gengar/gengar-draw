@@ -448,10 +448,13 @@ public class event_details extends Fragment {
                 Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
                 buttonDebounce = false;
             } else {
-                // check if lat and lon are null
+                if (latitude == null || longitude == null) {
+                    getLastLocation();
+                }
                 if ( latitude != null && longitude != null ) {
                     joinEvent(eventID);
                 } else {
+                    Toast.makeText(getContext(), "Please enable location services and restart app", Toast.LENGTH_SHORT).show();
                     buttonDebounce = false;
                 }
             }
@@ -472,11 +475,7 @@ public class event_details extends Fragment {
                     blackFrame.setVisibility(View.VISIBLE);
                     getLastLocation();
                 } else {
-                    if ( latitude != null && longitude != null ) {
-                        joinEvent(eventID);
-                    } else {
-                        buttonDebounce = false;
-                    }
+                    joinEvent(eventID);
                 }
 
             } else {
