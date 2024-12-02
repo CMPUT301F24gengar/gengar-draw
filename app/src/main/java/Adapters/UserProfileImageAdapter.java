@@ -1,5 +1,6 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +19,10 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
 import Classes.UserProfile;
+import Classes.UserProfileManager;
+
 /**
  * This is the UserProfileImageAdapter which is a custom adapter to display all the images of the user profiles.
  */
@@ -60,6 +65,38 @@ public class UserProfileImageAdapter extends RecyclerView.Adapter<UserProfileIma
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         UserProfile userProfile = localUserProfiles.get(position);
+        UserProfileManager userProfileManager = new UserProfileManager();
+
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        userProfileManager.deleteProfilePicture(localUserProfiles.get(deletedPosition).getDeviceID(), new UserProfileManager.OnDeleteListener() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(context,"Deleted profile picture of "+ localUserProfiles.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                                localUserProfiles.remove(deletedPosition);
+                                notifyItemRemoved(deletedPosition);
+                            }
+                            @Override
+                            public void onError(Exception e) {
+                                Log.d("Error profile picture deletion: ", e.toString());
+                            }
+                        });
+                    }
+                    @Override
+                    public void onCancel() {
+                        //Do nothing
+                    }
+                });
+                dialog.show();
+            }
+        });
+
         if (userProfile.getPictureURL() != null) {
             Glide.with(context).load(userProfile.getPictureURL()).into(holder.profilePicture);
         } else {

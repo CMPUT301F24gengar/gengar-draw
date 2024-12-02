@@ -26,6 +26,7 @@ public class Event {
     private String ListReference; // Stores the docID of the EventLists
     private String LocationReference; // Stores the docID of the Locations;
     private String QRCode;
+    private String eventID;
 
     /**
      * Empty Event Constructor
@@ -47,8 +48,9 @@ public class Event {
      * @param listReference  Reference ID of the associated event list document
      * @param LocationReference  Reference ID of the associated location document
      * @param QRCode         QR code for event identification
+     * @param eventID        Unique ID of the event
      */
-    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode){
+    public Event(String organizerID, String eventTitle, Date regOpenDate, Date regDeadlineDate, Date eventStartDate, Integer maxWinners, Integer maxEntrants, String eventDetails, String eventPictureURL, boolean enableGeolocation, String listReference, String LocationReference, String QRCode, String eventID){
         this.organizerID = organizerID;
         this.eventTitle = eventTitle;
         this.regOpenDate = regOpenDate;
@@ -62,6 +64,7 @@ public class Event {
         this.ListReference = listReference;
         this.LocationReference = LocationReference;
         this.QRCode = QRCode;
+        this.eventID = eventID;
     }
 
     /**
@@ -169,6 +172,12 @@ public class Event {
     }
 
     /**
+     * Gets the event ID
+     * @return String representing the event's unique ID
+     */
+    public String getEventID() { return eventID; }
+
+    /**
      * Sets the organizer ID
      * @param organizerID String representing the organizer's unique ID
      */
@@ -255,4 +264,12 @@ public class Event {
      * @param QRCode String representing the event's QR code
      */
     public void setQRCode(String QRCode) { this.QRCode = QRCode; }
+
+    /**
+     * Sets the event ID
+     * @param eventID String representing the event's unique ID
+     */
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
 }

@@ -128,8 +128,28 @@ public class UserProfileManager {
      */
     public void deleteUserProfile(String deviceID) {
         assert db != null;
-        db.collection("users").document(deviceID) // Use deviceID as the document ID
-                .delete();
+        EventListsManager eventListsManager = new EventListsManager();
+        //delete image from firebase
+        StorageReference storageRef = storage.getReference().child("profilePictures/" + deviceID);
+        storageRef.delete();
+
+        //delete facility in a user profile
+        FacilityManager facilityManager = new FacilityManager();
+        facilityManager.deleteFacility(deviceID);
+
+        getUserProfile(deviceID, new UserProfileManager.OnUserProfileFetchListener() {
+            @Override
+            public void onUserProfileFetched(UserProfile userProfileFetched) {
+                for (String eventID : userProfileFetched.getJoinedEvents()){
+                    eventListsManager.removeUserFromAllLists(eventID, deviceID);
+                }
+                db.collection("users").document(deviceID).delete();
+            }
+            @Override
+            public void onUserProfileFetchError(Exception e) {
+                //Handle the error
+            }
+        });
     }
 
     /**

@@ -24,11 +24,12 @@ public class EventTest {
         String listReference = "list123";
         String locationReference = "location123";
         String QRCode = "sampleQRCode123";
+        String eventID = "event123";
 
         // Return a new Event object with mock data
         return new Event(organizerID, eventTitle, regOpenDate, regDeadlineDate, eventStartDate,
                 maxWinners, maxEntrants, eventDetails, eventPictureURL,
-                enableGeolocation, listReference, locationReference, QRCode);
+                enableGeolocation, listReference, locationReference, QRCode, eventID);
     }
 
     @Test

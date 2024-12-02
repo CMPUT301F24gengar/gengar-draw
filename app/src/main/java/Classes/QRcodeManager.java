@@ -39,7 +39,7 @@ public class QRcodeManager {
      */
     public QRcode createQRcodeFromDocument(DocumentSnapshot document) {
         String eventID = document.getString("eventID");
-        String qrcode = document.getString("QRCode");
+        String qrcode = document.getString("qrcode");
         return new QRcode(qrcode, eventID);
     }
 
@@ -99,6 +99,19 @@ public class QRcodeManager {
                     Log.e("QRcodeManager", "Error searching QR code: ", e);
                     listener.onError(e);
                 });
+    }
+
+    /**
+     * Deletes a qrcode object from the database.
+     * @param qrcode The ID of the qrcode object to be deleted
+     */
+    public void deleteQRcode(String qrcode){
+        if(qrcode == null){
+            return; //if there is no qrcode to delete, do nothing.
+        }
+        db.collection("qrcodes")
+                .document(qrcode)
+                .delete();
     }
 
     /**

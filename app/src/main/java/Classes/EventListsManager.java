@@ -123,21 +123,27 @@ public class EventListsManager {
                     Integer maxEntrants = eventLists.getMaxEntrants();
                     List<String> waitingList = eventLists.getWaitingList();
 
+                    if (eventLists.getEnableGeolocation() && (latitude == null || longitude == null)) {
+                        message.set("No location provided");
+                        added.set(false);
+                        return null;
+                    }
+
                     if ((maxEntrants == null || waitingList.size() < maxEntrants) && !waitingList.contains(userID)) {
                         eventLists.addToWaitingList(userID);
                         message.set("Joined the waiting list");
                         added.set(true);
 
-                        // If latitude and longitude are provided [enabled geolocation], add them to the location list
-//                        if (latitude != null && longitude != null) {
-//                            Map<String, Object> location = eventLists.getLocationList();
-//                            Map<String, Double> userLocation = new HashMap<>();
-//                            userLocation.put("latitude", latitude);
-//                            userLocation.put("longitude", longitude);
-//                            location.put(userID, userLocation);
-//
-//                            eventLists.setLocationList(location);
-//                        }
+//                         If latitude and longitude are provided [enabled geolocation], add them to the location list
+                        if (latitude != null && longitude != null) {
+                            Map<String, Object> location = eventLists.getLocationList();
+                            Map<String, Double> userLocation = new HashMap<>();
+                            userLocation.put("latitude", latitude);
+                            userLocation.put("longitude", longitude);
+                            location.put(userID, userLocation);
+
+                            eventLists.setLocationList(location);
+                        }
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     } else {
@@ -146,7 +152,7 @@ public class EventListsManager {
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -171,12 +177,12 @@ public class EventListsManager {
                         message.set("Left the waiting list");
                         removed.set(true);
 
-                        // Remove user from locationList if present
-//                        Map<String, Object> locationList = eventLists.getLocationList();
-//                        if (locationList.containsKey(userID)) {
-//                            locationList.remove(userID);
-//                            eventLists.setLocationList(locationList);
-//                        }
+//                         Remove user from locationList if present
+                        Map<String, Object> locationList = eventLists.getLocationList();
+                        if (locationList.containsKey(userID)) {
+                            locationList.remove(userID);
+                            eventLists.setLocationList(locationList);
+                        }
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     } else {
@@ -185,7 +191,7 @@ public class EventListsManager {
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), removed.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), removed.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -198,6 +204,7 @@ public class EventListsManager {
     public void chooseWinners(String eventID, OnEventListsUpdateListener listener) {
         AtomicReference<String> message = new AtomicReference<>();
         AtomicBoolean chosen = new AtomicBoolean(false);
+        AtomicReference<List<String>> users = new AtomicReference<>();
         db.runTransaction(transaction -> {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
@@ -219,7 +226,7 @@ public class EventListsManager {
 
                     if (slotsLeft > 0) {
                         Collections.shuffle(waitingList);
-                        List<String> winners = waitingList.subList(0, slotsLeft);
+                        List<String> winners = new ArrayList<>(waitingList.subList(0, slotsLeft));
 
                         chosenList.addAll(winners);
                         waitingList.removeAll(winners); // Remove the winners from the waitingList
@@ -229,15 +236,17 @@ public class EventListsManager {
 
                         message.set("Winners chosen");
                         chosen.set(true);
+                        users.set(winners);
 
                         transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     } else {
                         message.set("Winners list is full");
                         chosen.set(false);
+                        users.set(null);
                     }
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), chosen.get(), users.get()); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -258,13 +267,51 @@ public class EventListsManager {
                     eventLists.removeFromChosenList(userID);
                     eventLists.addToCancelledList(userID);
 
+//                    Remove user from locationList if present
+                    Map<String, Object> locationList = eventLists.getLocationList();
+                    if (locationList.containsKey(userID)) {
+                        locationList.remove(userID);
+                        eventLists.setLocationList(locationList);
+                    }
+
                     message.set("Cancelled");
                     cancelled.set(true);
 
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get(), null); })
+                .addOnFailureListener(listener::onError);
+    }
+
+    public void addUsersToCancelledList(String eventID, OnEventListsUpdateListener listener) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean cancelled = new AtomicBoolean(false);
+        db.runTransaction(transaction -> {
+                    DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+                    EventLists eventLists = createEventListsFromDocument(snapshot);
+
+                    // remove all users from chosen list and add to cancelled list
+                    List<String> chosenList = eventLists.getChosenList();
+                    List<String> cancelledList = eventLists.getCancelledList();
+
+                    cancelledList.addAll(chosenList);
+
+//                    Remove user from locationList if present
+                    Map<String, Object> locationList = eventLists.getLocationList();
+                    for (String userID : chosenList) {
+                        locationList.remove(userID);
+                    }
+                    eventLists.setLocationList(locationList);
+                    chosenList.clear();
+
+                    message.set("Cancelled");
+                    cancelled.set(true);
+
+                    transaction.set(db.collection("event-lists").document(eventID), eventLists);
+                    return null;
+                })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), cancelled.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -291,7 +338,7 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
     }
 
@@ -309,7 +356,16 @@ public class EventListsManager {
                     DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
                     EventLists eventLists = createEventListsFromDocument(snapshot);
 
+                    // remove all users from chosen list and add to cancelled list
                     eventLists.removeFromChosenList(userID);
+                    eventLists.addToCancelledList(userID);
+
+//                    Remove user from locationList if present
+                    Map<String, Object> locationList = eventLists.getLocationList();
+                    if (locationList.containsKey(userID)) {
+                        locationList.remove(userID);
+                        eventLists.setLocationList(locationList);
+                    }
 
                     message.set("Declined");
                     added.set(false);
@@ -317,8 +373,26 @@ public class EventListsManager {
                     transaction.set(db.collection("event-lists").document(eventID), eventLists);
                     return null;
                 })
-                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get()); })
+                .addOnSuccessListener(aVoid -> { listener.onSuccess(message.get(), added.get(), null); })
                 .addOnFailureListener(listener::onError);
+    }
+
+    public void removeUserFromAllLists(String eventID, String userID) {
+        AtomicReference<String> message = new AtomicReference<>();
+        AtomicBoolean removed = new AtomicBoolean(false);
+        db.runTransaction(transaction -> {
+            DocumentSnapshot snapshot = transaction.get(db.collection("event-lists").document(eventID));
+            EventLists eventLists = createEventListsFromDocument(snapshot);
+            eventLists.removeFromChosenList(userID);
+            eventLists.removeFromWaitingList(userID);
+            eventLists.removeFromCancelledList(userID);
+            eventLists.removeFromWinnersList(userID);
+            eventLists.getLocationList().remove(userID);
+            message.set("Removed from all lists");
+            removed.set(true);
+            transaction.set(db.collection("event-lists").document(eventID), eventLists);
+            return null;
+        });
     }
 
     /**
@@ -333,7 +407,7 @@ public class EventListsManager {
      * Listener interface for updating event data.
      */
     public interface OnEventListsUpdateListener {
-        void onSuccess(String message, boolean boolValue);
+        void onSuccess(String message, boolean boolValue, List<String> users);
         void onError(Exception e);
     }
 

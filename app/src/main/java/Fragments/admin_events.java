@@ -15,7 +15,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.gengardraw.MainActivity;
 import com.example.gengardraw.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,8 +35,12 @@ import Classes.Event;
 import Classes.EventListsManager;
 import Classes.EventManager;
 
-public class admin_events extends Fragment{
-
+/**
+ * @author Dion
+ * admin_events
+ * This fragment displays the list of facility profiles that an admin can browse through.
+ */
+public class admin_events extends Fragment implements EventAdapter.OnEventClickListener {
     private FirebaseFirestore db;
     private RecyclerView recyclerView;
     private EventManager eventManager;
@@ -61,15 +67,15 @@ public class admin_events extends Fragment{
         events = new ArrayList<>();
         searchEvents = new ArrayList<>();
         layoutManager = new LinearLayoutManager(getActivity());
-        customAdapter = new EventAdapter(getContext(),events, true);
-        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true);
+        customAdapter = new EventAdapter(getContext(),events, true, false, this);
+        searchCustomAdapter = new EventAdapter(getContext(),searchEvents, true, false, this);
 
 
         fetchEvents(new OnEventsLoadedListener() {
             @Override
             public void onEventsLoaded(ArrayList<Event> events) {
                 //adding userProfiles to adapter
-                recyclerView.setLayoutManager(layoutManager); //arranges recyclerView in linear form
+                recyclerView.setLayoutManager(layoutManager);  // arranges recyclerView in linear form
                 recyclerView.setAdapter(customAdapter);
             }
         });
@@ -93,12 +99,52 @@ public class admin_events extends Fragment{
         return view;
     }
 
+    /**
+     * Handles the event details button click
+     * @param EventID The event ID of the clicked event
+     */
+    @Override
+    public void onEventDetailsClick(String EventID) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventID", EventID);
+
+        event_details eventDetailsFragment = new event_details();
+        eventDetailsFragment.setArguments(bundle); // Pass the eventID to the fragment
+        // Navigate to event details fragment
+
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_content, eventDetailsFragment) // Replace with your container ID
+                    .addToBackStack(null) // Optional: to add to back stack
+                    .commit();
+        } else {
+            // Handle the error
+        }
+    }
+
+    /**
+     * Handles the event details button click
+     * @param EventID The event ID of the clicked event
+     */
+    @Override
+    public void onEventUpdateClick(String EventID) {
+        // Do nothing
+    }
+
+    /**
+     * interface for the listener that checks if all the events have been loaded.
+     */
     public interface OnEventsLoadedListener {
         void onEventsLoaded(ArrayList<Event> events);
     }
 
-    //creates listener since firebase's get() is asynchronous in nature,
-    //so it notifies when all profiles have been loaded.
+    /**
+     * fetchEvents
+     * fetches events for the list of event IDs.
+     * @param listener callback to let the calling method know when all the events have been loaded.
+     */
     public void fetchEvents(OnEventsLoadedListener listener) {
         db.collection("events")
                 .get()

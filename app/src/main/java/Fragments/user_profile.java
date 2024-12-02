@@ -30,6 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Classes.UserProfile;
 import Classes.UserProfileManager;
 
@@ -43,10 +46,13 @@ import Classes.UserProfileManager;
 
 public class user_profile extends Fragment {
 
+    private List<Integer> colors = new ArrayList<>();
+
     String deviceId;
 
     private TextView facilityButton;
     private ImageView profileImage;
+    private TextView profileInitials;
     private EditText nameEditText;
     private EditText emailEditText;
     private EditText phoneNumberEditText;
@@ -62,6 +68,13 @@ public class user_profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        colors.add(R.color.pfp1);
+        colors.add(R.color.pfp2);
+        colors.add(R.color.pfp3);
+        colors.add(R.color.pfp4);
+        colors.add(R.color.pfp5);
+        colors.add(R.color.pfp6);
+
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
         facilityButton = view.findViewById(R.id.profile_user_facility_btn);
         facilityButton.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +85,7 @@ public class user_profile extends Fragment {
         });
 
         profileImage = view.findViewById(R.id.profile_user_picture);
+        profileInitials = view.findViewById(R.id.profile_user_initials);
         nameEditText = view.findViewById(R.id.profile_user_name);
         emailEditText = view.findViewById(R.id.profile_user_email);
         phoneNumberEditText = view.findViewById(R.id.profile_user_phone);
@@ -88,7 +102,7 @@ public class user_profile extends Fragment {
             @Override
             public void onUserProfileFetched(UserProfile userProfileFetched) {
                 setDetails(userProfileFetched);
-                userProfile=userProfileFetched;
+                userProfile = userProfileFetched;
                 pictureURL = userProfileFetched.getPictureURL();
             }
             @Override
@@ -102,9 +116,13 @@ public class user_profile extends Fragment {
             public void onClick(View view) {
                 ImageURI=null;
                 pictureURL = null;
-                profileImage.setImageDrawable(getResources().getDrawable(R.drawable.user));
-                profileImage.setImageTintList(getResources().getColorStateList(R.color.grey));
 
+                profileImage.setVisibility(View.GONE);
+
+                int nameLength = userProfile.getName().length();
+                profileInitials.setText(userProfile.getInitials());
+                profileInitials.setBackgroundColor(getContext().getResources().getColor(colors.get(nameLength % 6)));
+                profileInitials.setVisibility(View.VISIBLE);
             }
         });
 
@@ -186,11 +204,18 @@ public class user_profile extends Fragment {
         emailEditText.setText(userProfile.getEmail());
         phoneNumberEditText.setText(userProfile.getPhoneNumber());
         if(userProfile.getPictureURL()!=null){
+            profileImage.setVisibility(View.VISIBLE);
             Glide.with(this).load(userProfile.getPictureURL()).into(profileImage);
-            profileImage.setImageTintList(null);
-        }
-        Log.d("userprof","userprof: "+ userProfile.getPictureURL());
 
+            profileInitials.setVisibility(View.GONE);
+        } else {
+            profileImage.setVisibility(View.GONE);
+
+            int nameLength = userProfile.getName().length();
+            profileInitials.setText(userProfile.getInitials());
+            profileInitials.setBackgroundColor(getContext().getResources().getColor(colors.get(nameLength % 6)));
+            profileInitials.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -213,7 +238,9 @@ public class user_profile extends Fragment {
                 assert data != null;
                 ImageURI = data.getData();
                 profileImage.setImageURI(ImageURI);
-                profileImage.setImageTintList(null);
+
+                profileImage.setVisibility(View.VISIBLE);
+                profileInitials.setVisibility(View.GONE);
             }
         }
     }

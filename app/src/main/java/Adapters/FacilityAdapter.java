@@ -1,11 +1,14 @@
 package Adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +19,11 @@ import com.example.gengardraw.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import Classes.CustomDialogClass;
+import Classes.EventManager;
 import Classes.Facility;
+import Classes.FacilityManager;
+
 /**
  * This is the FacilityAdapter which is a custom adapter to display all the facilities along with their profile picture.
  */
@@ -60,14 +67,37 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.MyView
      */
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        holder.Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomDialogClass dialog = new CustomDialogClass((Activity) context);
+                dialog.setDialogListener(new CustomDialogClass.DialogListener() {
+                    @Override
+                    public void onProceed() {
+                        int deletedPosition = holder.getAdapterPosition();
+                        FacilityManager facilityManager = new FacilityManager();
+                        facilityManager.deleteFacility(localFacilities.get(deletedPosition).getDeviceID());
+                        Toast.makeText(view.getContext(), "Deleted " + localFacilities.get(deletedPosition).getName(),Toast.LENGTH_SHORT).show();
+                        localFacilities.remove(deletedPosition);
+                        notifyItemRemoved(deletedPosition);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Do nothing
+                    }
+                });
+                dialog.show();
+            }
+        });
         Facility facility = localFacilities.get(position);
         holder.name.setText(facility.getName());
         if (facility.getPictureURL() != null) {
             Glide.with(context).load(facility.getPictureURL()).into(holder.profilePicture);
         } else {
             holder.profilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.user));
-            holder.profilePicture.setImageTintList(context.getResources().getColorStateList(R.color.green));
         }
+        holder.profilePicture.setVisibility(View.VISIBLE);
     }
     /**
      * Used to get references for views of a single item.

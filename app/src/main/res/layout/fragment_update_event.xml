@@ -74,6 +74,8 @@
                         app:cardCornerRadius="10dp">
 
                         <ImageView
+                            android:id="@+id/view_event_update_overlay"
+                            android:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:contentDescription="@string/todo"
@@ -91,6 +93,8 @@
                             android:scaleType="centerCrop" />
 
                         <TextView
+                            android:id="@+id/update_event_update_poster"
+                            android:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@string/update_poster"
@@ -304,22 +308,32 @@
                         android:textColor="@color/grey"
                         android:textSize="16sp"
                         android:visibility="gone" />
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:text="EVENT DESCRIPTION :"
+                        android:text="EVENT DESCRIPTION:"
                         android:textAlignment="textStart"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
-
+                    <TextView
+                        android:id="@+id/update_event_details_static"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text=""
+                        android:textAlignment="textStart"
+                        android:textColor="@color/grey"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
                     <EditText
                         android:id="@+id/update_event_details"
                         style="@style/main"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -327,7 +341,7 @@
                         android:layout_marginEnd="10dp"
                         android:background="@drawable/rounded_corner"
                         android:backgroundTint="@color/black2"
-                        android:hint="@string/event_details"
+                        android:hint="EVENT DESCRIPTION"
                         android:paddingStart="15dp"
                         android:paddingTop="13dp"
                         android:paddingEnd="15dp"

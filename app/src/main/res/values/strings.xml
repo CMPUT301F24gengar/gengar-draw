@@ -61,4 +61,16 @@
     <string name="view_cancelled_entrants">VIEW CANCELLED ENTRANTS</string>
     <string name="view_winners">VIEW WINNERS</string>
     <string name="event_does_not_exist">EVENT DOES NOT EXIST</string>
+    <string name="this_event_requires_geolocation_in_order_to_join_the_waiting_list">THIS EVENT REQUIRES GEOLOCATION IN ORDER TO JOIN THE WAITING LIST</string>
+    <string name="warning">WARNING</string>
+    <string name="map">MAP</string>
+    <string name="click_user_to_add_a_profile_picture">CLICK USER TO ADD A PROFILE PICTURE</string>
+    <string name="send_notification">SEND NOTIFICATION</string>
+    <string name="enter_notification_message">ENTER NOTIFICATION MESSAGE</string>
+    <string name="send">SEND</string>
+    <string name="no_qr_code">NO QR CODE</string>
+    <string name="generate_qr_code">GENERATE NEW QR CODE</string>
+    <string name="download_qr_code">DOWNLOAD QR CODE</string>
+    <string name="confirm_deletion">CONFIRM DELETION</string>
+    <string name="are_you_sure_you_want_to_delete_this_object">ARE YOU SURE YOU WANT TO DELETE THIS OBJECT</string>
 </resources>
